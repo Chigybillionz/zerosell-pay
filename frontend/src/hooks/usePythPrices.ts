@@ -38,7 +38,7 @@ const DEFAULT_PRICES: PricesMap = {
   },
 };
 
-const BACKEND_URL = "http://localhost:4000";
+const BACKEND_URL = (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:4000";
 
 export function usePythPrices() {
   const [prices, setPrices] = useState<PricesMap>(DEFAULT_PRICES);

@@ -3,7 +3,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction } from "@solana/web3.js";
 import { z } from "zod";
 
-export const BACKEND_URL = "http://localhost:4000";
+export const BACKEND_URL = (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:4000";
 
 const isValidPubkey = (val: string): boolean => {
   try {

@@ -12,7 +12,7 @@ import {
 } from "@zerosell/shared";
 
 export const PROGRAM_ID = ZEROSELL_PROGRAM_ID;
-export const BACKEND_URL = "http://localhost:4000";
+export const BACKEND_URL = (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:4000";
 
 export interface PositionData {
   publicKey: string;

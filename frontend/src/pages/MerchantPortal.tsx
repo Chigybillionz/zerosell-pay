@@ -99,7 +99,7 @@ export const MerchantPortal: React.FC = () => {
     e.preventDefault();
     const id = Math.floor(100000 + Math.random() * 900000);
     const checkoutUrl = `${window.location.origin}/checkout`;
-    const blinkActionUrl = `http://localhost:4000/api/actions/pay/${id}`;
+    const blinkActionUrl = `${BACKEND_URL}/api/actions/pay/${id}`;
     const dialectBlinkUrl = `https://dial.to/?action=solana-action:${encodeURIComponent(
       blinkActionUrl
     )}&cluster=devnet`;
