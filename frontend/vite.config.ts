@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       qrcode: path.resolve(__dirname, "./src/stubs/qrcode.ts"),
+      buffer: "buffer/",
     },
   },
   optimizeDeps: {

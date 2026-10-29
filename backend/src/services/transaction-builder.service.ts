@@ -128,9 +128,9 @@ export class TransactionBuilderService {
     const [userLoanPositionPda] = getUserLoanPositionPda(borrower, invoiceId);
     const [collateralVaultPda] = getCollateralVaultPda(borrower, invoiceId);
 
-    const borrowerCollateralAta = getAssociatedTokenAddressSync(collateralMint, borrower);
-    const merchantUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, merchant);
-    const treasuryUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, treasury);
+    const borrowerCollateralAta = getAssociatedTokenAddressSync(collateralMint, borrower, true);
+    const merchantUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, merchant, true);
+    const treasuryUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, treasury, true);
 
     const programAny = program as any;
 
@@ -194,8 +194,8 @@ export class TransactionBuilderService {
     if (rentGrantIx) transaction.add(rentGrantIx);
 
     // 3. Ensure merchant and treasury ATAs exist (sponsored by relayer)
-    const merchantUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, merchant);
-    const treasuryUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, treasury);
+    const merchantUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, merchant, true);
+    const treasuryUsdcAta = getAssociatedTokenAddressSync(USDC_MINT, treasury, true);
     transaction.add(
       createAssociatedTokenAccountIdempotentInstruction(relayerKeypair.publicKey, merchantUsdcAta, merchant, USDC_MINT),
       createAssociatedTokenAccountIdempotentInstruction(relayerKeypair.publicKey, treasuryUsdcAta, treasury, USDC_MINT)
