@@ -17,10 +17,11 @@ export const USER_POSITION_SEED = "user_position";
 export const LIQUIDITY_VAULT_SEED = "liquidity_vault";
 export const COLLATERAL_VAULT_SEED = "collateral_vault";
 
-export const PROTOCOL_CONFIG_SEED_BUFFER = Buffer.from(PROTOCOL_CONFIG_SEED);
-export const USER_POSITION_SEED_BUFFER = Buffer.from(USER_POSITION_SEED);
-export const LIQUIDITY_VAULT_SEED_BUFFER = Buffer.from(LIQUIDITY_VAULT_SEED);
-export const COLLATERAL_VAULT_SEED_BUFFER = Buffer.from(COLLATERAL_VAULT_SEED);
+const encoder = new TextEncoder();
+export const PROTOCOL_CONFIG_SEED_BUFFER = encoder.encode(PROTOCOL_CONFIG_SEED);
+export const USER_POSITION_SEED_BUFFER = encoder.encode(USER_POSITION_SEED);
+export const LIQUIDITY_VAULT_SEED_BUFFER = encoder.encode(LIQUIDITY_VAULT_SEED);
+export const COLLATERAL_VAULT_SEED_BUFFER = encoder.encode(COLLATERAL_VAULT_SEED);
 
 // ==========================================
 // 3. Supported Token Mints (Devnet)

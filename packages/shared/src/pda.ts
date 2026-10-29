@@ -22,11 +22,12 @@ export function getLiquidityVaultPda(programId: PublicKey = ZEROSELL_PROGRAM_ID)
 }
 
 /**
- * Helper to serialize invoiceId as little-endian 64-bit buffer
+ * Helper to serialize invoiceId as little-endian 64-bit Uint8Array
  */
-export function getInvoiceBuffer(invoiceId: number | bigint): Buffer {
-  const buf = Buffer.alloc(8);
-  buf.writeBigUInt64LE(BigInt(invoiceId));
+export function getInvoiceBuffer(invoiceId: number | bigint): Uint8Array {
+  const buf = new Uint8Array(8);
+  const view = new DataView(buf.buffer);
+  view.setBigUint64(0, BigInt(invoiceId), true);
   return buf;
 }
 
@@ -39,7 +40,7 @@ export function getUserLoanPositionPda(
   programId: PublicKey = ZEROSELL_PROGRAM_ID
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [USER_POSITION_SEED_BUFFER, borrower.toBuffer(), getInvoiceBuffer(invoiceId)],
+    [USER_POSITION_SEED_BUFFER, borrower.toBytes(), getInvoiceBuffer(invoiceId)],
     programId
   );
 }
@@ -53,7 +54,7 @@ export function getCollateralVaultPda(
   programId: PublicKey = ZEROSELL_PROGRAM_ID
 ): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
-    [COLLATERAL_VAULT_SEED_BUFFER, borrower.toBuffer(), getInvoiceBuffer(invoiceId)],
+    [COLLATERAL_VAULT_SEED_BUFFER, borrower.toBytes(), getInvoiceBuffer(invoiceId)],
     programId
   );
 }
