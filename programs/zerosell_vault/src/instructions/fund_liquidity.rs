@@ -45,3 +45,4 @@ pub fn handler(ctx: Context<FundLiquidity>, amount_usdc: u64) -> Result<()> {
     msg!("Funded {} USDC into ZeroSell Protocol Liquidity Vault", amount_usdc);
     Ok(())
 }
+

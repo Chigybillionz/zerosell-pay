@@ -2,28 +2,28 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, getAccount } from "@solana/spl-token";
-import { expect } from "chai";
+import { describe, it, before } from "node:test";
+import assert from "node:assert";
 import { setupTestContext, TestContext } from "./setup.js";
 import {
-  ZEROSELL_PROGRAM_ID,
   DEFAULT_MAX_LTV_BPS,
   DEFAULT_LIQUIDATION_THRESHOLD_BPS,
   DEFAULT_PROTOCOL_FEE_BPS,
   getUserLoanPositionPda,
   getCollateralVaultPda,
+  IDL,
 } from "../packages/shared/src/index.js";
 
-describe("zerosell_vault protocol end-to-end tests", () => {
+describe("zerosell_vault protocol end-to-end test suite", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  const idl = require("../packages/shared/src/idl/zerosell_vault.json");
-  const program = new Program(idl, ZEROSELL_PROGRAM_ID, provider);
+  const program: any = new Program(IDL as any, provider);
 
   let ctx: TestContext;
   const invoiceId = new anchor.BN(984321);
   const oraclePriceUsd = new anchor.BN(150_000_000); // $150.00 SOL in 10^6
-  const oracleConfidenceUsd = new anchor.BN(1_500_000); // $1.50 confidence (1% of price <= 2%)
+  const oracleConfidenceUsd = new anchor.BN(1_500_000); // $1.50 confidence (1% <= 2% max)
   const collateralAmount = new anchor.BN(1_000_000_000); // 1.0 SOL (9 decimals)
   const merchantUsdcAmount = new anchor.BN(50_000_000); // 50.00 USDC (6 decimals)
 
@@ -31,6 +31,9 @@ describe("zerosell_vault protocol end-to-end tests", () => {
     ctx = await setupTestContext(provider);
   });
 
+  // =========================================================================
+  // Test 1: Protocol Initialization
+  // =========================================================================
   it("1. Initializes Protocol Config & Liquidity Vault", async () => {
     const tx = await program.methods
       .initializeProtocol(
@@ -50,14 +53,20 @@ describe("zerosell_vault protocol end-to-end tests", () => {
       })
       .rpc();
 
-    console.log("initialize_protocol tx:", tx);
+    console.log("  ✓ initialize_protocol tx:", tx);
 
     const configAccount: any = await program.account.protocolConfig.fetch(ctx.protocolConfigPda);
-    expect(configAccount.admin.toBase58()).to.equal(ctx.authority.publicKey.toBase58());
-    expect(configAccount.maxLtvBps).to.equal(5000);
-    expect(configAccount.protocolFeeBps).to.equal(30);
+    assert.strictEqual(configAccount.admin.toBase58(), ctx.authority.publicKey.toBase58());
+    assert.strictEqual(configAccount.treasury.toBase58(), ctx.treasury.publicKey.toBase58());
+    assert.strictEqual(configAccount.maxLtvBps, 5000);
+    assert.strictEqual(configAccount.liquidationThresholdBps, 7500);
+    assert.strictEqual(configAccount.protocolFeeBps, 30);
+    assert.strictEqual(configAccount.paused, false);
   });
 
+  // =========================================================================
+  // Test 2: Liquidity Funding
+  // =========================================================================
   it("2. Funds liquidity vault with USDC", async () => {
     const fundAmount = new anchor.BN(5_000_000_000); // 5,000 USDC
 
@@ -72,13 +81,16 @@ describe("zerosell_vault protocol end-to-end tests", () => {
       })
       .rpc();
 
-    console.log("fund_liquidity tx:", tx);
+    console.log("  ✓ fund_liquidity tx:", tx);
 
     const vaultAccount = await getAccount(provider.connection, ctx.liquidityVaultPda);
-    expect(Number(vaultAccount.amount)).to.equal(5_000_000_000);
+    assert.strictEqual(Number(vaultAccount.amount), 5_000_000_000);
   });
 
-  it("3. Atomic Lock & Pay: locks collateral, routes 0.30% fee to treasury, and pays merchant USDC", async () => {
+  // =========================================================================
+  // Test 3: Happy Path Atomic Lock & Pay
+  // =========================================================================
+  it("3. Happy Path: Executes atomic lock_collateral_and_pay", async () => {
     const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
     const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
     const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
@@ -111,28 +123,38 @@ describe("zerosell_vault protocol end-to-end tests", () => {
       .signers([ctx.borrower])
       .rpc();
 
-    console.log("lock_collateral_and_pay tx:", tx);
+    console.log("  ✓ lock_collateral_and_pay tx:", tx);
 
     // Verify merchant received exact 50.00 USDC
     const merchantAta = await getAccount(provider.connection, ctx.merchantUsdcAta);
-    expect(Number(merchantAta.amount)).to.equal(50_000_000);
+    assert.strictEqual(Number(merchantAta.amount), 50_000_000);
 
     // Verify treasury received 0.30% protocol fee ($0.15 USDC)
     const treasuryAta = await getAccount(provider.connection, ctx.treasuryUsdcAta);
-    expect(Number(treasuryAta.amount)).to.equal(150_000);
+    assert.strictEqual(Number(treasuryAta.amount), 150_000);
 
-    // Verify collateral locked
+    // Verify collateral locked in vault
     const collateralVault = await getAccount(provider.connection, collateralVaultPda);
-    expect(Number(collateralVault.amount)).to.equal(1_000_000_000);
+    assert.strictEqual(Number(collateralVault.amount), 1_000_000_000);
+
+    // Verify user position PDA state
+    const positionAccount: any = await program.account.userLoanPosition.fetch(userLoanPositionPda);
+    assert.strictEqual(positionAccount.borrower.toBase58(), ctx.borrower.publicKey.toBase58());
+    assert.strictEqual(positionAccount.merchant.toBase58(), ctx.merchant.publicKey.toBase58());
+    assert.strictEqual(Number(positionAccount.debtUsdcAmount), 50_150_000); // 50 USDC + 0.30% fee ($0.15)
+    assert.strictEqual(positionAccount.status, 0); // 0 = Active
   });
 
-  it("4. Adversarial Test: Reject borrow exceeding 50% max LTV", async () => {
+  // =========================================================================
+  // Test 4: Adversarial Test - LTV Limit Exceeded (> 50%)
+  // =========================================================================
+  it("4. Adversarial Test: Rejects borrow exceeding 50% max LTV", async () => {
     const invalidInvoiceId = new anchor.BN(112233);
     const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invalidInvoiceId.toNumber());
     const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invalidInvoiceId.toNumber());
     const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
 
-    // Requesting $120 USDC borrow on 1 SOL ($150 value) = 80% LTV (exceeds 50% limit)
+    // 1 SOL ($150 USD) at 50% LTV allows max $75 USDC. Requesting $120 USDC (80% LTV)
     const excessiveBorrow = new anchor.BN(120_000_000);
 
     try {
@@ -164,13 +186,16 @@ describe("zerosell_vault protocol end-to-end tests", () => {
         .signers([ctx.borrower])
         .rpc();
 
-      expect.fail("Should have thrown LtvLimitExceeded error");
+      assert.fail("Should have thrown LtvLimitExceeded error");
     } catch (err: any) {
-      expect(err.toString()).to.include("LtvLimitExceeded");
+      assert.ok(err.toString().includes("LtvLimitExceeded"));
     }
   });
 
-  it("5. Adversarial Test: Reject stale Pyth oracle price (> 60 seconds old)", async () => {
+  // =========================================================================
+  // Test 5: Adversarial Test - Stale Pyth Oracle Price (> 60s)
+  // =========================================================================
+  it("5. Adversarial Test: Rejects stale Pyth oracle price (> 60s lag)", async () => {
     const staleInvoiceId = new anchor.BN(445566);
     const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, staleInvoiceId.toNumber());
     const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, staleInvoiceId.toNumber());
@@ -206,23 +231,111 @@ describe("zerosell_vault protocol end-to-end tests", () => {
         .signers([ctx.borrower])
         .rpc();
 
-      expect.fail("Should have thrown OraclePriceStale error");
+      assert.fail("Should have thrown OraclePriceStale error");
     } catch (err: any) {
-      expect(err.toString()).to.include("OraclePriceStale");
+      assert.ok(err.toString().includes("OraclePriceStale"));
     }
   });
 
-  it("6. Repays debt and unlocks collateral back to borrower", async () => {
+  // =========================================================================
+  // Test 6: Adversarial Test - Oracle Confidence Interval Too Wide (> 2%)
+  // =========================================================================
+  it("6. Adversarial Test: Rejects oracle confidence interval exceeding 2% of price", async () => {
+    const wideConfInvoiceId = new anchor.BN(778899);
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, wideConfInvoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, wideConfInvoiceId.toNumber());
+    const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
+
+    // $5.00 confidence on $150.00 price = 3.33% (> 2.0% allowable limit)
+    const wideConfidenceUsd = new anchor.BN(5_000_000);
+
+    try {
+      await program.methods
+        .lockCollateralAndPay(
+          wideConfInvoiceId,
+          collateralAmount,
+          merchantUsdcAmount,
+          oraclePriceUsd,
+          wideConfidenceUsd,
+          publishTime
+        )
+        .accounts({
+          borrower: ctx.borrower.publicKey,
+          merchant: ctx.merchant.publicKey,
+          treasury: ctx.treasury.publicKey,
+          protocolConfig: ctx.protocolConfigPda,
+          userLoanPosition: userLoanPositionPda,
+          collateralMint: ctx.collateralMint,
+          borrowerCollateralAta: ctx.borrowerCollateralAta,
+          collateralVault: collateralVaultPda,
+          liquidityVault: ctx.liquidityVaultPda,
+          merchantUsdcAta: ctx.merchantUsdcAta,
+          treasuryUsdcAta: ctx.treasuryUsdcAta,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          rent: SYSVAR_RENT_PUBKEY,
+        })
+        .signers([ctx.borrower])
+        .rpc();
+
+      assert.fail("Should have thrown OracleConfidenceTooWide error");
+    } catch (err: any) {
+      assert.ok(err.toString().includes("OracleConfidenceTooWide"));
+    }
+  });
+
+  // =========================================================================
+  // Test 7: Adversarial Test - Premature Liquidation of Healthy Position (< 75%)
+  // =========================================================================
+  it("7. Adversarial Test: Rejects liquidation of a healthy position", async () => {
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
+
+    // Current price is $150, debt is $50.15 -> Current LTV is 33.4% (well below 75% threshold)
+    try {
+      await program.methods
+        .liquidateOrSettle(
+          invoiceId,
+          oraclePriceUsd,
+          oracleConfidenceUsd,
+          publishTime
+        )
+        .accounts({
+          liquidator: ctx.liquidator.publicKey,
+          borrower: ctx.borrower.publicKey,
+          protocolConfig: ctx.protocolConfigPda,
+          userLoanPosition: userLoanPositionPda,
+          collateralMint: ctx.collateralMint,
+          liquidatorUsdcAta: ctx.liquidatorUsdcAta,
+          liquidityVault: ctx.liquidityVaultPda,
+          liquidatorCollateralAta: ctx.liquidatorCollateralAta,
+          collateralVault: collateralVaultPda,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([ctx.liquidator])
+        .rpc();
+
+      assert.fail("Should have thrown PositionHealthy error");
+    } catch (err: any) {
+      assert.ok(err.toString().includes("PositionHealthy"));
+    }
+  });
+
+  // =========================================================================
+  // Test 8: Partial Repay & Proportional Collateral Unlock
+  // =========================================================================
+  it("8. Partial Repayment: Repays 50% of debt and releases 50% collateral", async () => {
     const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
     const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
 
     const borrowerCollateralBefore = await getAccount(provider.connection, ctx.borrowerCollateralAta);
 
-    // Full repayment ($50.15 USDC debt)
-    const fullRepayAmount = new anchor.BN(50_150_000);
+    // Repay half of debt: 25.075 USDC (25_075_000 atomic units)
+    const partialRepayAmount = new anchor.BN(25_075_000);
 
     const tx = await program.methods
-      .repayAndUnlock(invoiceId, fullRepayAmount)
+      .repayAndUnlock(invoiceId, partialRepayAmount)
       .accounts({
         borrower: ctx.borrower.publicKey,
         protocolConfig: ctx.protocolConfigPda,
@@ -236,14 +349,84 @@ describe("zerosell_vault protocol end-to-end tests", () => {
       .signers([ctx.borrower])
       .rpc();
 
-    console.log("repay_and_unlock tx:", tx);
+    console.log("  ✓ partial repay_and_unlock tx:", tx);
 
-    const positionAccount: any = await program.account.userLoanPosition.fetch(userLoanPositionPda);
-    expect(positionAccount.status).to.equal(1); // 1 = Repaid
-
+    // Verify 50% of collateral returned to borrower
     const borrowerCollateralAfter = await getAccount(provider.connection, ctx.borrowerCollateralAta);
-    expect(Number(borrowerCollateralAfter.amount)).to.equal(
-      Number(borrowerCollateralBefore.amount) + 1_000_000_000
-    );
+    const returnedCollateral = Number(borrowerCollateralAfter.amount) - Number(borrowerCollateralBefore.amount);
+    assert.ok(Math.abs(returnedCollateral - 500_000_000) < 1000);
+
+    // Verify position remains Active with remaining debt
+    const positionAccount: any = await program.account.userLoanPosition.fetch(userLoanPositionPda);
+    assert.strictEqual(positionAccount.status, 0); // 0 = Active
+    assert.strictEqual(Number(positionAccount.debtUsdcAmount), 25_075_000);
+  });
+
+  // =========================================================================
+  // Test 9: Full Repayment, Vault Closure & Rent Refund
+  // =========================================================================
+  it("9. Full Repayment: Clears remaining debt, unlocks collateral, and closes vault", async () => {
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
+
+    const remainingDebt = new anchor.BN(25_075_000);
+
+    const tx = await program.methods
+      .repayAndUnlock(invoiceId, remainingDebt)
+      .accounts({
+        borrower: ctx.borrower.publicKey,
+        protocolConfig: ctx.protocolConfigPda,
+        userLoanPosition: userLoanPositionPda,
+        borrowerUsdcAta: ctx.borrowerUsdcAta,
+        liquidityVault: ctx.liquidityVaultPda,
+        borrowerCollateralAta: ctx.borrowerCollateralAta,
+        collateralVault: collateralVaultPda,
+        tokenProgram: TOKEN_PROGRAM_ID,
+      })
+      .signers([ctx.borrower])
+      .rpc();
+
+    console.log("  ✓ full repay_and_unlock tx:", tx);
+
+    // Verify position status updated to 1 (Repaid)
+    const positionAccount: any = await program.account.userLoanPosition.fetch(userLoanPositionPda);
+    assert.strictEqual(positionAccount.status, 1);
+    assert.strictEqual(Number(positionAccount.debtUsdcAmount), 0);
+    assert.strictEqual(Number(positionAccount.collateralLocked), 0);
+
+    // Verify collateral_vault account was closed
+    const vaultAccountInfo = await provider.connection.getAccountInfo(collateralVaultPda);
+    assert.strictEqual(vaultAccountInfo, null);
+  });
+
+  // =========================================================================
+  // Test 10: Adversarial Test - Repaying an Already Closed Position
+  // =========================================================================
+  it("10. Adversarial Test: Rejects repayment on an already repaid position", async () => {
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
+
+    try {
+      await program.methods
+        .repayAndUnlock(invoiceId, new anchor.BN(10_000_000))
+        .accounts({
+          borrower: ctx.borrower.publicKey,
+          protocolConfig: ctx.protocolConfigPda,
+          userLoanPosition: userLoanPositionPda,
+          borrowerUsdcAta: ctx.borrowerUsdcAta,
+          liquidityVault: ctx.liquidityVaultPda,
+          borrowerCollateralAta: ctx.borrowerCollateralAta,
+          collateralVault: collateralVaultPda,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([ctx.borrower])
+        .rpc();
+
+      assert.fail("Should have thrown error on repaid position");
+    } catch (err: any) {
+      assert.ok(
+        err.toString().includes("PositionNotActive") || err.toString().includes("AccountNotInitialized")
+      );
+    }
   });
 });

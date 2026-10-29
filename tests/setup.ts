@@ -5,8 +5,6 @@ import {
   ZEROSELL_PROGRAM_ID,
   getProtocolConfigPda,
   getLiquidityVaultPda,
-  getUserLoanPositionPda,
-  getCollateralVaultPda,
 } from "../packages/shared/src/index.js";
 
 export interface TestContext {
@@ -103,3 +101,4 @@ export async function setupTestContext(provider: anchor.AnchorProvider): Promise
     liquidatorCollateralAta,
   };
 }
+

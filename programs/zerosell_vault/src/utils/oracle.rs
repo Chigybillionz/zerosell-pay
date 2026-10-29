@@ -40,3 +40,4 @@ pub fn get_validated_pyth_price(
 
     Ok(price_usd)
 }
+

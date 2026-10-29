@@ -63,3 +63,4 @@ export const BPS_DIVISOR = 10000;
 export const MAX_ORACLE_STALENESS_SECONDS = 60;       // Max allowable Pyth price lag
 export const MAX_ORACLE_CONFIDENCE_PERCENT = 2.0;     // Max allowable confidence interval (2% of price)
 export const PRICE_DECIMALS = 6;                      // USD prices scaled by 10^6 ($1.00 = 1_000_000)
+

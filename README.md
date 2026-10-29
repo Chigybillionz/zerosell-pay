@@ -83,9 +83,9 @@ flowchart TD
 ## 🔑 On-Chain Addresses (Devnet)
 
 - **zerosell_vault Program ID**: `3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv`
-- **GlobalPool PDA**: `[b"global_pool"]`
-- **USDC Vault PDA**: `[b"usdc_vault"]`
-- **UserPosition PDA**: `[b"position", borrower, invoice_id]`
+- **ProtocolConfig PDA**: `[b"protocol_config"]`
+- **USDC Liquidity Vault PDA**: `[b"liquidity_vault"]`
+- **UserLoanPosition PDA**: `[b"user_position", borrower, invoice_id]`
 - **CollateralVault PDA**: `[b"collateral_vault", borrower, invoice_id]`
 - **Devnet USDC Mint**: `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU`
 - **Wrapped SOL Mint**: `So11111111111111111111111111111111111111112`
@@ -94,27 +94,29 @@ flowchart TD
 
 ## 📐 Smart Contract PDA & State Specification
 
-### 1. `GlobalPool` PDA
-- **Seeds**: `[b"global_pool"]`
+### 1. `ProtocolConfig` PDA
+- **Seeds**: `[b"protocol_config"]`
 - **Fields**:
-  - `authority`: Admin Pubkey
+  - `admin`: Admin Pubkey
+  - `treasury`: Protocol Treasury Pubkey for protocol fee routing (0.30%)
   - `usdc_mint`: Devnet USDC Mint
-  - `usdc_vault`: Token Account holding protocol USDC liquidity
-  - `max_ltv_bps`: Initial maximum borrow ratio (`5000` = 50.00%)
+  - `liquidity_vault`: USDC Token Account holding protocol liquidity
+  - `max_ltv_bps`: Maximum borrow ratio (`5000` = 50.00%)
   - `liquidation_threshold_bps`: Liquidation trigger (`7500` = 75.00%)
-  - `origination_fee_bps`: Flat origination protocol fee (`50` = 0.50%)
+  - `protocol_fee_bps`: Protocol origination fee (`30` = 0.30%)
   - `total_usdc_lent`: Aggregate USDC principal disbursed to merchants
+  - `paused`: Emergency circuit breaker boolean
   - `bump`: PDA derivation bump
 
-### 2. `UserPosition` PDA
-- **Seeds**: `[b"position", borrower.key().as_ref(), invoice_id.to_le_bytes().as_ref()]`
+### 2. `UserLoanPosition` PDA
+- **Seeds**: `[b"user_position", borrower.key().as_ref(), invoice_id.to_le_bytes().as_ref()]`
 - **Fields**:
   - `borrower`: User wallet who locked collateral
   - `merchant`: Merchant wallet who received USDC
   - `invoice_id`: Unique merchant invoice identifier (u64)
   - `collateral_mint`: Collateral asset mint (WSOL or Mock NVDAx)
-  - `collateral_amount`: Units locked in vault
-  - `debt_usdc_amount`: Principal disbursed + 0.50% origination fee
+  - `collateral_locked`: Units locked in vault
+  - `debt_usdc_amount`: Principal disbursed + 0.30% fee
   - `entry_price_usd`: Pyth USD price at lock time (scaled to $10^6$)
   - `created_at`: Unix timestamp of transaction
   - `status`: `0 = Active`, `1 = Repaid`, `2 = Liquidated`
@@ -164,16 +166,12 @@ $$\text{debt\_usdc\_amount} = \text{merchant\_usdc\_amount} + \text{Fee}$$
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/zerosell-pay/zerosell-pay.git
+git clone https://github.com/Chigybillionz/zerosell-pay.git
 cd zerosell-pay
 
-# Install backend dependencies
-cd backend && npm install && npm run build
-cd ..
-
-# Install frontend dependencies
-cd frontend && npm install
-cd ..
+# Install workspace dependencies & build all packages
+npm install
+npm run build
 ```
 
 ### 2. Configure Environment
@@ -188,11 +186,8 @@ PYTH_HERMES_URL=https://hermes.pyth.network
 
 ### 3. Run Development Servers
 ```bash
-# Terminal 1: Start Backend (Relayer, Blinks, Hermes & Webhooks)
-cd backend && npm run dev
-
-# Terminal 2: Start Frontend (Storefront, Dashboard, Merchant Portal)
-cd frontend && npm run dev
+# Concurrently launch both backend relayer & frontend UI
+npm run dev
 ```
 
 Visit `http://localhost:5173` to explore:
@@ -202,9 +197,33 @@ Visit `http://localhost:5173` to explore:
 
 ---
 
-## 🎥 3-Minute Demo Video Walkthrough
-- **Demo Link**: [ZeroSell Pay - Dev3pack Video Demo Placeholder](https://youtu.be/placeholder)
-- **Live Deployment**: `http://localhost:5173`
+## 🌐 Production Deployment Guides
+
+### Frontend (Vercel)
+1. Push to GitHub (`https://github.com/Chigybillionz/zerosell-pay.git`).
+2. Import project into Vercel and set Root Directory to `frontend`.
+3. Set Build Command: `npm run build` and Output Directory: `dist`.
+4. Deploy! Vercel SPA routing is pre-configured via `frontend/vercel.json`.
+
+### Backend (Render / Railway)
+1. In Render or Railway, create a new Web Service pointing to the repository.
+2. Set Root Directory to `backend`.
+3. Set Build Command: `npm install && npm run build` and Start Command: `npm run start`.
+4. Add Environment Variables:
+   - `PORT=4000`
+   - `SOLANA_RPC_URL=https://api.devnet.solana.com`
+   - `PROGRAM_ID=3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv`
+
+---
+
+## 🎥 3-Minute Video Demo Storyboard & Pitch Script
+
+| Time | Scene | Visual / Action | Narration Key Points |
+| :--- | :--- | :--- | :--- |
+| **0:00 - 0:40** | **The Dilemma** | Mock Storefront (`/checkout`) showing $50 USDC invoice | *"Crypto holders face capital gains and lost upside whenever paying for real-world expenses. Selling SOL is expensive and painful."* |
+| **0:40 - 1:30** | **Atomic Lock & Pay** | Click "Pay with ZeroSell" modal | *"ZeroSell Pay locks 0.539 SOL in a non-custodial Anchor Vault PDA, checks Pyth oracle price on-chain, and disburses 50 USDC to merchant—all sponsored 100% gasless by our Relayer."* |
+| **1:30 - 2:15** | **Borrower Dashboard** | Open `/dashboard` | *"View active loan positions, real-time LTV health factor gauge, and unrealized collateral gains. When ready, click 'Repay & Unlock' to reclaim collateral."* |
+| **2:15 - 3:00** | **Blinks & Settlement** | Open `/merchant` | *"Instant invoice generation, shareable Solana Action/Blink links for X and Discord, and real-time Server-Sent Events (SSE) settlement feed via Helius."* |
 
 ---
 

@@ -34,3 +34,4 @@ Follow these non-negotiable standards across every line of code written:
   - Validate all form inputs and URL query parameters with `zod` schemas.
   - Sanitize all URL query parameters against valid `PublicKey` formats.
   - Always simulate transactions via `connection.simulateTransaction(tx)` before prompting wallet signatures, catching errors early and displaying human-readable toast notifications.
+

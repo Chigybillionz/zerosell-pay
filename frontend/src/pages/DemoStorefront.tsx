@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
+import { z } from "zod";
 import {
   Zap,
   Server,
@@ -15,6 +18,23 @@ import {
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { ZeroSellCheckoutModal } from "../components/ZeroSellCheckoutModal.js";
+
+const QueryParamsSchema = z.object({
+  invoiceId: z.coerce.number().int().positive().optional(),
+  amount: z.coerce.number().positive().optional(),
+  merchant: z
+    .string()
+    .refine((val) => {
+      try {
+        new PublicKey(val);
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Invalid merchant pubkey")
+    .optional(),
+  title: z.string().max(100).optional(),
+});
 
 const DEMO_INVOICES = [
   {
@@ -52,10 +72,44 @@ const DEMO_INVOICES = [
 export const DemoStorefront: React.FC = () => {
   const { connected } = useWallet();
   const { solPrice, calculateCollateralNeeded } = usePythPrices();
+  const [searchParams] = useSearchParams();
 
   const [selectedInvoice, setSelectedInvoice] = useState(DEMO_INVOICES[0]);
   const [modalOpen, setModalOpen] = useState(false);
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
+
+  useEffect(() => {
+    const rawParams = {
+      invoiceId: searchParams.get("invoiceId") || undefined,
+      amount: searchParams.get("amount") || undefined,
+      merchant: searchParams.get("merchant") || undefined,
+      title: searchParams.get("title") || undefined,
+    };
+
+    const parsed = QueryParamsSchema.safeParse(rawParams);
+    if (parsed.success) {
+      const { invoiceId, amount, merchant, title } = parsed.data;
+      if (invoiceId) {
+        const found = DEMO_INVOICES.find((i) => i.id === invoiceId);
+        if (found) {
+          setSelectedInvoice(found);
+          setModalOpen(true);
+        }
+      } else if (amount && merchant) {
+        setSelectedInvoice({
+          id: Math.floor(100000 + Math.random() * 900000),
+          title: title || "Custom Checkout Invoice",
+          category: "Direct Checkout",
+          description: "ZeroSell collateralized invoice",
+          usdcAmount: amount,
+          merchantPubkey: merchant,
+          vendorName: "Merchant POS",
+          dueDate: "Immediate",
+        });
+        setModalOpen(true);
+      }
+    }
+  }, [searchParams]);
 
   const calc = calculateCollateralNeeded(selectedInvoice.usdcAmount, "SOL", 50.0);
 

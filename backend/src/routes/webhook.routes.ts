@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { EventEmitter } from "events";
+import crypto from "crypto";
 
 export const webhookEmitter = new EventEmitter();
 
@@ -7,6 +8,17 @@ const router = Router();
 
 // Track active SSE client connections
 const clients: Response[] = [];
+
+/**
+ * Constant-time comparison helper to prevent timing attacks on webhook secrets
+ */
+function verifyHeliusAuth(authHeader: string | undefined, expectedSecret: string): boolean {
+  if (!authHeader) return false;
+  const headerBuf = Buffer.from(authHeader, "utf-8");
+  const secretBuf = Buffer.from(expectedSecret, "utf-8");
+  if (headerBuf.length !== secretBuf.length) return false;
+  return crypto.timingSafeEqual(headerBuf, secretBuf);
+}
 
 /**
  * GET /api/webhooks/stream
@@ -18,7 +30,9 @@ router.get("/webhooks/stream", (req: Request, res: Response) => {
   res.setHeader("Connection", "keep-alive");
   res.setHeader("Access-Control-Allow-Origin", "*");
 
-  res.write(`data: ${JSON.stringify({ type: "CONNECTED", message: "Live ZeroSell Settlement Stream Connected" })}\n\n`);
+  res.write(
+    `data: ${JSON.stringify({ type: "CONNECTED", message: "Live ZeroSell Settlement Stream Connected" })}\n\n`
+  );
 
   clients.push(res);
 
@@ -31,12 +45,12 @@ router.get("/webhooks/stream", (req: Request, res: Response) => {
 });
 
 // Broadcast any payment event to all connected SSE clients
-webhookEmitter.on("payment", (data: any) => {
+webhookEmitter.on("payment", (data: unknown) => {
   const payload = `data: ${JSON.stringify(data)}\n\n`;
   clients.forEach((client) => {
     try {
       client.write(payload);
-    } catch (err) {
+    } catch {
       // client disconnected
     }
   });
@@ -44,10 +58,18 @@ webhookEmitter.on("payment", (data: any) => {
 
 /**
  * POST /api/webhooks/helius
- * Listens for Devnet transactions parsed by Helius webhook
+ * Listens for Devnet transactions parsed by Helius webhook with timing-safe authentication
  */
 router.post("/webhooks/helius", (req: Request, res: Response) => {
   try {
+    const secret = process.env.HELIUS_WEBHOOK_SECRET;
+    if (secret) {
+      const authHeader = req.headers["authorization"];
+      if (!verifyHeliusAuth(authHeader, secret)) {
+        return res.status(401).json({ error: "Unauthorized: Invalid Helius auth secret" });
+      }
+    }
+
     const events = Array.isArray(req.body) ? req.body : [req.body];
 
     for (const evt of events) {
@@ -66,12 +88,12 @@ router.post("/webhooks/helius", (req: Request, res: Response) => {
       });
     }
 
-    res.status(200).json({ received: true });
-  } catch (err: any) {
-    console.error("[Helius Webhook Error]:", err);
-    res.status(500).json({ error: err.message });
+    return res.status(200).json({ received: true });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Internal server error";
+    console.error("[Helius Webhook Error]:", message);
+    return res.status(500).json({ error: message });
   }
 });
 
 export default router;
-

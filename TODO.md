@@ -36,34 +36,35 @@ Tracking roadmap for the Dev3pack Solana Hackathon ($10,000 "Best App Overall" t
 - [x] `lib.rs`: Router entry-point under 50 lines with `assert_not_paused!` macro.
 
 ### 🧪 Task 3: Smart Contract Integration Testing & Devnet Deployment
-- [ ] Create `tests/setup.ts` fixture helper for token minting, devnet SOL airdrop, and PDA derivation.
-- [ ] Write integration test cases in `tests/zerosell_vault.ts`:
-  - [ ] Happy path: Initialize protocol $\rightarrow$ Fund vault $\rightarrow$ Atomic Lock & Pay $\rightarrow$ Repay & Unlock.
-  - [ ] Adversarial: LTV limit exceeded (> 50%), stale oracle price rejection, unauthorized vault withdrawal.
-- [ ] Devnet deployment verification and update README with on-chain Program ID & sample signatures.
+- [x] Create `tests/setup.ts` fixture helper for token minting, devnet SOL airdrop, and PDA derivation.
+- [x] Write integration test cases in `tests/zerosell_vault.ts`:
+  - [x] Happy path: Initialize protocol $\rightarrow$ Fund vault $\rightarrow$ Atomic Lock & Pay $\rightarrow$ Repay & Unlock.
+  - [x] Adversarial: LTV limit exceeded (> 50%), stale oracle price rejection, unauthorized vault withdrawal.
+- [x] Devnet deployment verification and update README with on-chain Program ID & sample signatures.
 
 ### 🌐 Task 4: Node.js Gasless Relayer, Solana Pay & Blinks Backend (`/backend`)
-- [ ] `TransactionBuilderService.ts`: Centralized transaction constructor for both frontend checkout and Solana Blinks.
-- [ ] `RelayerService.ts`: Decompile and inspect incoming transactions, whitelist Program IDs, sign as `feePayer`, and broadcast.
-- [ ] `BlinkActionService.ts`: Implement `GET /api/actions/checkout` and `POST /api/actions/checkout` conforming to `@solana/actions`.
-- [ ] `WebhookService.ts`: Helius webhook receiver with `timingSafeEqual` authentication and SSE live event stream.
-- [ ] Add `express-rate-limit` and `zod` input validation middleware.
+- [x] `TransactionBuilderService.ts`: Centralized transaction constructor for both frontend checkout and Solana Blinks.
+- [x] `RelayerService.ts`: Decompile and inspect incoming transactions, whitelist Program IDs, sign as `feePayer`, and broadcast.
+- [x] `BlinkActionService.ts`: Implement `GET /api/actions/checkout` and `POST /api/actions/checkout` conforming to `@solana/actions`.
+- [x] `WebhookService.ts`: Helius webhook receiver with `timingSafeEqual` authentication and SSE live event stream.
+- [x] Add `express-rate-limit` and `zod` input validation middleware.
 
 ### 💻 Task 5: React + TypeScript + Tailwind CSS Frontend (`/frontend`)
-- [ ] Custom Hooks:
-  - [ ] `useZeroSellProgram.ts`: Typed Anchor Program client initialization.
-  - [ ] `usePythPrices.ts`: Live Pyth Hermes price & confidence interval poller.
-  - [ ] `useAtomicCheckout.ts`: VersionedTransaction builder, simulation check, and relayer sponsor submission.
-- [ ] View 1: ZeroSell Checkout Widget (`/checkout`) with collateral selector, LTV health gauge, and Solana Pay QR modal.
-- [ ] View 2: Borrower Position Dashboard (`/dashboard`) with active credit lines, LTV gauge, and Repay modal.
-- [ ] View 3: Merchant POS Generator (`/merchant`) with instant invoice generation, shareable Solana Blink, and live SSE settlement feed.
-- [ ] Sanitize URL query parameters with `zod` and run `simulateTransaction` before wallet signing.
+- [x] Custom Hooks:
+  - [x] `useZeroSellProgram.ts`: Typed Anchor Program client initialization.
+  - [x] `usePythPrices.ts`: Live Pyth Hermes price & confidence interval poller.
+  - [x] `useAtomicCheckout.ts`: VersionedTransaction builder, simulation check, and relayer sponsor submission.
+- [x] View 1: ZeroSell Checkout Widget (`/checkout`) with collateral selector, LTV health gauge, and Solana Pay QR modal.
+- [x] View 2: Borrower Position Dashboard (`/dashboard`) with active credit lines, LTV gauge, and Repay modal.
+- [x] View 3: Merchant POS Generator (`/merchant`) with instant invoice generation, shareable Solana Blink, and live SSE settlement feed.
+- [x] Sanitize URL query parameters with `zod` and run `simulateTransaction` before wallet signing.
 
 ### 🔗 Task 6: End-to-End Integration, Polish & Edge-Case Verification
-- [ ] Smoke test full loop on Devnet: Generate invoice $\rightarrow$ Checkout with SOL collateral $\rightarrow$ Relayer pays gas $\rightarrow$ Merchant gets USDC $\rightarrow$ Repay on dashboard.
-- [ ] Clickable Solana Explorer links on all transaction confirmation toasts and settlement logs.
+- [x] Smoke test full loop on Devnet: Generate invoice $\rightarrow$ Checkout with SOL collateral $\rightarrow$ Relayer pays gas $\rightarrow$ Merchant gets USDC $\rightarrow$ Repay on dashboard.
+- [x] Clickable Solana Explorer links on all transaction confirmation toasts and settlement logs.
 
 ### 📦 Task 7: Dev3pack Submission Packaging & Documentation
-- [ ] Update `README.md` with complete architecture diagram, security/risk analysis, and Devnet addresses.
-- [ ] Prepare deployment scripts for Vercel (frontend) and Render/Railway (backend).
-- [ ] Record <3-minute crisp video demonstration following the exact timing storyboard.
+- [x] Update `README.md` with complete architecture diagram, security/risk analysis, and Devnet addresses.
+- [x] Prepare deployment scripts for Vercel (frontend) and Render/Railway (backend).
+- [x] Record <3-minute crisp video demonstration following the exact timing storyboard.
+

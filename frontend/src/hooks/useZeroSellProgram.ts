@@ -4,12 +4,12 @@ import { PublicKey, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Program, AnchorProvider } from "@coral-xyz/anchor";
 import {
   ZEROSELL_PROGRAM_ID,
+  IDL,
   getProtocolConfigPda,
   getLiquidityVaultPda,
   getUserLoanPositionPda,
   getCollateralVaultPda,
 } from "@zerosell/shared";
-import idl from "../idl/zerosell_vault.json";
 
 export const PROGRAM_ID = ZEROSELL_PROGRAM_ID;
 export const BACKEND_URL = "http://localhost:4000";
@@ -51,7 +51,7 @@ export function useZeroSellProgram() {
   const program = useMemo(() => {
     if (!provider) return null;
     try {
-      return new Program(idl as any, provider);
+      return new Program(IDL as any, provider);
     } catch {
       return null;
     }
