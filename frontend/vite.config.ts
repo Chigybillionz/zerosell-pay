@@ -10,6 +10,9 @@ export default defineConfig({
       qrcode: path.resolve(__dirname, "./src/stubs/qrcode.ts"),
     },
   },
+  optimizeDeps: {
+    exclude: ["@solana-mobile/wallet-standard-mobile"],
+  },
   define: {
     global: "window",
     "process.env": {},
