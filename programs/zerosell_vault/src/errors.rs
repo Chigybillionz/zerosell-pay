@@ -2,28 +2,34 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum ZeroSellError {
+    #[msg("Pyth oracle price is stale (> 60 seconds old).")]
+    OraclePriceStale,
+
+    #[msg("Oracle confidence interval exceeds 2% of price.")]
+    OracleConfidenceTooWide,
+
     #[msg("Requested borrow amount exceeds maximum LTV threshold (Max 50%).")]
-    LtvExceeded,
+    LtvLimitExceeded,
 
-    #[msg("Oracle price is stale or invalid.")]
-    StaleOracle,
+    #[msg("ZeroSell Protocol operations are currently paused by admin.")]
+    ProtocolPaused,
 
-    #[msg("Invalid oracle price feed provided.")]
-    InvalidOraclePrice,
+    #[msg("Math calculation overflow occurred.")]
+    MathOverflow,
 
-    #[msg("User position is not active (already repaid or liquidated).")]
+    #[msg("Invalid repayment amount specified.")]
+    InvalidRepaymentAmount,
+
+    #[msg("User position is already repaid or liquidated.")]
     PositionNotActive,
 
     #[msg("Position is healthy and cannot be liquidated (LTV below threshold).")]
     PositionHealthy,
 
-    #[msg("Global liquidity pool has insufficient USDC liquidity.")]
-    InsufficientVaultLiquidity,
+    #[msg("Protocol liquidity vault has insufficient USDC balance.")]
+    InsufficientLiquidity,
 
-    #[msg("Math calculation overflow occurred.")]
-    MathOverflow,
-
-    #[msg("Unauthorized operation.")]
+    #[msg("Caller is not authorized to perform this operation.")]
     Unauthorized,
 
     #[msg("Invoice ID must be non-zero.")]
@@ -33,12 +39,14 @@ pub enum ZeroSellError {
     ZeroCollateral,
 
     #[msg("Merchant USDC amount must be greater than zero.")]
-    ZeroMerchantAmount,
+    ZeroBorrowAmount,
 
-    #[msg("Invalid collateral token account.")]
+    #[msg("Invalid collateral token account provided.")]
     InvalidCollateralAccount,
 
-    #[msg("Collateral mint does not match position.")]
+    #[msg("Collateral mint does not match position record.")]
     CollateralMintMismatch,
-}
 
+    #[msg("Invalid treasury account.")]
+    InvalidTreasury,
+}

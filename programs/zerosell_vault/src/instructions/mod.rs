@@ -1,12 +1,11 @@
-pub mod initialize_pool;
-pub mod deposit_liquidity;
-pub mod lock_and_pay;
-pub mod repay_position;
-pub mod liquidate;
+pub mod initialize_protocol;
+pub mod fund_liquidity;
+pub mod lock_collateral_and_pay;
+pub mod repay_and_unlock;
+pub mod liquidate_or_settle;
 
-pub use initialize_pool::*;
-pub use deposit_liquidity::*;
-pub use lock_and_pay::*;
-pub use repay_position::*;
-pub use liquidate::*;
-
+pub use initialize_protocol::*;
+pub use fund_liquidity::*;
+pub use lock_collateral_and_pay::*;
+pub use repay_and_unlock::*;
+pub use liquidate_or_settle::*;

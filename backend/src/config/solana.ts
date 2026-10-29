@@ -4,6 +4,15 @@ import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  ZEROSELL_PROGRAM_ID,
+  DEVNET_USDC_MINT,
+  WRAPPED_SOL_MINT,
+  getProtocolConfigPda,
+  getLiquidityVaultPda,
+  getUserLoanPositionPda,
+  getCollateralVaultPda,
+} from "@zerosell/shared";
 
 dotenv.config();
 
@@ -20,9 +29,7 @@ export const connection = new Connection(SOLANA_RPC_URL, {
   confirmTransactionInitialTimeout: 60000,
 });
 
-export const PROGRAM_ID = new PublicKey(
-  process.env.PROGRAM_ID || idl.address
-);
+export const PROGRAM_ID = ZEROSELL_PROGRAM_ID;
 
 // Load or generate Relayer Keypair for gasless transaction sponsorship
 export let relayerKeypair: Keypair;
@@ -50,43 +57,14 @@ export const provider = new AnchorProvider(connection, relayerWallet, {
 
 export const program = new Program(idl, provider);
 
-// Constants & Mints
-export const USDC_MINT = new PublicKey(
-  process.env.USDC_MINT || "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"
-);
-export const WSOL_MINT = new PublicKey(
-  process.env.WSOL_MINT || "So11111111111111111111111111111111111111112"
-);
+// Token Mints
+export const USDC_MINT = process.env.USDC_MINT ? new PublicKey(process.env.USDC_MINT) : DEVNET_USDC_MINT;
+export const WSOL_MINT = process.env.WSOL_MINT ? new PublicKey(process.env.WSOL_MINT) : WRAPPED_SOL_MINT;
 
-// PDA Derivation Helpers
-export function getGlobalPoolPda(): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("global_pool")],
-    PROGRAM_ID
-  );
-}
-
-export function getUsdcVaultPda(): [PublicKey, number] {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("usdc_vault")],
-    PROGRAM_ID
-  );
-}
-
-export function getUserPositionPda(borrower: PublicKey, invoiceId: number | bigint): [PublicKey, number] {
-  const invBuf = Buffer.alloc(8);
-  invBuf.writeBigUInt64LE(BigInt(invoiceId));
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("position"), borrower.toBuffer(), invBuf],
-    PROGRAM_ID
-  );
-}
-
-export function getCollateralVaultPda(borrower: PublicKey, invoiceId: number | bigint): [PublicKey, number] {
-  const invBuf = Buffer.alloc(8);
-  invBuf.writeBigUInt64LE(BigInt(invoiceId));
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("collateral_vault"), borrower.toBuffer(), invBuf],
-    PROGRAM_ID
-  );
-}
+// Centralized PDA Derivations re-exported from @zerosell/shared (DRY)
+export {
+  getProtocolConfigPda,
+  getLiquidityVaultPda,
+  getUserLoanPositionPda,
+  getCollateralVaultPda,
+};

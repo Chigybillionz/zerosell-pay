@@ -1,295 +1,249 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
-} from "@solana/web3.js";
-import {
-  TOKEN_PROGRAM_ID,
-  createMint,
-  createAccount,
-  mintTo,
-  getAccount,
-} from "@solana/spl-token";
+import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import { TOKEN_PROGRAM_ID, getAccount } from "@solana/spl-token";
 import { expect } from "chai";
+import { setupTestContext, TestContext } from "./setup.js";
+import {
+  ZEROSELL_PROGRAM_ID,
+  DEFAULT_MAX_LTV_BPS,
+  DEFAULT_LIQUIDATION_THRESHOLD_BPS,
+  DEFAULT_PROTOCOL_FEE_BPS,
+  getUserLoanPositionPda,
+  getCollateralVaultPda,
+} from "../packages/shared/src/index.js";
 
-describe("zerosell_vault protocol tests", () => {
+describe("zerosell_vault protocol end-to-end tests", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
-  // Load IDL
-  const idl = require("../frontend/src/idl/zerosell_vault.json");
-  const programId = new PublicKey("3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv");
-  const program = new Program(idl, programId, provider);
+  const idl = require("../packages/shared/src/idl/zerosell_vault.json");
+  const program = new Program(idl, ZEROSELL_PROGRAM_ID, provider);
 
-  const authority = (provider.wallet as any).payer as Keypair;
-  const merchant = Keypair.generate();
-  const borrower = Keypair.generate();
-
-  let usdcMint: PublicKey;
-  let collateralMint: PublicKey;
-
-  let globalPoolPda: PublicKey;
-  let usdcVaultPda: PublicKey;
-
-  let depositorUsdcAta: PublicKey;
-  let merchantUsdcAta: PublicKey;
-  let borrowerUsdcAta: PublicKey;
-  let borrowerCollateralAta: PublicKey;
-
+  let ctx: TestContext;
   const invoiceId = new anchor.BN(984321);
-  const oraclePriceUsd = new anchor.BN(150_000_000); // $150.00 SOL price scaled by 10^6
+  const oraclePriceUsd = new anchor.BN(150_000_000); // $150.00 SOL in 10^6
+  const oracleConfidenceUsd = new anchor.BN(1_500_000); // $1.50 confidence (1% of price <= 2%)
   const collateralAmount = new anchor.BN(1_000_000_000); // 1.0 SOL (9 decimals)
   const merchantUsdcAmount = new anchor.BN(50_000_000); // 50.00 USDC (6 decimals)
 
   before(async () => {
-    // Airdrop SOL to test actors
-    const airdrop1 = await provider.connection.requestAirdrop(
-      borrower.publicKey,
-      2 * anchor.web3.LAMPORTS_PER_SOL
-    );
-    await provider.connection.confirmTransaction(airdrop1);
-
-    const airdrop2 = await provider.connection.requestAirdrop(
-      merchant.publicKey,
-      1 * anchor.web3.LAMPORTS_PER_SOL
-    );
-    await provider.connection.confirmTransaction(airdrop2);
-
-    // Create Mock USDC mint (6 decimals)
-    usdcMint = await createMint(
-      provider.connection,
-      authority,
-      authority.publicKey,
-      null,
-      6
-    );
-
-    // Create Mock Collateral mint (e.g., wSOL or NVDAx - 9 decimals)
-    collateralMint = await createMint(
-      provider.connection,
-      authority,
-      authority.publicKey,
-      null,
-      9
-    );
-
-    // Derive Global PDAs
-    [globalPoolPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("global_pool")],
-      program.programId
-    );
-
-    [usdcVaultPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("usdc_vault")],
-      program.programId
-    );
-
-    // Setup Token Accounts
-    depositorUsdcAta = await createAccount(
-      provider.connection,
-      authority,
-      usdcMint,
-      authority.publicKey
-    );
-
-    merchantUsdcAta = await createAccount(
-      provider.connection,
-      authority,
-      usdcMint,
-      merchant.publicKey
-    );
-
-    borrowerUsdcAta = await createAccount(
-      provider.connection,
-      authority,
-      usdcMint,
-      borrower.publicKey
-    );
-
-    borrowerCollateralAta = await createAccount(
-      provider.connection,
-      authority,
-      collateralMint,
-      borrower.publicKey
-    );
-
-    // Mint test liquidity to LP / authority (10,000 USDC)
-    await mintTo(
-      provider.connection,
-      authority,
-      usdcMint,
-      depositorUsdcAta,
-      authority,
-      10_000_000_000
-    );
-
-    // Mint 5.0 SOL collateral to borrower
-    await mintTo(
-      provider.connection,
-      authority,
-      collateralMint,
-      borrowerCollateralAta,
-      authority,
-      5_000_000_000
-    );
-
-    // Mint some USDC to borrower to test repayment later (100 USDC)
-    await mintTo(
-      provider.connection,
-      authority,
-      usdcMint,
-      borrowerUsdcAta,
-      authority,
-      100_000_000
-    );
+    ctx = await setupTestContext(provider);
   });
 
-  it("1. Initializes the GlobalPool & USDC Vault", async () => {
-    const maxLtvBps = 5000; // 50.00%
-    const liquidationThresholdBps = 7500; // 75.00%
-    const originationFeeBps = 50; // 0.50%
-
+  it("1. Initializes Protocol Config & Liquidity Vault", async () => {
     const tx = await program.methods
-      .initializePool(maxLtvBps, liquidationThresholdBps, originationFeeBps)
+      .initializeProtocol(
+        DEFAULT_MAX_LTV_BPS,
+        DEFAULT_LIQUIDATION_THRESHOLD_BPS,
+        DEFAULT_PROTOCOL_FEE_BPS
+      )
       .accounts({
-        authority: authority.publicKey,
-        usdcMint,
-        globalPool: globalPoolPda,
-        usdcVault: usdcVaultPda,
+        admin: ctx.authority.publicKey,
+        treasury: ctx.treasury.publicKey,
+        usdcMint: ctx.usdcMint,
+        protocolConfig: ctx.protocolConfigPda,
+        liquidityVault: ctx.liquidityVaultPda,
         systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
         rent: SYSVAR_RENT_PUBKEY,
       })
       .rpc();
 
-    console.log("GlobalPool initialized with tx:", tx);
+    console.log("initialize_protocol tx:", tx);
 
-    const poolAccount: any = await program.account.globalPool.fetch(globalPoolPda);
-    expect(poolAccount.authority.toBase58()).to.equal(authority.publicKey.toBase58());
-    expect(poolAccount.maxLtvBps).to.equal(5000);
-    expect(poolAccount.originationFeeBps).to.equal(50);
+    const configAccount: any = await program.account.protocolConfig.fetch(ctx.protocolConfigPda);
+    expect(configAccount.admin.toBase58()).to.equal(ctx.authority.publicKey.toBase58());
+    expect(configAccount.maxLtvBps).to.equal(5000);
+    expect(configAccount.protocolFeeBps).to.equal(30);
   });
 
-  it("2. Deposits USDC liquidity into the protocol vault", async () => {
-    const depositAmount = new anchor.BN(5_000_000_000); // 5,000 USDC
+  it("2. Funds liquidity vault with USDC", async () => {
+    const fundAmount = new anchor.BN(5_000_000_000); // 5,000 USDC
 
     const tx = await program.methods
-      .depositLiquidity(depositAmount)
+      .fundLiquidity(fundAmount)
       .accounts({
-        depositor: authority.publicKey,
-        globalPool: globalPoolPda,
-        depositorUsdcAta,
-        usdcVault: usdcVaultPda,
+        funder: ctx.authority.publicKey,
+        protocolConfig: ctx.protocolConfigPda,
+        funderUsdcAta: ctx.funderUsdcAta,
+        liquidityVault: ctx.liquidityVaultPda,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
       .rpc();
 
-    console.log("Deposited liquidity with tx:", tx);
+    console.log("fund_liquidity tx:", tx);
 
-    const vaultAccount = await getAccount(provider.connection, usdcVaultPda);
+    const vaultAccount = await getAccount(provider.connection, ctx.liquidityVaultPda);
     expect(Number(vaultAccount.amount)).to.equal(5_000_000_000);
   });
 
-  it("3. Executes atomic LockAndPay: locks collateral and instantly disburses USDC to merchant", async () => {
-    // Derive user position PDA
-    const invoiceBuffer = invoiceId.toArrayLike(Buffer, "le", 8);
-    const [userPositionPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("position"), borrower.publicKey.toBuffer(), invoiceBuffer],
-      program.programId
-    );
-
-    // Derive collateral vault PDA
-    const [collateralVaultPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("collateral_vault"), borrower.publicKey.toBuffer(), invoiceBuffer],
-      program.programId
-    );
+  it("3. Atomic Lock & Pay: locks collateral, routes 0.30% fee to treasury, and pays merchant USDC", async () => {
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
 
     const tx = await program.methods
-      .lockAndPay(invoiceId, collateralAmount, merchantUsdcAmount, oraclePriceUsd)
+      .lockCollateralAndPay(
+        invoiceId,
+        collateralAmount,
+        merchantUsdcAmount,
+        oraclePriceUsd,
+        oracleConfidenceUsd,
+        publishTime
+      )
       .accounts({
-        borrower: borrower.publicKey,
-        merchant: merchant.publicKey,
-        globalPool: globalPoolPda,
-        userPosition: userPositionPda,
-        collateralMint,
-        borrowerCollateralAccount: borrowerCollateralAta,
+        borrower: ctx.borrower.publicKey,
+        merchant: ctx.merchant.publicKey,
+        treasury: ctx.treasury.publicKey,
+        protocolConfig: ctx.protocolConfigPda,
+        userLoanPosition: userLoanPositionPda,
+        collateralMint: ctx.collateralMint,
+        borrowerCollateralAta: ctx.borrowerCollateralAta,
         collateralVault: collateralVaultPda,
-        usdcVault: usdcVaultPda,
-        merchantUsdcAta,
+        liquidityVault: ctx.liquidityVaultPda,
+        merchantUsdcAta: ctx.merchantUsdcAta,
+        treasuryUsdcAta: ctx.treasuryUsdcAta,
         systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
         rent: SYSVAR_RENT_PUBKEY,
       })
-      .signers([borrower])
+      .signers([ctx.borrower])
       .rpc();
 
-    console.log("LockAndPay executed with tx:", tx);
+    console.log("lock_collateral_and_pay tx:", tx);
 
     // Verify merchant received exact 50.00 USDC
-    const merchantAtaInfo = await getAccount(provider.connection, merchantUsdcAta);
-    expect(Number(merchantAtaInfo.amount)).to.equal(50_000_000);
+    const merchantAta = await getAccount(provider.connection, ctx.merchantUsdcAta);
+    expect(Number(merchantAta.amount)).to.equal(50_000_000);
 
-    // Verify collateral is locked in collateral_vault
-    const collateralVaultInfo = await getAccount(provider.connection, collateralVaultPda);
-    expect(Number(collateralVaultInfo.amount)).to.equal(1_000_000_000);
+    // Verify treasury received 0.30% protocol fee ($0.15 USDC)
+    const treasuryAta = await getAccount(provider.connection, ctx.treasuryUsdcAta);
+    expect(Number(treasuryAta.amount)).to.equal(150_000);
 
-    // Verify UserPosition record: debt = 50 USDC + 0.50% fee ($0.25) = $50.25 USDC
-    const positionAccount: any = await program.account.userPosition.fetch(userPositionPda);
-    expect(positionAccount.borrower.toBase58()).to.equal(borrower.publicKey.toBase58());
-    expect(positionAccount.merchant.toBase58()).to.equal(merchant.publicKey.toBase58());
-    expect(positionAccount.status).to.equal(0); // 0 = Active
-    expect(Number(positionAccount.debtUsdcAmount)).to.equal(50_250_000);
+    // Verify collateral locked
+    const collateralVault = await getAccount(provider.connection, collateralVaultPda);
+    expect(Number(collateralVault.amount)).to.equal(1_000_000_000);
   });
 
-  it("4. Repays debt and unlocks collateral back to borrower", async () => {
-    const invoiceBuffer = invoiceId.toArrayLike(Buffer, "le", 8);
-    const [userPositionPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("position"), borrower.publicKey.toBuffer(), invoiceBuffer],
-      program.programId
-    );
+  it("4. Adversarial Test: Reject borrow exceeding 50% max LTV", async () => {
+    const invalidInvoiceId = new anchor.BN(112233);
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invalidInvoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invalidInvoiceId.toNumber());
+    const publishTime = new anchor.BN(Math.floor(Date.now() / 1000));
 
-    const [collateralVaultPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("collateral_vault"), borrower.publicKey.toBuffer(), invoiceBuffer],
-      program.programId
-    );
+    // Requesting $120 USDC borrow on 1 SOL ($150 value) = 80% LTV (exceeds 50% limit)
+    const excessiveBorrow = new anchor.BN(120_000_000);
 
-    const borrowerCollateralBefore = await getAccount(
-      provider.connection,
-      borrowerCollateralAta
-    );
+    try {
+      await program.methods
+        .lockCollateralAndPay(
+          invalidInvoiceId,
+          collateralAmount,
+          excessiveBorrow,
+          oraclePriceUsd,
+          oracleConfidenceUsd,
+          publishTime
+        )
+        .accounts({
+          borrower: ctx.borrower.publicKey,
+          merchant: ctx.merchant.publicKey,
+          treasury: ctx.treasury.publicKey,
+          protocolConfig: ctx.protocolConfigPda,
+          userLoanPosition: userLoanPositionPda,
+          collateralMint: ctx.collateralMint,
+          borrowerCollateralAta: ctx.borrowerCollateralAta,
+          collateralVault: collateralVaultPda,
+          liquidityVault: ctx.liquidityVaultPda,
+          merchantUsdcAta: ctx.merchantUsdcAta,
+          treasuryUsdcAta: ctx.treasuryUsdcAta,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          rent: SYSVAR_RENT_PUBKEY,
+        })
+        .signers([ctx.borrower])
+        .rpc();
+
+      expect.fail("Should have thrown LtvLimitExceeded error");
+    } catch (err: any) {
+      expect(err.toString()).to.include("LtvLimitExceeded");
+    }
+  });
+
+  it("5. Adversarial Test: Reject stale Pyth oracle price (> 60 seconds old)", async () => {
+    const staleInvoiceId = new anchor.BN(445566);
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, staleInvoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, staleInvoiceId.toNumber());
+    // Stale timestamp (120 seconds in the past)
+    const stalePublishTime = new anchor.BN(Math.floor(Date.now() / 1000) - 120);
+
+    try {
+      await program.methods
+        .lockCollateralAndPay(
+          staleInvoiceId,
+          collateralAmount,
+          merchantUsdcAmount,
+          oraclePriceUsd,
+          oracleConfidenceUsd,
+          stalePublishTime
+        )
+        .accounts({
+          borrower: ctx.borrower.publicKey,
+          merchant: ctx.merchant.publicKey,
+          treasury: ctx.treasury.publicKey,
+          protocolConfig: ctx.protocolConfigPda,
+          userLoanPosition: userLoanPositionPda,
+          collateralMint: ctx.collateralMint,
+          borrowerCollateralAta: ctx.borrowerCollateralAta,
+          collateralVault: collateralVaultPda,
+          liquidityVault: ctx.liquidityVaultPda,
+          merchantUsdcAta: ctx.merchantUsdcAta,
+          treasuryUsdcAta: ctx.treasuryUsdcAta,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          rent: SYSVAR_RENT_PUBKEY,
+        })
+        .signers([ctx.borrower])
+        .rpc();
+
+      expect.fail("Should have thrown OraclePriceStale error");
+    } catch (err: any) {
+      expect(err.toString()).to.include("OraclePriceStale");
+    }
+  });
+
+  it("6. Repays debt and unlocks collateral back to borrower", async () => {
+    const [userLoanPositionPda] = getUserLoanPositionPda(ctx.borrower.publicKey, invoiceId.toNumber());
+    const [collateralVaultPda] = getCollateralVaultPda(ctx.borrower.publicKey, invoiceId.toNumber());
+
+    const borrowerCollateralBefore = await getAccount(provider.connection, ctx.borrowerCollateralAta);
+
+    // Full repayment ($50.15 USDC debt)
+    const fullRepayAmount = new anchor.BN(50_150_000);
 
     const tx = await program.methods
-      .repayPosition(invoiceId)
+      .repayAndUnlock(invoiceId, fullRepayAmount)
       .accounts({
-        borrower: borrower.publicKey,
-        globalPool: globalPoolPda,
-        userPosition: userPositionPda,
-        borrowerUsdcAta,
-        usdcVault: usdcVaultPda,
-        borrowerCollateralAccount: borrowerCollateralAta,
+        borrower: ctx.borrower.publicKey,
+        protocolConfig: ctx.protocolConfigPda,
+        userLoanPosition: userLoanPositionPda,
+        borrowerUsdcAta: ctx.borrowerUsdcAta,
+        liquidityVault: ctx.liquidityVaultPda,
+        borrowerCollateralAta: ctx.borrowerCollateralAta,
         collateralVault: collateralVaultPda,
         tokenProgram: TOKEN_PROGRAM_ID,
       })
-      .signers([borrower])
+      .signers([ctx.borrower])
       .rpc();
 
-    console.log("RepayPosition executed with tx:", tx);
+    console.log("repay_and_unlock tx:", tx);
 
-    // Verify position status updated to 1 (Repaid)
-    const positionAccount: any = await program.account.userPosition.fetch(userPositionPda);
-    expect(positionAccount.status).to.equal(1);
+    const positionAccount: any = await program.account.userLoanPosition.fetch(userLoanPositionPda);
+    expect(positionAccount.status).to.equal(1); // 1 = Repaid
 
-    // Verify collateral returned to borrower
-    const borrowerCollateralAfter = await getAccount(
-      provider.connection,
-      borrowerCollateralAta
-    );
+    const borrowerCollateralAfter = await getAccount(provider.connection, ctx.borrowerCollateralAta);
     expect(Number(borrowerCollateralAfter.amount)).to.equal(
       Number(borrowerCollateralBefore.amount) + 1_000_000_000
     );
   });
 });
-

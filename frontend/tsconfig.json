@@ -18,7 +18,11 @@
     "strict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@zerosell/shared": ["../packages/shared/dist/index.d.ts"]
+    }
   },
   "include": ["src"]
 }

@@ -2,9 +2,16 @@ import { useState, useCallback, useMemo } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { Program, AnchorProvider } from "@coral-xyz/anchor";
+import {
+  ZEROSELL_PROGRAM_ID,
+  getProtocolConfigPda,
+  getLiquidityVaultPda,
+  getUserLoanPositionPda,
+  getCollateralVaultPda,
+} from "@zerosell/shared";
 import idl from "../idl/zerosell_vault.json";
 
-export const PROGRAM_ID = new PublicKey(idl.address);
+export const PROGRAM_ID = ZEROSELL_PROGRAM_ID;
 export const BACKEND_URL = "http://localhost:4000";
 
 export interface PositionData {
@@ -49,23 +56,6 @@ export function useZeroSellProgram() {
       return null;
     }
   }, [provider]);
-
-  // PDA Derivations
-  const getGlobalPoolPda = useCallback((): [PublicKey, number] => {
-    return PublicKey.findProgramAddressSync([Buffer.from("global_pool")], PROGRAM_ID);
-  }, []);
-
-  const getUserPositionPda = useCallback((borrower: PublicKey, invoiceId: number | bigint): [PublicKey, number] => {
-    const invBuf = Buffer.alloc(8);
-    invBuf.writeBigUInt64LE(BigInt(invoiceId));
-    return PublicKey.findProgramAddressSync([Buffer.from("position"), borrower.toBuffer(), invBuf], PROGRAM_ID);
-  }, []);
-
-  const getCollateralVaultPda = useCallback((borrower: PublicKey, invoiceId: number | bigint): [PublicKey, number] => {
-    const invBuf = Buffer.alloc(8);
-    invBuf.writeBigUInt64LE(BigInt(invoiceId));
-    return PublicKey.findProgramAddressSync([Buffer.from("collateral_vault"), borrower.toBuffer(), invBuf], PROGRAM_ID);
-  }, []);
 
   /**
    * Request 1 Devnet SOL airdrop for frictionless judge testing
@@ -125,6 +115,16 @@ export function useZeroSellProgram() {
         const txBuffer = Buffer.from(buildData.transactionBase64, "base64");
         const transaction = Transaction.from(txBuffer);
 
+        // Security check: simulate transaction before prompting wallet signature
+        try {
+          const simulation = await connection.simulateTransaction(transaction);
+          if (simulation.value.err) {
+            console.warn("Transaction simulation warning:", simulation.value.err);
+          }
+        } catch (simErr) {
+          console.warn("Simulation check:", simErr);
+        }
+
         // Step 2: Prompt user's wallet to sign transaction
         const signedTransaction = await signTransaction(transaction);
         const signedTxBase64 = signedTransaction.serialize().toString("base64");
@@ -159,7 +159,7 @@ export function useZeroSellProgram() {
         setLoading(false);
       }
     },
-    [publicKey, signTransaction]
+    [publicKey, signTransaction, connection]
   );
 
   /**
@@ -196,12 +196,12 @@ export function useZeroSellProgram() {
     PROGRAM_ID,
     loading,
     error,
-    getGlobalPoolPda,
-    getUserPositionPda,
+    getProtocolConfigPda,
+    getLiquidityVaultPda,
+    getUserLoanPositionPda,
     getCollateralVaultPda,
     requestDevnetAirdrop,
     executeGaslessCheckout,
     repayPosition,
   };
 }
-

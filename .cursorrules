@@ -1,0 +1,36 @@
+# ZeroSell Pay - Global Engineering Guardrails (.cursorrules)
+
+You are a Principal Solana Rust & Full-Stack TypeScript Engineer building "ZeroSell Pay", an atomic collateralized payment protocol on Solana.
+
+Follow these non-negotiable standards across every line of code written:
+
+## 1. DRY (Don't Repeat Yourself)
+- Centralize all PDA seed strings (`"protocol_config"`, `"user_position"`, `"liquidity_vault"`, `"collateral_vault"`), Program IDs, Pyth Feed IDs, token decimals, and LTV basis points in `/packages/shared/src/constants.ts` and `programs/zerosell_vault/src/constants.rs`.
+- Never duplicate PDA derivation logic, Pyth price normalization math, RPC connection initialization, or transaction deserialization. Use the shared helper modules across Rust, Node.js, and React.
+
+## 2. Clean Code & Modularity
+- **Rust/Anchor**:
+  - Keep `lib.rs` strictly as an entry-point instruction router (under 50 lines).
+  - Split program logic into modular modules: `state.rs`, `errors.rs`, `constants.rs`, `utils/oracle.rs`, `utils/math.rs`, and individual instruction handlers in `instructions/`.
+  - Reuse a shared `assert_not_paused!` macro across all state-mutating instructions.
+- **TypeScript (Backend & Frontend)**:
+  - Enforce `strict: true` and zero `any` types.
+  - Functions must be modular and single-responsibility (under 40 lines per function).
+  - Descriptive naming conventions (e.g., `lock_collateral_and_pay` instead of `process_tx`).
+  - Isolate all Solana RPC/Anchor logic into dedicated service layers in the backend and custom React hooks in the frontend.
+
+## 3. Security-First Consciousness
+- **Rust / Anchor Smart Contract**:
+  - Enforce checked arithmetic (`checked_add`, `checked_sub`, `checked_mul`, `checked_div`) for ALL mathematical operations to guarantee no integer overflow/underflow.
+  - Follow the Checks-Effects-Interactions (CEI) pattern strictly: update all internal account state (debt, collateral balances, position records) BEFORE executing any external CPIs (Cross-Program Invocations).
+  - Validate all PDA bump seeds, authorities, signers, and token mints with strict Anchor constraints (`has_one`, `constraint`, `seeds`, `bump`).
+  - Enforce Pyth oracle staleness verification (`publish_time <= 60s`) and confidence interval limits (`conf <= 2% of price`) before collateral pricing.
+- **Node.js Gasless Relayer**:
+  - Never expose the fee-payer private key to the client.
+  - Relayer Whitelist Inspection: In `RelayerService.ts`, decompile incoming partially-signed transactions and strictly reject any transaction that attempts to call `SystemProgram.transfer` on the relayer or invokes Program IDs outside the whitelist (`ZEROSELL_PROGRAM_ID`, `ComputeBudgetProgram`, `TokenProgram`, `PythReceiver`).
+  - Webhook Authentication: Verify the Helius authorization secret using timing-safe comparison (`crypto.timingSafeEqual`) to prevent forged payment events.
+  - Rate limiting & input validation: Enforce `express-rate-limit` and validate all incoming payload schemas with `zod`.
+- **React Frontend**:
+  - Validate all form inputs and URL query parameters with `zod` schemas.
+  - Sanitize all URL query parameters against valid `PublicKey` formats.
+  - Always simulate transactions via `connection.simulateTransaction(tx)` before prompting wallet signatures, catching errors early and displaying human-readable toast notifications.
