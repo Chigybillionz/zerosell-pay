@@ -27,6 +27,7 @@ const WHITELISTED_PROGRAM_IDS = new Set<string>([
   ASSOCIATED_TOKEN_PROGRAM_ID.toBase58(),
   SystemProgram.programId.toBase58(),
   "SysvarRent111111111111111111111111111111111",
+  "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
 ]);
 
 export interface BroadcastResult {
@@ -70,14 +71,16 @@ export class RelayerService {
   }
 
   /**
-   * Ensures the fee-payer signature is present on the transaction
+   * Ensures the fee-payer signature is present on the transaction if sponsored by relayer
    */
   public static ensureFeePayerSignature(transaction: Transaction): void {
-    const hasRelayerSignature = transaction.signatures.some(
-      (sig) => sig.publicKey.equals(relayerKeypair.publicKey) && sig.signature !== null
-    );
-    if (!hasRelayerSignature) {
-      transaction.partialSign(relayerKeypair);
+    if (transaction.feePayer && transaction.feePayer.equals(relayerKeypair.publicKey)) {
+      const hasRelayerSignature = transaction.signatures.some(
+        (sig) => sig.publicKey.equals(relayerKeypair.publicKey) && sig.signature !== null
+      );
+      if (!hasRelayerSignature) {
+        transaction.partialSign(relayerKeypair);
+      }
     }
   }
 
