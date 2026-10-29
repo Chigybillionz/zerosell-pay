@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #0B0F19;
+    color: #F3F4F6;
+    overflow-x: hidden;
+  }
+  
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1F2937;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
+
+/* Glassmorphism styling */
+.glass-panel {
+  background: rgba(17, 24, 39, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(20, 241, 149, 0.25);
+  box-shadow: 0 0 30px -5px rgba(20, 241, 149, 0.15);
+}
+
+/* Solana Wallet Adapter Override styling */
+.wallet-adapter-button {
+  background-color: #111827 !important;
+  color: #14F195 !important;
+  border: 1px solid rgba(20, 241, 149, 0.4) !important;
+  border-radius: 9999px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0 1.25rem !important;
+  height: 2.5rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.wallet-adapter-button:hover {
+  background-color: #162032 !important;
+  border-color: #14F195 !important;
+  box-shadow: 0 0 15px rgba(20, 241, 149, 0.3) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: rgba(11, 15, 25, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+}
+

@@ -1,0 +1,24 @@
+{
+  "name": "zerosell-pay",
+  "version": "1.0.0",
+  "description": "ZeroSell Pay - Spend Assets Without Selling on Solana",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "npm run start:backend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "test:contract": "ts-node tests/zerosell_vault.ts"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
+

@@ -1,0 +1,22 @@
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.devnet]
+zerosell_vault = "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv"
+
+[programs.localnet]
+zerosell_vault = "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
