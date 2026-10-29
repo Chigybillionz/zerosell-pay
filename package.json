@@ -14,7 +14,10 @@
     "dev:backend": "npm --prefix backend run dev",
     "dev:frontend": "npm --prefix frontend run dev",
     "build": "npm --prefix packages/shared run build && npm --prefix backend run build && npm --prefix frontend run build",
-    "test:contract": "ts-node tests/zerosell_vault.ts"
+    "test": "node backend/node_modules/tsx/dist/cli.mjs --test tests/zerosell_protocol.test.ts tests/backend_api.test.ts",
+    "test:unit": "node backend/node_modules/tsx/dist/cli.mjs --test tests/zerosell_protocol.test.ts",
+    "test:e2e": "node backend/node_modules/tsx/dist/cli.mjs --test tests/backend_api.test.ts",
+    "test:contract": "node backend/node_modules/tsx/dist/cli.mjs tests/zerosell_vault.ts"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

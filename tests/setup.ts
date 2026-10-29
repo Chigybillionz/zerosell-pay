@@ -37,18 +37,24 @@ export async function setupTestContext(provider: anchor.AnchorProvider): Promise
   const treasury = Keypair.generate();
   const liquidator = Keypair.generate();
 
-  // Airdrop SOL to test actors
-  await Promise.all([
-    provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(borrower.publicKey, 2 * anchor.web3.LAMPORTS_PER_SOL)
-    ),
-    provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(merchant.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL)
-    ),
-    provider.connection.confirmTransaction(
-      await provider.connection.requestAirdrop(liquidator.publicKey, 2 * anchor.web3.LAMPORTS_PER_SOL)
-    ),
-  ]);
+  // Airdrop SOL to test actors (devnet faucet or local validator)
+  try {
+    await Promise.all([
+      provider.connection.confirmTransaction(
+        await provider.connection.requestAirdrop(borrower.publicKey, 2 * anchor.web3.LAMPORTS_PER_SOL)
+      ),
+      provider.connection.confirmTransaction(
+        await provider.connection.requestAirdrop(merchant.publicKey, 1 * anchor.web3.LAMPORTS_PER_SOL)
+      ),
+      provider.connection.confirmTransaction(
+        await provider.connection.requestAirdrop(liquidator.publicKey, 2 * anchor.web3.LAMPORTS_PER_SOL)
+      ),
+    ]);
+  } catch (airdropErr: any) {
+    console.warn(
+      `  [Notice] Faucet airdrop skipped (${airdropErr.message || "faucet unavailable"}). Using local/prefunded balances.`
+    );
+  }
 
   // Create Mock USDC mint (6 decimals)
   const usdcMint = await createMint(provider.connection, authority, authority.publicKey, null, 6);

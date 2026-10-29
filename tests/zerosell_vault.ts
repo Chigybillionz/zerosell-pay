@@ -1,6 +1,9 @@
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import { Keypair, SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, getAccount } from "@solana/spl-token";
 import { describe, it, before } from "node:test";
 import assert from "node:assert";
@@ -13,6 +16,24 @@ import {
   getCollateralVaultPda,
   IDL,
 } from "../packages/shared/src/index.js";
+
+// Ensure Anchor environment fallback defaults
+if (!process.env.ANCHOR_PROVIDER_URL) {
+  process.env.ANCHOR_PROVIDER_URL = "https://api.devnet.solana.com";
+}
+if (!process.env.ANCHOR_WALLET) {
+  const defaultWallet = path.join(os.homedir(), ".config", "solana", "id.json");
+  if (fs.existsSync(defaultWallet)) {
+    process.env.ANCHOR_WALLET = defaultWallet;
+  } else {
+    const tmpWallet = path.join(os.tmpdir(), "zerosell_test_keypair.json");
+    if (!fs.existsSync(tmpWallet)) {
+      const kp = Keypair.generate();
+      fs.writeFileSync(tmpWallet, JSON.stringify(Array.from(kp.secretKey)));
+    }
+    process.env.ANCHOR_WALLET = tmpWallet;
+  }
+}
 
 describe("zerosell_vault protocol end-to-end test suite", () => {
   const provider = anchor.AnchorProvider.env();

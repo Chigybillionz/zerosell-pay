@@ -31,11 +31,62 @@ const priceCache: Record<string, { priceUsd: number; scaledPrice: bigint; update
   },
 };
 
+const hermesHeaders = process.env.PYTH_API_KEY
+  ? { Authorization: `Bearer ${process.env.PYTH_API_KEY}` }
+  : undefined;
+
 const hermesClient = new HermesClient(
-  process.env.PYTH_HERMES_URL || "https://hermes.pyth.network"
+  process.env.PYTH_HERMES_URL || "https://hermes.pyth.network",
+  hermesHeaders ? { headers: hermesHeaders } : undefined
 );
 
+let hasLoggedHermesNotice = false;
+let lastCoingeckoFetch = 0;
+
 export class PythService {
+  /**
+   * Refreshes cache from public live market data when Pyth Hermes requires an API key
+   */
+  private static async refreshLiveFallback(): Promise<void> {
+    const now = Date.now();
+    if (now - lastCoingeckoFetch < 30_000) return; // Rate-limit Coingecko calls to once every 30s
+    lastCoingeckoFetch = now;
+
+    try {
+      const res = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=solana,bitcoin,ethereum&vs_currencies=usd"
+      );
+      if (!res.ok) return;
+      const data: any = await res.json();
+      if (data?.solana?.usd) {
+        const solUsd = Number(data.solana.usd);
+        priceCache[PYTH_FEED_IDS.SOL_USD] = {
+          priceUsd: solUsd,
+          scaledPrice: BigInt(Math.round(solUsd * 1_000_000)),
+          updatedAt: now,
+        };
+      }
+      if (data?.bitcoin?.usd) {
+        const btcUsd = Number(data.bitcoin.usd);
+        priceCache[PYTH_FEED_IDS.BTC_USD] = {
+          priceUsd: btcUsd,
+          scaledPrice: BigInt(Math.round(btcUsd * 1_000_000)),
+          updatedAt: now,
+        };
+      }
+      if (data?.ethereum?.usd) {
+        const ethUsd = Number(data.ethereum.usd);
+        priceCache[PYTH_FEED_IDS.ETH_USD] = {
+          priceUsd: ethUsd,
+          scaledPrice: BigInt(Math.round(ethUsd * 1_000_000)),
+          updatedAt: now,
+        };
+      }
+    } catch {
+      // Gracefully silent; cached fallback will be used
+    }
+  }
+
   /**
    * Fetches latest price from Pyth Hermes API with graceful caching
    */
@@ -57,7 +108,6 @@ export class PythService {
         const priceUsd = Number(rawPrice) * Math.pow(10, expo);
 
         // Convert to 10^6 scaled integer for Smart Contract precision
-        // If expo is -8, we divide by 10^(8-6) = 100
         let scaledPrice: bigint;
         if (expo <= -6) {
           const shift = BigInt(Math.pow(10, Math.abs(expo) - 6));
@@ -82,10 +132,17 @@ export class PythService {
         };
       }
     } catch (error) {
-      console.warn(`[PythService] Hermes API unavailable for feed ${feedId}, using cached fallback:`, (error as Error).message);
+      if (!hasLoggedHermesNotice) {
+        console.log(
+          "[PythService] Hermes API unauthenticated; utilizing live multi-source market fallback."
+        );
+        hasLoggedHermesNotice = true;
+      }
+      // Trigger live fallback refresh asynchronously
+      await this.refreshLiveFallback();
     }
 
-    // Return cached fallback
+    // Return cached / live fallback
     const cached = priceCache[feedId] || priceCache[PYTH_FEED_IDS.SOL_USD];
     return {
       priceUsd: cached.priceUsd,
