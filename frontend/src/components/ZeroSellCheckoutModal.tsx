@@ -13,6 +13,7 @@ import {
   ArrowRight,
   TrendingUp,
   Percent,
+  AlertTriangle,
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { useZeroSellProgram } from "../hooks/useZeroSellProgram.js";
@@ -47,6 +48,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
     collateralUnits: number;
   } | null>(null);
   const [stepStatus, setStepStatus] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -58,12 +60,46 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
     invoice.title
   )}`;
 
+  const handleDemoConfirm = async () => {
+    try {
+      setStepStatus("Confirming Instant Demo Settlement...");
+      const demoSig = "demo_checkout_" + Math.random().toString(36).substring(2, 12);
+      await new Promise((r) => setTimeout(r, 600));
+
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#14F195", "#9945FF", "#00F0FF"],
+      });
+
+      const demoResult = {
+        signature: demoSig,
+        solscanUrl: `https://solscan.io/tx/${demoSig}?cluster=devnet`,
+        requiredCollateral: calc.collateralUnits,
+      };
+
+      setSuccessResult({
+        signature: demoSig,
+        solscanUrl: demoResult.solscanUrl,
+        collateralUnits: calc.collateralUnits,
+      });
+
+      onSuccess(demoResult);
+    } catch (e: any) {
+      setErrorMsg(e.message);
+    } finally {
+      setStepStatus("");
+    }
+  };
+
   const handlePay = async () => {
     if (!connected) {
-      alert("Please connect your Solana wallet first");
+      setErrorMsg("Please connect your Solana wallet first.");
       return;
     }
 
+    setErrorMsg(null);
     try {
       setStepStatus("1/3 Querying Pyth Hermes Oracle Price...");
       await new Promise((r) => setTimeout(r, 400));
@@ -93,7 +129,8 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
       onSuccess(result);
     } catch (err: any) {
-      alert(`Payment failed: ${err.message}`);
+      console.warn("[ZeroSell Checkout Error]:", err);
+      setErrorMsg(err.message || "Payment transaction could not be completed.");
     } finally {
       setStepStatus("");
     }
@@ -199,6 +236,40 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 {stepStatus && (
                   <div className="mb-4 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center text-xs text-emerald-400 font-mono animate-pulse">
                     {stepStatus}
+                  </div>
+                )}
+
+                {/* Error Banner with 1-click Recovery */}
+                {errorMsg && (
+                  <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-2">
+                    <div className="flex items-start space-x-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-semibold text-amber-200">Devnet Account Notice</p>
+                        <p className="text-[11px] text-amber-300/80 mt-0.5 leading-relaxed">
+                          {errorMsg.includes("debit") || errorMsg.includes("credit") || errorMsg.includes("simulation")
+                            ? "Your Devnet wallet has 0 SOL to simulate transaction fees. You can claim free test SOL or continue instantly in Demo Mode."
+                            : errorMsg}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => window.open("https://faucet.solana.com", "_blank")}
+                        className="flex-1 py-1.5 px-3 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[11px] font-semibold border border-amber-500/40 text-center transition-all"
+                      >
+                        Claim Free Devnet SOL ↗
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleDemoConfirm}
+                        className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold border border-emerald-500/40 text-center transition-all"
+                      >
+                        Instant Demo Confirm ⚡
+                      </button>
+                    </div>
                   </div>
                 )}
 

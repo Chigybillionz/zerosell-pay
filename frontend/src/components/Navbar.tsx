@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { useZeroSellProgram } from "../hooks/useZeroSellProgram.js";
 import {
@@ -17,25 +18,47 @@ import {
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const { connected } = useWallet();
+  const { connection } = useConnection();
+  const { connected, publicKey } = useWallet();
   const { solPrice, prices } = usePythPrices();
-  const { requestDevnetAirdrop } = useZeroSellProgram();
 
   const [airdropping, setAirdropping] = useState(false);
   const [airdropSuccess, setAirdropSuccess] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!publicKey) {
+      setBalance(null);
+      return;
+    }
+    const fetchBalance = async () => {
+      try {
+        const bal = await connection.getBalance(publicKey);
+        setBalance(bal / LAMPORTS_PER_SOL);
+      } catch {
+        setBalance(null);
+      }
+    };
+    fetchBalance();
+    const interval = setInterval(fetchBalance, 10000);
+    return () => clearInterval(interval);
+  }, [connection, publicKey]);
 
   const handleFaucet = async () => {
-    if (!connected) {
-      alert("Please connect your wallet first to receive Devnet SOL.");
+    if (!connected || !publicKey) {
+      alert("Please connect your wallet first to copy your address for Devnet SOL.");
       return;
     }
     setAirdropping(true);
     try {
-      await requestDevnetAirdrop();
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(publicKey.toBase58());
+      }
       setAirdropSuccess(true);
-      setTimeout(() => setAirdropSuccess(false), 4000);
-    } catch (err: any) {
-      alert(`Faucet error: ${err.message || "Devnet rate limit"}`);
+      window.open("https://faucet.solana.com", "_blank");
+      setTimeout(() => setAirdropSuccess(false), 5000);
+    } catch {
+      window.open("https://faucet.solana.com", "_blank");
     } finally {
       setAirdropping(false);
     }
@@ -116,23 +139,34 @@ export const Navbar: React.FC = () => {
             <span>Devnet</span>
           </div>
 
+          {/* Connected Wallet Devnet Balance */}
+          {connected && balance !== null && (
+            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-gray-900/80 border border-gray-800 text-xs font-mono">
+              <span className="text-gray-400">Bal:</span>
+              <span className={balance > 0 ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
+                {balance.toFixed(2)} SOL
+              </span>
+            </div>
+          )}
+
           {/* 1-Click Faucet Button */}
           <button
             onClick={handleFaucet}
             disabled={airdropping}
-            title="Airdrop 1 Devnet SOL for testing"
+            title="Copy wallet address & open official Solana Devnet Faucet"
             className="flex items-center space-x-1.5 px-3 py-2 rounded-full text-xs font-semibold bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
           >
-            {airdropping ? (
-              <div className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
-            ) : airdropSuccess ? (
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+            {airdropSuccess ? (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-300">Copied! Faucet Opened</span>
+              </>
             ) : (
-              <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+              <>
+                <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="hidden sm:inline">Free Devnet SOL</span>
+              </>
             )}
-            <span className="hidden sm:inline">
-              {airdropping ? "Airdropping..." : airdropSuccess ? "Airdropped!" : "Faucet +1 SOL"}
-            </span>
           </button>
 
           {/* Solana Wallet Adapter Button */}

@@ -207,16 +207,28 @@ export class TransactionBuilderService {
       isProgramDeployed = false;
     }
 
-    // Check if relayer has sufficient balance to sponsor transaction fees
+    // Check account balances to determine optimal fee-payer
     let isRelayerFunded = false;
+    let isBorrowerFunded = false;
     try {
-      const relayerBal = await connection.getBalance(relayerKeypair.publicKey);
+      const [relayerBal, borrowerBal] = await Promise.all([
+        connection.getBalance(relayerKeypair.publicKey),
+        connection.getBalance(borrower),
+      ]);
       isRelayerFunded = relayerBal >= 10_000;
+      isBorrowerFunded = borrowerBal >= 10_000;
     } catch {
       isRelayerFunded = false;
+      isBorrowerFunded = false;
     }
 
-    const effectiveFeePayer = isRelayerFunded ? relayerKeypair.publicKey : borrower;
+    // Default to relayerKeypair as designated fee-payer for gasless experience;
+    // Fall back to borrower only if borrower is funded and relayer is not.
+    const effectiveFeePayer = isRelayerFunded
+      ? relayerKeypair.publicKey
+      : isBorrowerFunded
+      ? borrower
+      : relayerKeypair.publicKey;
 
     if (isProgramDeployed) {
       // 2. Prepend rent grant if user has 0 SOL (and relayer is funded)
@@ -274,7 +286,7 @@ export class TransactionBuilderService {
     transaction.lastValidBlockHeight = lastValidBlockHeight;
     transaction.feePayer = effectiveFeePayer;
 
-    if (isRelayerFunded) {
+    if (effectiveFeePayer.equals(relayerKeypair.publicKey)) {
       transaction.partialSign(relayerKeypair);
     }
 
