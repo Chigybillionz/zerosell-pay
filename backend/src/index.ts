@@ -62,12 +62,22 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 ZeroSell Pay Backend & Relayer running on port ${PORT}`);
   console.log(`📡 Solana RPC: ${process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com"}`);
   console.log(`⚡ Blinks Action URL: http://localhost:${PORT}/api/actions/pay/984321`);
   console.log(`🔗 Actions Discovery: http://localhost:${PORT}/actions.json`);
   console.log(`=======================================================`);
+});
+
+server.on("error", (err: any) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`\n⚠️  Port ${PORT} is already in use by another process.`);
+    console.error(`Please stop any existing process on port ${PORT} before starting the server.\n`);
+    process.exit(1);
+  } else {
+    console.error("Server error:", err);
+  }
 });
 
