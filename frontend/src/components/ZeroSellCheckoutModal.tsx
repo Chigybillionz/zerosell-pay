@@ -137,15 +137,15 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg bg-[#0E1526] border border-gray-800 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-lg bg-[#111413] border border-[#1E2522] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
         {/* Glow accent */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800/60 transition-colors"
+          className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1a201c] transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -154,11 +154,11 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
           <>
             {/* Modal Header */}
             <div className="text-center mb-6">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 mb-3">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-bold text-emerald-400 mb-3">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>ZeroSell Non-Custodial Protocol</span>
               </div>
-              <h3 className="text-2xl font-extrabold text-white">
+              <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                 Pay Without Selling
               </h3>
               <p className="text-xs text-gray-400 mt-1">
@@ -167,12 +167,12 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             {/* Mode Switch Tabs */}
-            <div className="flex bg-gray-950/80 p-1 rounded-xl border border-gray-800/80 mb-6">
+            <div className="flex bg-[#090c0a] p-1 rounded-xl border border-[#1e2522] mb-6">
               <button
                 onClick={() => setActiveTab("wallet")}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === "wallet"
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                    ? "bg-[#161d19] text-emerald-400 border border-emerald-500/40"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -181,9 +181,9 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab("qr")}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === "qr"
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                    ? "bg-[#161d19] text-emerald-400 border border-emerald-500/40"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -195,7 +195,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
             {activeTab === "wallet" ? (
               <div>
                 {/* Financial Math Breakdown Card */}
-                <div className="bg-gray-950/70 rounded-2xl p-4 border border-gray-800 mb-6 space-y-3">
+                <div className="bg-[#090c0a] rounded-2xl p-4 border border-[#1e2522] mb-6 space-y-3">
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-400">Invoice Amount:</span>
                     <span className="font-mono font-bold text-gray-200">
@@ -224,7 +224,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-gray-800/80 flex justify-between items-center text-xs">
+                  <div className="pt-2 border-t border-[#1e2522] flex justify-between items-center text-xs">
                     <span className="text-gray-300 font-medium">Merchant Receives:</span>
                     <span className="font-mono font-bold text-emerald-300 text-sm">
                       ${invoice.usdcAmount.toFixed(2)} USDC Instantly
@@ -258,14 +258,14 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                       <button
                         type="button"
                         onClick={() => window.open("https://faucet.solana.com", "_blank")}
-                        className="flex-1 py-1.5 px-3 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[11px] font-semibold border border-amber-500/40 text-center transition-all"
+                        className="flex-1 py-1.5 px-3 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[11px] font-semibold border border-amber-500/40 text-center transition-all cursor-pointer"
                       >
                         Claim Free Devnet SOL ↗
                       </button>
                       <button
                         type="button"
                         onClick={handleDemoConfirm}
-                        className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold border border-emerald-500/40 text-center transition-all"
+                        className="flex-1 py-1.5 px-3 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold border border-emerald-500/40 text-center transition-all cursor-pointer"
                       >
                         Instant Demo Confirm ⚡
                       </button>
@@ -277,7 +277,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 text-black font-extrabold text-sm shadow-glow hover:opacity-95 active:scale-95 transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center space-x-2 py-4 px-6 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-black text-xs uppercase tracking-wider shadow-lg transition-all disabled:opacity-50 cursor-pointer active:scale-95"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -285,7 +285,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                     <>
                       <Zap className="w-4 h-4 fill-black" />
                       <span>
-                        Lock {calc.formattedUnits} SOL & Pay ${invoice.usdcAmount} USDC
+                        Lock {calc.formattedUnits} SOL &amp; Pay ${invoice.usdcAmount} USDC
                       </span>
                     </>
                   )}
@@ -313,7 +313,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             <div>
-              <h3 className="text-2xl font-extrabold text-white">
+              <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                 Payment Settled!
               </h3>
               <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
@@ -321,7 +321,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               </p>
             </div>
 
-            <div className="bg-gray-950 p-4 rounded-2xl border border-gray-800 text-left space-y-2 text-xs">
+            <div className="bg-[#090c0a] p-4 rounded-2xl border border-[#1e2522] text-left space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-gray-400">Invoice:</span>
                 <span className="font-mono text-gray-200">#{invoice.id}</span>
@@ -345,7 +345,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 href={successResult.solscanUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center space-x-2 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 text-xs font-semibold transition-colors"
+                className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-full bg-[#18201b] hover:bg-[#202b24] text-gray-200 text-xs font-semibold transition-colors border border-[#26352c]"
               >
                 <span>View on Solscan Devnet</span>
                 <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
@@ -353,9 +353,9 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
               <button
                 onClick={onClose}
-                className="w-full py-3 rounded-xl bg-emerald-500 text-black font-extrabold text-xs shadow-glow hover:bg-emerald-400 transition-colors"
+                className="w-full py-3.5 rounded-full bg-emerald-500 text-black font-extrabold text-xs uppercase tracking-wider shadow-glow hover:bg-emerald-400 transition-colors cursor-pointer"
               >
-                Close & View Vault Dashboard
+                Close &amp; View Vault Dashboard
               </button>
             </div>
           </div>

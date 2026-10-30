@@ -10,6 +10,7 @@ import {
   RefreshCw,
   PlusCircle,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { useZeroSellProgram, PositionData } from "../hooks/useZeroSellProgram.js";
@@ -21,7 +22,7 @@ export const UserDashboard: React.FC = () => {
   const { solPrice, refreshPrices } = usePythPrices();
   const { repayPosition } = useZeroSellProgram();
 
-  // Active positions state (seeded with realistic demo positions for judge evaluation)
+  // Active positions state (seeded with realistic demo positions for evaluation)
   const [positions, setPositions] = useState<PositionData[]>([
     {
       publicKey: "Pos1111111111111111111111111111111111111111",
@@ -90,22 +91,27 @@ export const UserDashboard: React.FC = () => {
     totalCollateralVal > 0 ? (totalDebtUsdc / totalCollateralVal) * 100 : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Borrower Credit & Vault Dashboard
+          <div className="inline-flex items-center space-x-2 text-emerald-400 font-mono text-xs font-semibold tracking-wider">
+            <span>&gt;_ VAULT DASHBOARD</span>
+            <span className="text-gray-600">•</span>
+            <span className="text-gray-400">NON-CUSTODIAL SOLANA PDA</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase mt-1">
+            Borrower Credit & Vaults
           </h1>
           <p className="text-xs sm:text-sm text-gray-400 mt-1">
-            Track locked collateral, manage active credit lines, and repay with 1-click to unlock your assets.
+            Monitor locked collateral, track unrealized SOL market gains, and repay loans to unlock collateral.
           </p>
         </div>
 
         <div className="flex items-center space-x-3">
           <button
             onClick={() => refreshPrices()}
-            className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-xs font-semibold text-gray-300 hover:text-white hover:bg-gray-800 transition-colors"
+            className="flex items-center space-x-1.5 px-4 py-2 rounded-full bg-[#121614] border border-[#1f2823] text-xs font-semibold text-gray-200 hover:text-white hover:bg-[#181d1a] transition-all cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
             <span>Sync Pyth Oracles</span>
@@ -113,78 +119,77 @@ export const UserDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Metrics Row: 4 key high-impact financial cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        {/* Metric 1: Total Locked Collateral */}
-        <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-5 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs uppercase font-bold tracking-wider">
-              Total Collateral Locked
+      {/* Metrics Row: 4 key high-impact financial cards with Web3 Grid dividers */}
+      <div className="bg-[#0e1210] border border-[#1e2722] rounded-2xl overflow-hidden shadow-2xl">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#1e2722] text-center">
+          {/* Metric 1 */}
+          <div className="p-5 hover:bg-[#121714] transition-colors text-left">
+            <div className="flex items-center justify-between text-gray-400 mb-1">
+              <span className="text-[11px] uppercase font-bold tracking-wider">
+                Locked Collateral
+              </span>
+              <Lock className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div className="text-2xl font-black text-white font-mono">
+              ${totalCollateralVal.toFixed(2)}
+            </div>
+            <span className="text-[11px] text-gray-500 mt-0.5 block">
+              {activePositions.reduce((a, b) => a + b.collateralAmount, 0).toFixed(3)} SOL in vaults
             </span>
-            <Lock className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-black text-white font-mono">
-            ${totalCollateralVal.toFixed(2)}
-          </div>
-          <span className="text-xs text-gray-400 mt-1 block">
-            {activePositions
-              .reduce((a, b) => a + b.collateralAmount, 0)
-              .toFixed(3)}{" "}
-            SOL locked across {activePositions.length} vaults
-          </span>
-        </div>
 
-        {/* Metric 2: Active Debt Owed */}
-        <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-5 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs uppercase font-bold tracking-wider">
-              Total Active Debt
+          {/* Metric 2 */}
+          <div className="p-5 hover:bg-[#121714] transition-colors text-left">
+            <div className="flex items-center justify-between text-gray-400 mb-1">
+              <span className="text-[11px] uppercase font-bold tracking-wider">
+                Active Debt
+              </span>
+              <Coins className="w-4 h-4 text-purple-400" />
+            </div>
+            <div className="text-2xl font-black text-white font-mono">
+              ${totalDebtUsdc.toFixed(2)}
+            </div>
+            <span className="text-[11px] text-purple-400 mt-0.5 block">
+              USDC owed to Protocol
             </span>
-            <Coins className="w-4 h-4 text-purple-400" />
           </div>
-          <div className="text-2xl font-black text-white font-mono">
-            ${totalDebtUsdc.toFixed(2)}
-          </div>
-          <span className="text-xs text-purple-300 mt-1 block">
-            USDC owed to Protocol Vault
-          </span>
-        </div>
 
-        {/* Metric 3: Unrealized Gains Saved */}
-        <div className="bg-gradient-to-tr from-emerald-950/40 via-gray-900/80 to-teal-950/20 border border-emerald-500/30 rounded-2xl p-5 backdrop-blur-sm relative overflow-hidden">
-          <div className="flex items-center justify-between text-emerald-400 mb-2">
-            <span className="text-xs uppercase font-bold tracking-wider">
-              Upside Saved
+          {/* Metric 3 */}
+          <div className="p-5 hover:bg-[#121714] transition-colors text-left">
+            <div className="flex items-center justify-between text-emerald-400 mb-1">
+              <span className="text-[11px] uppercase font-bold tracking-wider">
+                Upside Preserved
+              </span>
+              <TrendingUp className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div className="text-2xl font-black text-emerald-400 font-mono">
+              +${totalGainsSaved.toFixed(2)}
+            </div>
+            <span className="text-[11px] text-emerald-400/80 mt-0.5 block">
+              Saved by holding SOL
             </span>
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-black text-emerald-300 font-mono">
-            +${totalGainsSaved.toFixed(2)}
-          </div>
-          <span className="text-xs text-emerald-400/80 mt-1 block font-medium">
-            Profit earned by NOT selling SOL
-          </span>
-        </div>
 
-        {/* Metric 4: Average Portfolio Health */}
-        <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-5 backdrop-blur-sm">
-          <div className="flex items-center justify-between text-gray-400 mb-2">
-            <span className="text-xs uppercase font-bold tracking-wider">
-              Aggregate Health
+          {/* Metric 4 */}
+          <div className="p-5 hover:bg-[#121714] transition-colors text-left">
+            <div className="flex items-center justify-between text-gray-400 mb-1">
+              <span className="text-[11px] uppercase font-bold tracking-wider">
+                Portfolio LTV
+              </span>
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            </div>
+            <div className="text-2xl font-black text-emerald-400 font-mono">
+              {averageLtv > 0 ? `${averageLtv.toFixed(1)}%` : "N/A"}
+            </div>
+            <span className="text-[11px] text-gray-500 mt-0.5 block">
+              Liquidation threshold 75%
             </span>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-2xl font-black text-emerald-400 font-mono">
-            {averageLtv > 0 ? `${averageLtv.toFixed(1)}%` : "N/A"}
-          </div>
-          <span className="text-xs text-gray-400 mt-1 block">
-            Safe buffer (Liq threshold at 75%)
-          </span>
         </div>
       </div>
 
       {/* Global Health Factor Bar Gauge Component */}
-      <div className="mb-8">
+      <div>
         <HealthFactorGauge
           ltvPercent={averageLtv || 50.0}
           liquidationThreshold={75.0}
@@ -192,36 +197,28 @@ export const UserDashboard: React.FC = () => {
       </div>
 
       {/* Tabs: Active Locks vs Repaid History */}
-      <div className="flex items-center justify-between border-b border-gray-800 mb-6 pb-2">
-        <div className="flex space-x-4">
-          <button
-            onClick={() => setActiveTab("active")}
-            className={`text-sm font-bold pb-2 transition-all relative ${
-              activeTab === "active"
-                ? "text-emerald-400"
-                : "text-gray-400 hover:text-white"
-            }`}
-          >
-            <span>Active Collateral Locks ({activePositions.length})</span>
-            {activeTab === "active" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
-            )}
-          </button>
+      <div className="flex items-center space-x-2 border-b border-[#1E2522] pb-3">
+        <button
+          onClick={() => setActiveTab("active")}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "active"
+              ? "bg-emerald-500 text-black shadow-sm"
+              : "text-gray-400 hover:text-white bg-[#111413] border border-[#1E2522]"
+          }`}
+        >
+          Active Vault Locks ({activePositions.length})
+        </button>
 
-          <button
-            onClick={() => setActiveTab("history")}
-            className={`text-sm font-bold pb-2 transition-all relative ${
-              activeTab === "history"
-                ? "text-emerald-400"
-                : "text-gray-400 hover:text-white"
-            }`}
-          >
-            <span>Repaid History ({repaidPositions.length})</span>
-            {activeTab === "history" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400 rounded-full" />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => setActiveTab("history")}
+          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+            activeTab === "history"
+              ? "bg-emerald-500 text-black shadow-sm"
+              : "text-gray-400 hover:text-white bg-[#111413] border border-[#1E2522]"
+          }`}
+        >
+          Repaid History ({repaidPositions.length})
+        </button>
       </div>
 
       {/* Position Cards Grid */}
@@ -239,7 +236,7 @@ export const UserDashboard: React.FC = () => {
 
       {/* Empty State */}
       {(activeTab === "active" ? activePositions : repaidPositions).length === 0 && (
-        <div className="text-center py-16 bg-gray-900/30 rounded-3xl border border-dashed border-gray-800">
+        <div className="text-center py-16 bg-[#111413] rounded-3xl border border-dashed border-[#1E2522]">
           <Coins className="w-10 h-10 text-gray-600 mx-auto mb-3" />
           <h4 className="text-base font-bold text-gray-300">No positions found</h4>
           <p className="text-xs text-gray-500 mt-1">
@@ -250,4 +247,3 @@ export const UserDashboard: React.FC = () => {
     </div>
   );
 };
-

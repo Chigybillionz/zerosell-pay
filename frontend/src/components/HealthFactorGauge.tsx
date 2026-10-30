@@ -38,7 +38,7 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
   const clampedWidth = Math.min(Math.max((ltvPercent / 100) * 100, 5), 100);
 
   return (
-    <div className="bg-gray-900/70 border border-gray-800 rounded-2xl p-5 backdrop-blur-md">
+    <div className="bg-[#111413] border border-[#1e2522] rounded-2xl p-5 shadow-xl">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
           {isCritical ? (
@@ -48,22 +48,22 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
           ) : (
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
           )}
-          <span className="text-sm font-semibold text-gray-200">
-            Vault Health & LTV
+          <span className="text-sm font-bold text-white">
+            Vault Health & LTV Buffer
           </span>
         </div>
-        <div className="flex items-center space-x-1.5">
-          <span className={`text-xs font-bold uppercase tracking-wider ${color}`}>
+        <div className="flex items-center space-x-2">
+          <span className={`text-xs font-mono font-bold uppercase tracking-wider ${color}`}>
             {statusLabel}
           </span>
-          <span className="text-gray-400 text-xs font-mono">
-            ({ltvPercent.toFixed(1)}%)
+          <span className="text-gray-400 text-xs font-mono bg-[#0c0f0d] px-2 py-0.5 rounded border border-[#1e2522]">
+            {ltvPercent.toFixed(1)}% LTV
           </span>
         </div>
       </div>
 
       {/* Progress Bar with Liquidation Marker */}
-      <div className="relative w-full h-3 bg-gray-950 rounded-full overflow-hidden p-0.5 border border-gray-800">
+      <div className="relative w-full h-3 bg-[#080a09] rounded-full overflow-hidden p-0.5 border border-[#1e2522]">
         <div
           className={`h-full rounded-full transition-all duration-700 ease-out ${barColor}`}
           style={{ width: `${clampedWidth}%` }}

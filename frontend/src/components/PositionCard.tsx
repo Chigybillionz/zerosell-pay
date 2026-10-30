@@ -27,16 +27,16 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, onRepay })
   const isWarning = position.currentLtvPercent >= 55 && position.currentLtvPercent < 75;
 
   return (
-    <div className="bg-gray-900/80 border border-gray-800 hover:border-gray-700/80 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl backdrop-blur-sm relative overflow-hidden group">
+    <div className="bg-[#111413] border border-[#1e2522] hover:border-[#2d3a33] rounded-2xl p-6 transition-all duration-300 hover:shadow-2xl relative overflow-hidden group">
       {/* Background subtle emerald glow if active */}
       {!repaid && (
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-all pointer-events-none" />
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/15 transition-all pointer-events-none" />
       )}
 
       {/* Header: Invoice ID and Status Badge */}
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-gray-800 flex items-center justify-center">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#18201b] border border-[#233028] flex items-center justify-center">
             {repaid ? (
               <Unlock className="w-4 h-4 text-cyan-400" />
             ) : (
@@ -44,7 +44,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, onRepay })
             )}
           </div>
           <div>
-            <h4 className="text-sm font-bold text-gray-200">
+            <h4 className="text-sm font-extrabold text-white">
               Invoice #{position.invoiceId}
             </h4>
             <p className="text-[11px] text-gray-400">
@@ -76,7 +76,7 @@ export const PositionCard: React.FC<PositionCardProps> = ({ position, onRepay })
       </div>
 
       {/* Grid: Collateral vs Debt */}
-      <div className="grid grid-cols-2 gap-4 my-4 p-3.5 bg-gray-950/60 rounded-xl border border-gray-800/80">
+      <div className="grid grid-cols-2 gap-4 my-4 p-4 bg-[#0a0d0b] rounded-xl border border-[#1e2522]">
         <div>
           <span className="text-[11px] text-gray-400 uppercase font-medium tracking-wide">
             Locked Collateral
