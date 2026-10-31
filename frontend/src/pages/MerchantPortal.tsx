@@ -227,8 +227,8 @@ export const MerchantPortal: React.FC = () => {
           {/* Generated Shareable Links Box */}
           {createdInvoice && (
             <div className="mt-6 pt-6 border-t border-[#1E2522] space-y-4">
-              <div className="p-4 rounded-2xl bg-[#0c2317] border border-[#1B402B]">
-                <span className="text-xs font-bold text-emerald-400 block mb-1">
+              <div className="p-4 rounded-2xl bg-[#131715] border border-[#222A25]">
+                <span className="text-xs font-bold text-white block mb-1">
                   🎉 Invoice #{createdInvoice.id} Generated!
                 </span>
                 <p className="text-[11px] text-gray-300">

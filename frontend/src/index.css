@@ -19,21 +19,14 @@
 .bg-web3-mesh {
   background-color: #080A09;
   background-image: 
-    radial-gradient(circle at 50% -20%, rgba(20, 241, 149, 0.12) 0%, transparent 60%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .web3-card {
   background-color: #111413;
   border: 1px solid #1E2522;
-  border-radius: 1.25rem;
-}
-
-.web3-card-green {
-  background-color: #0C2317;
-  border: 1px solid #1B402B;
   border-radius: 1.25rem;
 }
 

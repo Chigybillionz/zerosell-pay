@@ -139,9 +139,6 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
       <div className="relative w-full max-w-lg bg-[#111413] border border-[#1E2522] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
-        {/* Glow accent */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-24 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -154,8 +151,8 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
           <>
             {/* Modal Header */}
             <div className="text-center mb-6">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-mono font-bold text-emerald-400 mb-3">
-                <ShieldCheck className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#181E1B] border border-[#27322B] text-[11px] font-mono font-bold text-gray-300 mb-3">
+                <ShieldCheck className="w-3.5 h-3.5 text-gray-300" />
                 <span>ZeroSell Non-Custodial Protocol</span>
               </div>
               <h3 className="text-2xl font-black text-white uppercase tracking-tight">
@@ -172,7 +169,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 onClick={() => setActiveTab("wallet")}
                 className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === "wallet"
-                    ? "bg-[#161d19] text-emerald-400 border border-emerald-500/40"
+                    ? "bg-[#181D1A] text-white border border-[#27322B]"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -183,7 +180,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 onClick={() => setActiveTab("qr")}
                 className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeTab === "qr"
-                    ? "bg-[#161d19] text-emerald-400 border border-emerald-500/40"
+                    ? "bg-[#181D1A] text-white border border-[#27322B]"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -348,12 +345,12 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-full bg-[#18201b] hover:bg-[#202b24] text-gray-200 text-xs font-semibold transition-colors border border-[#26352c]"
               >
                 <span>View on Solscan Devnet</span>
-                <ExternalLink className="w-3.5 h-3.5 text-emerald-400" />
+                <ExternalLink className="w-3.5 h-3.5 text-gray-300" />
               </a>
 
               <button
                 onClick={onClose}
-                className="w-full py-3.5 rounded-full bg-emerald-500 text-black font-extrabold text-xs uppercase tracking-wider shadow-glow hover:bg-emerald-400 transition-colors cursor-pointer"
+                className="w-full py-3.5 rounded-full bg-white hover:bg-gray-100 text-black font-extrabold text-xs uppercase tracking-wider shadow-sm transition-colors cursor-pointer"
               >
                 Close &amp; View Vault Dashboard
               </button>

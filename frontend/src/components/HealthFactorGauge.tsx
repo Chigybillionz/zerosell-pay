@@ -23,10 +23,10 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
     : "text-emerald-400";
 
   const barColor = isCritical
-    ? "bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+    ? "bg-red-500"
     : isWarning
-    ? "bg-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)]"
-    : "bg-emerald-400 shadow-[0_0_15px_rgba(20,241,149,0.5)]";
+    ? "bg-amber-400"
+    : "bg-emerald-400";
 
   const statusLabel = isCritical
     ? "Liquidation Risk"

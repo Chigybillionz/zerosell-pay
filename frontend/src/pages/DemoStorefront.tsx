@@ -123,7 +123,7 @@ export const DemoStorefront: React.FC = () => {
       <div className="bg-[#0e1210] border border-[#1e2722] rounded-2xl overflow-hidden shadow-2xl">
         <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#1e2722] text-center">
           <div className="p-4 sm:p-5 hover:bg-[#121714] transition-colors">
-            <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400 block tracking-tight">
+            <span className="text-xl sm:text-2xl font-black font-mono text-white block tracking-tight">
               150%
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">
@@ -132,7 +132,7 @@ export const DemoStorefront: React.FC = () => {
           </div>
 
           <div className="p-4 sm:p-5 hover:bg-[#121714] transition-colors">
-            <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400 block tracking-tight">
+            <span className="text-xl sm:text-2xl font-black font-mono text-white block tracking-tight">
               &lt; 400ms
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">
@@ -141,7 +141,7 @@ export const DemoStorefront: React.FC = () => {
           </div>
 
           <div className="p-4 sm:p-5 hover:bg-[#121714] transition-colors">
-            <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400 block tracking-tight">
+            <span className="text-xl sm:text-2xl font-black font-mono text-white block tracking-tight">
               0% TAX
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">
@@ -150,7 +150,7 @@ export const DemoStorefront: React.FC = () => {
           </div>
 
           <div className="p-4 sm:p-5 hover:bg-[#121714] transition-colors">
-            <span className="text-xl sm:text-2xl font-black font-mono text-emerald-400 block tracking-tight">
+            <span className="text-xl sm:text-2xl font-black font-mono text-white block tracking-tight">
               100% FREE
             </span>
             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest mt-0.5 block">
@@ -162,7 +162,7 @@ export const DemoStorefront: React.FC = () => {
 
       {/* 2. HERO INTRO HEADER */}
       <div className="space-y-3">
-        <div className="inline-flex items-center space-x-2 text-emerald-400 font-mono text-xs font-semibold tracking-wider">
+        <div className="inline-flex items-center space-x-2 text-gray-400 font-mono text-xs font-semibold tracking-wider">
           <span>&gt;_ HOW TO PAY</span>
           <span className="text-gray-600">•</span>
           <span className="text-amber-400 uppercase tracking-widest text-[11px] font-bold">
@@ -182,18 +182,15 @@ export const DemoStorefront: React.FC = () => {
 
       {/* 3. MAIN INTERACTIVE 2-COLUMN GRID (Matching Image 1 & Image 2) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Left Column: Forest Green Protocol Card (Matching Image 1 Left) */}
-        <div className="lg:col-span-5 bg-[#0C2317] border border-[#1B402B] rounded-3xl p-7 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-          {/* Subtle glow orb */}
-          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
+        {/* Left Column: Clean Charcoal Protocol Card */}
+        <div className="lg:col-span-5 bg-[#111413] border border-[#1E2522] rounded-3xl p-7 flex flex-col justify-between shadow-2xl relative overflow-hidden">
           <div className="space-y-6">
-            <div className="w-12 h-12 rounded-2xl bg-[#143d26] border border-[#255838] flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6 text-emerald-400" />
+            <div className="w-12 h-12 rounded-2xl bg-[#161B18] border border-[#242C27] flex items-center justify-center">
+              <ShieldCheck className="w-6 h-6 text-gray-200" />
             </div>
 
             <div>
-              <span className="text-[11px] font-bold tracking-widest text-emerald-400 uppercase">
+              <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
                 The Protocol
               </span>
               <h2 className="text-2xl font-black text-white mt-1">
@@ -207,21 +204,21 @@ export const DemoStorefront: React.FC = () => {
             {/* Event-style specs with icons like reference Image 1 */}
             <div className="space-y-3.5 pt-2 text-xs">
               <div className="flex items-center space-x-3 text-gray-200">
-                <Calendar className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span>30-Day Flexible Repayment Window</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-200">
-                <Lock className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <Lock className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span>Non-Custodial Anchor Smart Contract Vault</span>
               </div>
               <div className="flex items-center space-x-3 text-gray-200">
-                <Sparkles className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-gray-400 flex-shrink-0" />
                 <span>Real-Time Pyth Hermes Pull Oracle ($ {solPrice.toFixed(2)})</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-8 mt-6 border-t border-[#1a442b]">
+          <div className="pt-8 mt-6 border-t border-[#1E2522]">
             <a
               href="https://github.com/Chigybillionz/zerosell-pay"
               target="_blank"
@@ -255,7 +252,7 @@ export const DemoStorefront: React.FC = () => {
                 <span className="text-[10px] uppercase font-bold text-gray-500 block">
                   Oracle SOL Price
                 </span>
-                <span className="text-sm font-mono font-bold text-emerald-400">
+                <span className="text-sm font-mono font-bold text-white">
                   ${solPrice.toFixed(2)}
                 </span>
               </div>
@@ -272,15 +269,15 @@ export const DemoStorefront: React.FC = () => {
                     onClick={() => setSelectedInvoice(inv)}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       isSelected
-                        ? "bg-[#161d19] border-emerald-500/60 shadow-glow"
-                        : "bg-[#141816]/70 border-[#232b26] hover:border-[#333f37] hover:bg-[#161a18]"
+                        ? "bg-[#161a18] border-white/40 shadow-md"
+                        : "bg-[#0d100e] border-[#1f2522] hover:border-[#2d3731] hover:bg-[#131715]"
                     }`}
                   >
                     <div className="flex items-start space-x-3.5">
                       <div
                         className={`w-5 h-5 rounded-full border flex items-center justify-center mt-0.5 flex-shrink-0 transition-colors ${
                           isSelected
-                            ? "border-emerald-400 bg-emerald-400"
+                            ? "border-white bg-white"
                             : "border-gray-600 bg-transparent"
                         }`}
                       >
@@ -292,7 +289,7 @@ export const DemoStorefront: React.FC = () => {
                           <span className="text-sm font-extrabold text-white">
                             {inv.title}
                           </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1e2522] text-gray-400 font-medium">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#181d1a] text-gray-400 font-medium">
                             {inv.category}
                           </span>
                         </div>
@@ -307,7 +304,7 @@ export const DemoStorefront: React.FC = () => {
                         ${inv.usdcAmount.toFixed(2)}{" "}
                         <span className="text-xs text-gray-400 font-sans">USDC</span>
                       </div>
-                      <div className="text-[11px] font-mono text-emerald-400 font-semibold">
+                      <div className="text-[11px] font-mono text-gray-300 font-semibold">
                         ~{invCalc.formattedUnits} SOL Collateral
                       </div>
                     </div>
@@ -326,13 +323,13 @@ export const DemoStorefront: React.FC = () => {
               </div>
               <div className="flex justify-between items-center text-gray-400">
                 <span>Collateral Required (150% CR / 50% LTV):</span>
-                <span className="font-mono text-emerald-400 font-bold">
+                <span className="font-mono text-white font-bold">
                   {calc.formattedUnits} SOL (${calc.collateralValueUsd.toFixed(2)} USD)
                 </span>
               </div>
               <div className="flex justify-between items-center text-gray-400">
                 <span>Relayer Gas Sponsorship:</span>
-                <span className="font-semibold text-purple-400 font-mono">
+                <span className="font-semibold text-gray-200 font-mono">
                   100% FREE (Sponsored)
                 </span>
               </div>
@@ -364,7 +361,7 @@ export const DemoStorefront: React.FC = () => {
       <div className="pt-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#1E2522] pb-4">
           <div>
-            <span className="text-xs font-mono text-emerald-400 font-bold tracking-wider uppercase">
+            <span className="text-xs font-mono text-gray-400 font-bold tracking-wider uppercase">
               &gt;_ ARCHITECTURE BREAKDOWN
             </span>
             <h3 className="text-2xl font-black text-white mt-1">
@@ -383,7 +380,7 @@ export const DemoStorefront: React.FC = () => {
               <h4 className="text-lg font-black text-white uppercase tracking-tight">
                 For Buyers & Freelancers
               </h4>
-              <span className="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 text-[11px] font-mono font-bold uppercase">
+              <span className="px-2.5 py-1 rounded bg-[#181E1B] text-gray-300 border border-[#27322B] text-[11px] font-mono font-bold uppercase">
                 Borrowers
               </span>
             </div>
@@ -393,7 +390,7 @@ export const DemoStorefront: React.FC = () => {
 
             <div className="space-y-3 pt-2">
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   01
                 </span>
                 <div>
@@ -403,7 +400,7 @@ export const DemoStorefront: React.FC = () => {
               </div>
 
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   02
                 </span>
                 <div>
@@ -413,7 +410,7 @@ export const DemoStorefront: React.FC = () => {
               </div>
 
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-emerald-500/20 text-emerald-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   03
                 </span>
                 <div>
@@ -430,7 +427,7 @@ export const DemoStorefront: React.FC = () => {
               <h4 className="text-lg font-black text-white uppercase tracking-tight">
                 For Merchants & POS
               </h4>
-              <span className="px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/25 text-[11px] font-mono font-bold uppercase">
+              <span className="px-2.5 py-1 rounded bg-[#181E1B] text-gray-300 border border-[#27322B] text-[11px] font-mono font-bold uppercase">
                 Merchants
               </span>
             </div>
@@ -440,7 +437,7 @@ export const DemoStorefront: React.FC = () => {
 
             <div className="space-y-3 pt-2">
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-purple-500/20 text-purple-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   01
                 </span>
                 <div>
@@ -450,7 +447,7 @@ export const DemoStorefront: React.FC = () => {
               </div>
 
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-purple-500/20 text-purple-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   02
                 </span>
                 <div>
@@ -460,7 +457,7 @@ export const DemoStorefront: React.FC = () => {
               </div>
 
               <div className="flex items-start space-x-3 text-xs">
-                <span className="w-6 h-6 rounded bg-purple-500/20 text-purple-400 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
+                <span className="w-6 h-6 rounded bg-[#181D1A] border border-[#252F29] text-gray-300 font-mono font-black flex items-center justify-center text-xs flex-shrink-0">
                   03
                 </span>
                 <div>

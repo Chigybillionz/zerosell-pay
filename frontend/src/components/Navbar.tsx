@@ -75,17 +75,15 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between pointer-events-auto bg-[#0d100e]/90 backdrop-blur-xl border border-[#1f2823] rounded-2xl md:rounded-full px-4 sm:px-6 py-2.5 shadow-2xl transition-all">
         {/* Brand Logo */}
         <Link to="/checkout" className="flex items-center space-x-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-300 p-[1.5px] shadow-glow group-hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full bg-[#080a09] rounded-[10px] flex items-center justify-center">
-              <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
-            </div>
+          <div className="w-9 h-9 rounded-xl bg-[#151917] border border-[#242C27] flex items-center justify-center group-hover:border-[#354139] transition-colors">
+            <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
               <span className="text-lg font-black tracking-tight text-white font-mono">
                 ZeroSell
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-[#181E1B] text-gray-300 border border-[#28332C]">
                 Pay
               </span>
             </div>
@@ -105,7 +103,7 @@ export const Navbar: React.FC = () => {
                 to={link.path}
                 className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
                   isActive
-                    ? "bg-emerald-500 text-black font-bold shadow-sm"
+                    ? "bg-white text-black font-bold shadow-sm"
                     : "text-gray-400 hover:text-gray-200 hover:bg-gray-800/40"
                 }`}
               >
@@ -125,14 +123,14 @@ export const Navbar: React.FC = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
             <span className="text-gray-400 font-medium text-[11px]">Pyth SOL:</span>
-            <span className="font-mono font-bold text-emerald-400">
+            <span className="font-mono font-bold text-white">
               ${solPrice.toFixed(2)}
             </span>
           </div>
 
           {/* Devnet Network Pill */}
-          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-[11px] font-semibold text-emerald-400">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#151917] border border-[#242C27] text-[11px] font-semibold text-gray-300">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
             <span>Devnet</span>
           </div>
 

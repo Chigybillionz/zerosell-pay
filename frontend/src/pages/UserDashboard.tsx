@@ -156,16 +156,16 @@ export const UserDashboard: React.FC = () => {
 
           {/* Metric 3 */}
           <div className="p-5 hover:bg-[#121714] transition-colors text-left">
-            <div className="flex items-center justify-between text-emerald-400 mb-1">
+            <div className="flex items-center justify-between text-gray-400 mb-1">
               <span className="text-[11px] uppercase font-bold tracking-wider">
                 Upside Preserved
               </span>
               <TrendingUp className="w-4 h-4 text-emerald-400" />
             </div>
-            <div className="text-2xl font-black text-emerald-400 font-mono">
+            <div className="text-2xl font-black text-white font-mono">
               +${totalGainsSaved.toFixed(2)}
             </div>
-            <span className="text-[11px] text-emerald-400/80 mt-0.5 block">
+            <span className="text-[11px] text-gray-400 mt-0.5 block">
               Saved by holding SOL
             </span>
           </div>
@@ -176,9 +176,9 @@ export const UserDashboard: React.FC = () => {
               <span className="text-[11px] uppercase font-bold tracking-wider">
                 Portfolio LTV
               </span>
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <ShieldCheck className="w-4 h-4 text-gray-400" />
             </div>
-            <div className="text-2xl font-black text-emerald-400 font-mono">
+            <div className="text-2xl font-black text-white font-mono">
               {averageLtv > 0 ? `${averageLtv.toFixed(1)}%` : "N/A"}
             </div>
             <span className="text-[11px] text-gray-500 mt-0.5 block">
@@ -200,9 +200,9 @@ export const UserDashboard: React.FC = () => {
       <div className="flex items-center space-x-2 border-b border-[#1E2522] pb-3">
         <button
           onClick={() => setActiveTab("active")}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "active"
-              ? "bg-emerald-500 text-black shadow-sm"
+              ? "bg-white text-black font-bold shadow-sm"
               : "text-gray-400 hover:text-white bg-[#111413] border border-[#1E2522]"
           }`}
         >
@@ -211,9 +211,9 @@ export const UserDashboard: React.FC = () => {
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
+          className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
             activeTab === "history"
-              ? "bg-emerald-500 text-black shadow-sm"
+              ? "bg-white text-black font-bold shadow-sm"
               : "text-gray-400 hover:text-white bg-[#111413] border border-[#1E2522]"
           }`}
         >
