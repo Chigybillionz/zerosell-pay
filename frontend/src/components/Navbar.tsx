@@ -115,23 +115,19 @@ export const Navbar: React.FC = () => {
         </nav>
 
         {/* Right Action Cluster */}
-        <div className="flex items-center space-x-2.5">
-          {/* Live Pyth Oracle Ticker */}
+        <div className="flex items-center space-x-2">
+          {/* Live Pyth Oracle Ticker & Network Status */}
           <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-[#121614] border border-[#1f2923] text-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-gray-400 font-medium text-[11px]">Pyth SOL:</span>
-            <span className="font-mono font-bold text-white">
+            <span className="text-gray-400 text-[11px]">SOL:</span>
+            <span className="font-mono font-bold text-white text-xs">
               ${solPrice.toFixed(2)}
             </span>
-          </div>
-
-          {/* Devnet Network Pill */}
-          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-[#151917] border border-[#242C27] text-[11px] font-semibold text-gray-300">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
-            <span>Devnet</span>
+            <span className="text-gray-600">•</span>
+            <span className="text-gray-400 text-[11px]">Devnet</span>
           </div>
 
           {/* Connected Wallet Devnet Balance */}
@@ -149,7 +145,7 @@ export const Navbar: React.FC = () => {
             onClick={handleFaucet}
             disabled={airdropping}
             title="Copy wallet address & open official Solana Devnet Faucet"
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#161c18] hover:bg-[#1d2520] text-gray-200 border border-[#27352d] transition-all hover:scale-105 active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full text-xs font-medium bg-[#161c18] hover:bg-[#1d2520] text-gray-300 border border-[#27352d] transition-all hover:text-white cursor-pointer"
           >
             {airdropSuccess ? (
               <>
@@ -159,7 +155,7 @@ export const Navbar: React.FC = () => {
             ) : (
               <>
                 <Droplets className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">Free Devnet SOL</span>
+                <span className="hidden sm:inline">Faucet</span>
               </>
             )}
           </button>
