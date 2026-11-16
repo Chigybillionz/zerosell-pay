@@ -58,11 +58,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-10 pt-16 sm:pt-20">
         <div className="max-w-md p-3.5 sm:p-4 rounded-2xl bg-[#181126]/90 border border-[#3e2462] shadow-2xl backdrop-blur-xl flex items-center space-x-4 group hover:border-[#5a348f] transition-all">
           {/* Graphic Thumbnail */}
-          <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-purple-800 via-indigo-950 to-black border border-[#4d2d7a] flex flex-col items-center justify-center shrink-0 p-2 text-center">
-            <Zap className="w-5 h-5 text-cyan-400 mb-1" />
-            <span className="text-[9px] font-black tracking-widest text-purple-200 uppercase">
-              Dev3pack
-            </span>
+          <div className="w-20 h-20 rounded-xl overflow-hidden border border-[#4d2d7a] shrink-0 bg-black shadow-lg">
+            <img
+              src="/zerosell-logo.jpg"
+              alt="ZeroSell Pay Logo"
+              className="w-full h-full object-cover object-top hover:scale-105 transition-transform"
+            />
           </div>
 
           {/* Text & Compact CTA */}

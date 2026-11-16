@@ -75,17 +75,25 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/checkout" className="flex items-center space-x-3 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 via-indigo-600 to-cyan-400 p-[1.5px] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full bg-black rounded-[6.5px] flex items-center justify-center">
-              <Zap className="w-4 h-4 text-cyan-300 fill-cyan-300/20" />
-            </div>
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-400 opacity-40 blur-sm group-hover:opacity-80 transition-opacity" />
+            <img
+              src="/zerosell-logo.jpg"
+              alt="ZeroSell Pay Emblem"
+              className="relative w-9 h-9 rounded-xl object-cover object-top border border-white/10 shadow-lg group-hover:scale-105 transition-transform"
+            />
           </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-base font-extrabold tracking-tight text-white font-mono uppercase">
-              ZeroSell
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-purple-950/80 text-purple-300 border border-purple-800/50">
-              Pay
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-1.5 leading-none">
+              <span className="text-base font-extrabold tracking-tight text-white font-mono uppercase">
+                ZeroSell
+              </span>
+              <span className="text-base font-extrabold tracking-tight text-[#14F195] font-mono uppercase">
+                Pay
+              </span>
+            </div>
+            <span className="text-[8.5px] uppercase tracking-widest font-semibold text-neutral-400 mt-0.5 hidden sm:block">
+              Spend Without Selling
             </span>
           </div>
         </Link>

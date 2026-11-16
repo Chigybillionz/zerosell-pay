@@ -1,6 +1,10 @@
+<p align="center">
+  <img src="assets/zerosell-logo.jpg" alt="ZeroSell Pay - Spend Without Selling" width="680" />
+</p>
+
 # ⚡ ZeroSell Pay
 
-> **Spend Your Crypto & Tokenized Stocks Without Selling a Single Share.**  
+> **Spend Without Selling — The Liquidity Layer for Every Asset on Earth.**  
 > *Target Track: Dev3pack "Best App Overall on Solana" ($10,000 Prize)*
 
 [![Solana Devnet](https://img.shields.io/badge/Solana-Devnet-14F195?logo=solana&logoColor=black)](https://solscan.io/?cluster=devnet)

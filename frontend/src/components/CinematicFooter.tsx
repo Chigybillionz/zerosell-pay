@@ -48,13 +48,22 @@ export const CinematicFooter: React.FC<CinematicFooterProps> = ({ onLaunchClick 
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-12 grid grid-cols-2 md:grid-cols-4 gap-10 text-xs">
         {/* Brand Info */}
         <div className="col-span-2 md:col-span-1 space-y-4">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-400 p-[1.5px] flex items-center justify-center">
-              <div className="w-full h-full bg-black rounded-[7px] flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-cyan-300" />
-              </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-black">
+              <img
+                src="/zerosell-logo.jpg"
+                alt="ZeroSell Pay Emblem"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
-            <span className="font-bold text-white text-sm tracking-wide">ZeroSell Pay</span>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-white text-sm tracking-tight font-mono">
+                ZeroSell <span className="text-[#14F195]">Pay</span>
+              </span>
+              <span className="text-[9px] uppercase tracking-wider text-neutral-400 font-semibold">
+                Spend Without Selling
+              </span>
+            </div>
           </div>
           <p className="text-gray-400 leading-relaxed text-[11px]">
             Atomic, non-custodial collateralized payment protocol on Solana. Dev3pack Track: Best App Overall.
