@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { z } from "zod";
@@ -16,11 +16,16 @@ import {
   Sparkles,
   Info,
   Check,
-  Layers,
   HelpCircle,
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { ZeroSellCheckoutModal } from "../components/ZeroSellCheckoutModal.js";
+import { HeroSection } from "../components/HeroSection.js";
+import { LiveMetricsRibbon } from "../components/LiveMetricsRibbon.js";
+import { ProtocolFeaturesSection } from "../components/ProtocolFeaturesSection.js";
+import { UpsideSimulator } from "../components/UpsideSimulator.js";
+import { CinematicFooter } from "../components/CinematicFooter.js";
+import { FloatingAssistant } from "../components/FloatingAssistant.js";
 
 const QueryParamsSchema = z.object({
   invoiceId: z.coerce.number().int().positive().optional(),
@@ -73,6 +78,7 @@ const DEMO_INVOICES = [
 ];
 
 export const DemoStorefront: React.FC = () => {
+  const navigate = useNavigate();
   const { connected } = useWallet();
   const { solPrice, calculateCollateralNeeded } = usePythPrices();
   const [searchParams] = useSearchParams();
@@ -81,7 +87,7 @@ export const DemoStorefront: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
 
-  // HCI Progressive Disclosure Toggles
+  // Progressive Disclosure Toggles
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
@@ -121,271 +127,300 @@ export const DemoStorefront: React.FC = () => {
 
   const calc = calculateCollateralNeeded(selectedInvoice.usdcAmount, "SOL", 50.0);
 
+  const scrollToCheckout = () => {
+    const el = document.getElementById("checkout-experience");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-8">
-      {/* 1. SIMPLE, HUMAN-CENTERED HERO (No jargon overload) */}
-      <div className="text-center space-y-2.5">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#141816] border border-[#232B27] text-xs font-medium text-gray-300">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span>Pay Invoices in USDC • Keep 100% of Your SOL</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-          Never Sell Your SOL for Bills
-        </h1>
-        <p className="text-sm text-gray-400 max-w-lg mx-auto leading-relaxed">
-          ZeroSell locks your collateral in a private smart contract safe and pays the merchant in USDC instantly. Repay anytime to unlock your assets.
-        </p>
-      </div>
+    <div className="w-full bg-black text-white selection:bg-purple-500/30 selection:text-purple-200">
+      {/* 1. CINEMATIC HERO SECTION (Directly inspired by official Solana website) */}
+      <HeroSection
+        onGetStartedClick={scrollToCheckout}
+        onExploreVaultsClick={() => navigate("/dashboard")}
+        solPrice={solPrice}
+      />
 
-      {/* 2. THE MAIN FOCUSED CHECKOUT EXPERIENCE (Minimal cognitive friction) */}
-      <div className="bg-[#101311] border border-[#1E2522] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-        {/* Invoice Selector Pills (Quick 1-click choice) */}
-        <div>
-          <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
-            Select Demo Invoice
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {DEMO_INVOICES.map((inv) => {
-              const isSelected = selectedInvoice.id === inv.id;
-              return (
-                <button
-                  key={inv.id}
-                  onClick={() => setSelectedInvoice(inv)}
-                  className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                    isSelected
-                      ? "bg-[#181E1B] border-white/40 shadow-sm"
-                      : "bg-[#0B0D0C] border-[#1C221F] hover:border-[#2C3630] hover:bg-[#121614]"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-white truncate max-w-[120px]">
-                      {inv.title}
-                    </span>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-white shrink-0" />}
-                  </div>
-                  <div className="text-sm font-mono font-bold text-gray-200">
-                    ${inv.usdcAmount.toFixed(2)}{" "}
-                    <span className="text-[10px] text-gray-400 font-sans">USDC</span>
-                  </div>
-                </button>
-              );
-            })}
+      {/* 2. LIVE NETWORK & PROTOCOL METRICS RIBBON */}
+      <LiveMetricsRibbon />
+
+      {/* 3. INTERACTIVE PRODUCT CHECKOUT (Frictionless, progressive disclosure) */}
+      <section id="checkout-experience" className="py-24 px-4 sm:px-6 lg:px-12 bg-black relative">
+        {/* Subtle ambient light */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-purple-900/10 rounded-full blur-[140px] pointer-events-none" />
+
+        <div className="max-w-3xl mx-auto space-y-8 relative z-10">
+          <div className="text-center space-y-2.5">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#160f26] border border-[#2f1c4d] text-xs font-medium text-purple-300">
+              <Sparkles className="w-3.5 h-3.5 text-cyan-300" />
+              <span>Interactive Checkout Demonstration</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+              Try ZeroSell Pay in Real-Time
+            </h2>
+            <p className="text-sm text-gray-400 max-w-lg mx-auto">
+              Select an invoice below to test atomic collateral locking on Solana Devnet.
+            </p>
           </div>
-        </div>
 
-        {/* Transaction Summary Card (Clean, high visual contrast) */}
-        <div className="p-5 rounded-2xl bg-[#090B0A] border border-[#1A201D] space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-[#1A201D]">
+          <div className="bg-[#0e091a] border border-[#26173d] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            {/* Invoice Selector Pills */}
             <div>
-              <span className="text-[11px] text-gray-400 block font-medium">Billed By</span>
-              <span className="text-sm font-bold text-white">{selectedInvoice.vendorName}</span>
+              <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                Select Demo Invoice
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {DEMO_INVOICES.map((inv) => {
+                  const isSelected = selectedInvoice.id === inv.id;
+                  return (
+                    <button
+                      key={inv.id}
+                      onClick={() => setSelectedInvoice(inv)}
+                      className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-[#1d1136] border-purple-400/50 shadow-sm"
+                          : "bg-[#090612] border-[#1d122e] hover:border-[#331d52] hover:bg-[#120b21]"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-white truncate max-w-[120px]">
+                          {inv.title}
+                        </span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-cyan-300 shrink-0" />}
+                      </div>
+                      <div className="text-sm font-mono font-bold text-gray-200">
+                        ${inv.usdcAmount.toFixed(2)}{" "}
+                        <span className="text-[10px] text-gray-400 font-sans">USDC</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div className="text-right">
-              <span className="text-[11px] text-gray-400 block font-medium">Merchant Gets</span>
-              <span className="text-lg font-black text-white font-mono">
-                ${selectedInvoice.usdcAmount.toFixed(2)}{" "}
-                <span className="text-xs text-gray-400 font-sans">USDC</span>
-              </span>
+
+            {/* Summary Card */}
+            <div className="p-5 rounded-2xl bg-[#080510] border border-[#1d122e] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1d122e]">
+                <div>
+                  <span className="text-[11px] text-gray-400 block font-medium">Billed By</span>
+                  <span className="text-sm font-bold text-white">{selectedInvoice.vendorName}</span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-gray-400 block font-medium">Merchant Gets</span>
+                  <span className="text-lg font-black text-white font-mono">
+                    ${selectedInvoice.usdcAmount.toFixed(2)}{" "}
+                    <span className="text-xs text-gray-400 font-sans">USDC</span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] text-gray-400 block font-medium">
+                    Collateral Locked in Your Safe
+                  </span>
+                  <span className="text-xs text-gray-300">
+                    100% refunded when you repay
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-lg font-black text-white font-mono">
+                    ~{calc.formattedUnits} SOL
+                  </span>
+                  <span className="text-xs text-gray-400 block font-mono">
+                    (${calc.collateralValueUsd.toFixed(2)} USD)
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <span className="text-[11px] text-gray-400 block font-medium">
-                Collateral Held in Your Safe
-              </span>
-              <span className="text-xs text-gray-300">
-                100% refunded when you repay
-              </span>
+            {/* Primary Action Button */}
+            <div className="space-y-3 pt-1">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="w-full py-4 px-6 rounded-full bg-white hover:bg-gray-100 active:scale-[0.99] text-black font-black text-sm uppercase tracking-wider shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer"
+              >
+                <Zap className="w-4 h-4 fill-black" />
+                <span>Pay ${selectedInvoice.usdcAmount.toFixed(2)} USDC (Keep SOL)</span>
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
+
+              <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+                <span className="flex items-center space-x-1">
+                  <Check className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Zero Selling</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center space-x-1">
+                  <Check className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Zero Tax Drag</span>
+                </span>
+                <span>•</span>
+                <span className="flex items-center space-x-1">
+                  <Check className="w-3.5 h-3.5 text-gray-400" />
+                  <span>Non-Custodial</span>
+                </span>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="text-lg font-black text-white font-mono">
-                ~{calc.formattedUnits} SOL
-              </span>
-              <span className="text-xs text-gray-400 block font-mono">
-                (${calc.collateralValueUsd.toFixed(2)} USD)
-              </span>
-            </div>
-          </div>
-        </div>
 
-        {/* PRIMARY ACTION BUTTON (Clear, unambiguous Fitts's law target) */}
-        <div className="space-y-3 pt-1">
-          <button
-            onClick={() => setModalOpen(true)}
-            className="w-full py-4 px-6 rounded-full bg-white hover:bg-gray-100 active:scale-[0.99] text-black font-black text-sm uppercase tracking-wider shadow-lg flex items-center justify-center space-x-2 transition-all cursor-pointer"
-          >
-            <Zap className="w-4 h-4 fill-black" />
-            <span>Pay ${selectedInvoice.usdcAmount.toFixed(2)} USDC (Keep SOL)</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </button>
-
-          <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
-            <span className="flex items-center space-x-1">
-              <Check className="w-3.5 h-3.5 text-gray-400" />
-              <span>Zero Selling</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center space-x-1">
-              <Check className="w-3.5 h-3.5 text-gray-400" />
-              <span>Zero Tax Drag</span>
-            </span>
-            <span>•</span>
-            <span className="flex items-center space-x-1">
-              <Check className="w-3.5 h-3.5 text-gray-400" />
-              <span>Non-Custodial</span>
-            </span>
-          </div>
-        </div>
-
-        {/* 3. PROGRESSIVE DISCLOSURE ACCORDIONS (Hidden until requested) */}
-        <div className="pt-2 border-t border-[#1C221F] space-y-2.5">
-          {/* Accordion 1: Price & Collateral Breakdown */}
-          <div className="border border-[#1A201D] rounded-2xl bg-[#090B0A] overflow-hidden transition-all">
-            <button
-              onClick={() => setShowBreakdown(!showBreakdown)}
-              className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
-            >
-              <div className="flex items-center space-x-2">
-                <Info className="w-3.5 h-3.5 text-gray-400" />
-                <span>Price &amp; Collateral Details</span>
-              </div>
-              {showBreakdown ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              )}
-            </button>
-
-            {showBreakdown && (
-              <div className="px-4 pb-4 pt-1 border-t border-[#161B18] text-xs space-y-2 text-gray-400 animate-fade-in">
-                <div className="flex justify-between">
-                  <span>Pyth Hermes Oracle Price:</span>
-                  <span className="font-mono text-white font-medium">
-                    1 SOL = ${solPrice.toFixed(2)} USD
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Collateral Ratio:</span>
-                  <span className="font-mono text-white font-medium">
-                    150% (50.0% Loan-to-Value)
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Network Gas Fee:</span>
-                  <span className="font-mono text-gray-200 font-medium">
-                    $0.00 (Sponsored by Relayer)
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Origination Fee:</span>
-                  <span className="font-mono text-white font-medium">
-                    0.30% (${(selectedInvoice.usdcAmount * 0.003).toFixed(2)} USDC)
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Liquidation Buffer:</span>
-                  <span className="font-mono text-gray-300">
-                    Protected until SOL drops by &gt; 33.3%
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 2: How It Works */}
-          <div className="border border-[#1A201D] rounded-2xl bg-[#090B0A] overflow-hidden transition-all">
-            <button
-              onClick={() => setShowHowItWorks(!showHowItWorks)}
-              className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
-            >
-              <div className="flex items-center space-x-2">
-                <HelpCircle className="w-3.5 h-3.5 text-gray-400" />
-                <span>How do I get my SOL back?</span>
-              </div>
-              {showHowItWorks ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              )}
-            </button>
-
-            {showHowItWorks && (
-              <div className="px-4 pb-4 pt-1 border-t border-[#161B18] text-xs space-y-2.5 text-gray-400 leading-relaxed animate-fade-in">
-                <p>
-                  <strong className="text-white block font-semibold mb-0.5">1. Locked in your personal safe:</strong>
-                  Your SOL is deposited into an isolated Solana Anchor smart contract PDA that only your wallet can unlock.
-                </p>
-                <p>
-                  <strong className="text-white block font-semibold mb-0.5">2. Repay at your own pace:</strong>
-                  Visit your <strong>Vault Dashboard</strong> anytime to repay the ${selectedInvoice.usdcAmount} USDC.
-                </p>
-                <p>
-                  <strong className="text-white block font-semibold mb-0.5">3. 100% of price gains are yours:</strong>
-                  If SOL doubles in price while locked, you keep all of that profit when unlocking.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 3: Why Not Sell? (Comparison) */}
-          <div className="border border-[#1A201D] rounded-2xl bg-[#090B0A] overflow-hidden transition-all">
-            <button
-              onClick={() => setShowComparison(!showComparison)}
-              className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
-            >
-              <div className="flex items-center space-x-2">
-                <TrendingUp className="w-3.5 h-3.5 text-gray-400" />
-                <span>Why ZeroSell vs. Selling on a DEX?</span>
-              </div>
-              {showComparison ? (
-                <ChevronUp className="w-4 h-4 text-gray-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-gray-400" />
-              )}
-            </button>
-
-            {showComparison && (
-              <div className="px-4 pb-4 pt-1 border-t border-[#161B18] text-xs space-y-3 text-gray-400 animate-fade-in">
-                <div className="grid grid-cols-2 gap-3 pt-1">
-                  <div className="p-3 rounded-xl bg-[#121614] border border-[#1E2522]">
-                    <span className="text-[11px] font-bold text-white block mb-1">
-                      ⚡ ZeroSell Pay
-                    </span>
-                    <ul className="space-y-1 text-[11px] text-gray-300">
-                      <li>• Keep 100% future price upside</li>
-                      <li>• No capital gains tax trigger</li>
-                      <li>• Sponsored gas ($0.00 fee)</li>
-                      <li>• Non-custodial personal vault</li>
-                    </ul>
+            {/* Progressive Disclosure Accordions */}
+            <div className="pt-2 border-t border-[#1d122e] space-y-2.5">
+              {/* Accordion 1: Price & Collateral Details */}
+              <div className="border border-[#1d122e] rounded-2xl bg-[#080510] overflow-hidden transition-all">
+                <button
+                  onClick={() => setShowBreakdown(!showBreakdown)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center space-x-2">
+                    <Info className="w-3.5 h-3.5 text-purple-300" />
+                    <span>Price &amp; Collateral Details</span>
                   </div>
+                  {showBreakdown ? (
+                    <ChevronUp className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  )}
+                </button>
 
-                  <div className="p-3 rounded-xl bg-[#141212] border border-[#251A1A]">
-                    <span className="text-[11px] font-bold text-red-400 block mb-1">
-                      ⚠️ Selling SOL on DEX
-                    </span>
-                    <ul className="space-y-1 text-[11px] text-gray-400">
-                      <li>• Upside permanently lost</li>
-                      <li>• Triggers taxable disposal</li>
-                      <li>• 0.3% - 0.5% swap slippage</li>
-                      <li>• Sells an appreciating asset</li>
-                    </ul>
+                {showBreakdown && (
+                  <div className="px-4 pb-4 pt-1 border-t border-[#1a0f2b] text-xs space-y-2 text-gray-400 animate-fade-in">
+                    <div className="flex justify-between">
+                      <span>Pyth Hermes Oracle Price:</span>
+                      <span className="font-mono text-white font-medium">
+                        1 SOL = ${solPrice.toFixed(2)} USD
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Collateral Ratio:</span>
+                      <span className="font-mono text-white font-medium">
+                        150% (50.0% Loan-to-Value)
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Network Gas Fee:</span>
+                      <span className="font-mono text-emerald-400 font-medium">
+                        $0.00 (Sponsored by Relayer)
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Origination Fee:</span>
+                      <span className="font-mono text-white font-medium">
+                        0.30% (${(selectedInvoice.usdcAmount * 0.003).toFixed(2)} USDC)
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Liquidation Buffer:</span>
+                      <span className="font-mono text-gray-300">
+                        Protected until SOL drops by &gt; 33.3%
+                      </span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="text-center pt-1">
-                  <button
-                    onClick={() => setShowTraditionalModal(true)}
-                    className="text-[11px] text-gray-500 hover:text-gray-300 underline cursor-pointer"
-                  >
-                    Simulate traditional DEX sale instead
-                  </button>
-                </div>
+                )}
               </div>
-            )}
+
+              {/* Accordion 2: How It Works */}
+              <div className="border border-[#1d122e] rounded-2xl bg-[#080510] overflow-hidden transition-all">
+                <button
+                  onClick={() => setShowHowItWorks(!showHowItWorks)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center space-x-2">
+                    <HelpCircle className="w-3.5 h-3.5 text-purple-300" />
+                    <span>How do I get my SOL back?</span>
+                  </div>
+                  {showHowItWorks ? (
+                    <ChevronUp className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  )}
+                </button>
+
+                {showHowItWorks && (
+                  <div className="px-4 pb-4 pt-1 border-t border-[#1a0f2b] text-xs space-y-2.5 text-gray-400 leading-relaxed animate-fade-in">
+                    <p>
+                      <strong className="text-white block font-semibold mb-0.5">1. Locked in your personal safe:</strong>
+                      Your SOL is deposited into an isolated Solana Anchor smart contract PDA that only your wallet can unlock.
+                    </p>
+                    <p>
+                      <strong className="text-white block font-semibold mb-0.5">2. Repay at your own pace:</strong>
+                      Visit your <strong>Vault Dashboard</strong> anytime to repay the ${selectedInvoice.usdcAmount} USDC.
+                    </p>
+                    <p>
+                      <strong className="text-white block font-semibold mb-0.5">3. 100% of price gains are yours:</strong>
+                      If SOL doubles in price while locked, you keep all of that profit when unlocking.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Accordion 3: Comparison */}
+              <div className="border border-[#1d122e] rounded-2xl bg-[#080510] overflow-hidden transition-all">
+                <button
+                  onClick={() => setShowComparison(!showComparison)}
+                  className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="w-3.5 h-3.5 text-purple-300" />
+                    <span>Why ZeroSell vs. Selling on a DEX?</span>
+                  </div>
+                  {showComparison ? (
+                    <ChevronUp className="w-4 h-4 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  )}
+                </button>
+
+                {showComparison && (
+                  <div className="px-4 pb-4 pt-1 border-t border-[#1a0f2b] text-xs space-y-3 text-gray-400 animate-fade-in">
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div className="p-3 rounded-xl bg-[#140c24] border border-[#2b1747]">
+                        <span className="text-[11px] font-bold text-white block mb-1">
+                          ⚡ ZeroSell Pay
+                        </span>
+                        <ul className="space-y-1 text-[11px] text-gray-300">
+                          <li>• Keep 100% future price upside</li>
+                          <li>• No capital gains tax trigger</li>
+                          <li>• Sponsored gas ($0.00 fee)</li>
+                          <li>• Non-custodial personal vault</li>
+                        </ul>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-[#1a0f12] border border-[#3b1919]">
+                        <span className="text-[11px] font-bold text-red-400 block mb-1">
+                          ⚠️ Selling SOL on DEX
+                        </span>
+                        <ul className="space-y-1 text-[11px] text-gray-400">
+                          <li>• Upside permanently lost</li>
+                          <li>• Triggers taxable disposal</li>
+                          <li>• 0.3% - 0.5% swap slippage</li>
+                          <li>• Sells an appreciating asset</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="text-center pt-1">
+                      <button
+                        onClick={() => setShowTraditionalModal(true)}
+                        className="text-[11px] text-gray-500 hover:text-gray-300 underline cursor-pointer"
+                      >
+                        Simulate traditional DEX sale instead
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* 4. ASYMMETRICAL EDITORIAL ARCHITECTURE SECTION */}
+      <ProtocolFeaturesSection />
+
+      {/* 5. INTERACTIVE UPSIDE SIMULATOR */}
+      <UpsideSimulator currentSolPrice={solPrice} />
 
       {/* ZeroSell Checkout Modal */}
       <ZeroSellCheckoutModal
