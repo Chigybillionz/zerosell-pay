@@ -11,22 +11,20 @@ export const CinematicFooter: React.FC<CinematicFooterProps> = ({ onLaunchClick 
     <footer className="w-full bg-black text-white border-t border-white/[0.08] relative overflow-hidden">
       {/* 1. Final Conversion CTA Banner */}
       <div className="py-24 px-4 sm:px-6 lg:px-12 relative z-10 border-b border-white/[0.08]">
-        <div className="max-w-5xl mx-auto rounded-3xl p-10 sm:p-16 bg-gradient-to-tr from-[#160d2e] via-[#0d081b] to-black border border-[#3b2061] text-center space-y-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-1/2 translate-x-1/2 -mt-24 w-96 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-
+        <div className="max-w-5xl mx-auto rounded-3xl p-10 sm:p-16 bg-white/[0.02] border border-white/[0.08] backdrop-blur-xl text-center space-y-6 shadow-2xl relative overflow-hidden">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-tight">
             Start spending assets <br className="hidden sm:inline" />
             without selling.
           </h2>
 
-          <p className="text-sm sm:text-base text-gray-300 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-neutral-400 max-w-xl mx-auto leading-relaxed">
             Experience zero-tax, zero-slippage collateralized payments on Solana. Instant settlement for merchants, full upside for you.
           </p>
 
           <div className="pt-2 flex flex-wrap justify-center gap-4">
             <button
               onClick={onLaunchClick}
-              className="group flex items-center space-x-3 px-7 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-gray-100 transition-all hover:scale-105 active:scale-95 shadow-2xl cursor-pointer"
+              className="group flex items-center space-x-3 px-7 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-200 transition-all hover:scale-105 active:scale-95 shadow-2xl cursor-pointer"
             >
               <span>Launch Demo Storefront</span>
               <div className="w-6 h-6 rounded-full bg-black flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
@@ -36,7 +34,7 @@ export const CinematicFooter: React.FC<CinematicFooterProps> = ({ onLaunchClick 
 
             <Link
               to="/dashboard"
-              className="px-6 py-4 rounded-full bg-[#181229] hover:bg-[#22183b] border border-[#3c255e] text-gray-200 text-sm font-semibold transition-all cursor-pointer"
+              className="px-6 py-4 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.12] text-white text-sm font-semibold transition-all cursor-pointer"
             >
               Open Vault Dashboard
             </Link>
@@ -44,32 +42,32 @@ export const CinematicFooter: React.FC<CinematicFooterProps> = ({ onLaunchClick 
         </div>
       </div>
 
-      {/* 2. Editorial Multi-Column Link Navigation (Matching Solana's footer structure) */}
+      {/* 2. Editorial Multi-Column Link Navigation */}
       <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-12 grid grid-cols-2 md:grid-cols-4 gap-10 text-xs">
         {/* Brand Info */}
         <div className="col-span-2 md:col-span-1 space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-black">
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/20 shrink-0 bg-white p-0.5">
               <img
                 src="/zerosell-logo.jpg"
-                alt="ZeroSell Pay Emblem"
-                className="w-full h-full object-cover object-top"
+                alt="Zero Sell"
+                className="w-full h-full object-contain"
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-extrabold text-white text-sm tracking-tight font-mono">
-                ZeroSell <span className="text-[#14F195]">Pay</span>
+              <span className="font-extrabold text-white text-sm tracking-tight font-sans">
+                Zero <span className="text-neutral-300">Sell</span>
               </span>
               <span className="text-[9px] uppercase tracking-wider text-neutral-400 font-semibold">
                 Spend Without Selling
               </span>
             </div>
           </div>
-          <p className="text-gray-400 leading-relaxed text-[11px]">
+          <p className="text-neutral-400 leading-relaxed text-[11px]">
             Atomic, non-custodial collateralized payment protocol on Solana. Dev3pack Track: Best App Overall.
           </p>
-          <div className="flex items-center space-x-2 pt-1 text-[11px] font-mono text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="flex items-center space-x-2 pt-1 text-[11px] font-mono text-neutral-300">
+            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             <span>Devnet Network Active</span>
           </div>
         </div>

@@ -96,10 +96,10 @@ export const UserDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-3">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-neutral-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
             <span>Vault Dashboard</span>
             <span className="text-neutral-600">•</span>
-            <span className="text-cyan-400">Non-Custodial Solana PDA</span>
+            <span className="text-neutral-300">Non-Custodial Solana PDA</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
             Borrower Credit &amp; Vaults
@@ -114,7 +114,7 @@ export const UserDashboard: React.FC = () => {
             onClick={() => refreshPrices()}
             className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.12] text-xs font-semibold text-neutral-200 hover:text-white transition-all cursor-pointer backdrop-blur-md active:scale-95"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-cyan-400" />
+            <RefreshCw className="w-3.5 h-3.5 text-neutral-400" />
             <span>Sync Pyth Oracles</span>
           </button>
         </div>
@@ -129,7 +129,7 @@ export const UserDashboard: React.FC = () => {
               <span className="text-xs uppercase font-medium tracking-wider">
                 Locked Collateral
               </span>
-              <Lock className="w-4 h-4 text-violet-400" />
+              <Lock className="w-4 h-4 text-neutral-300" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               ${totalCollateralVal.toFixed(2)}
@@ -145,12 +145,12 @@ export const UserDashboard: React.FC = () => {
               <span className="text-xs uppercase font-medium tracking-wider">
                 Active Debt
               </span>
-              <Coins className="w-4 h-4 text-cyan-400" />
+              <Coins className="w-4 h-4 text-neutral-300" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               ${totalDebtUsdc.toFixed(2)}
             </div>
-            <span className="text-xs text-violet-300 mt-1 block">
+            <span className="text-xs text-neutral-400 mt-1 block">
               USDC owed to Protocol
             </span>
           </div>
@@ -161,7 +161,7 @@ export const UserDashboard: React.FC = () => {
               <span className="text-xs uppercase font-medium tracking-wider">
                 Upside Preserved
               </span>
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
+              <TrendingUp className="w-4 h-4 text-neutral-300" />
             </div>
             <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
               +${totalGainsSaved.toFixed(2)}

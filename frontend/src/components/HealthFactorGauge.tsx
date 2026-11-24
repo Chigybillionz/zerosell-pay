@@ -20,13 +20,13 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
     ? "text-red-400"
     : isWarning
     ? "text-amber-400"
-    : "text-emerald-400";
+    : "text-white";
 
   const barColor = isCritical
     ? "bg-red-500"
     : isWarning
     ? "bg-amber-400"
-    : "bg-emerald-400";
+    : "bg-white";
 
   const statusLabel = isCritical
     ? "Liquidation Risk"
@@ -46,7 +46,7 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
           ) : isWarning ? (
             <AlertTriangle className="w-5 h-5 text-amber-400" />
           ) : (
-            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <ShieldCheck className="w-5 h-5 text-neutral-300" />
           )}
           <span className="text-sm font-bold text-white tracking-tight">
             Vault Health &amp; LTV Buffer

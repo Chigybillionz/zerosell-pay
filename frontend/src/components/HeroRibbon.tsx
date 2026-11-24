@@ -3,11 +3,10 @@ import React from "react";
 export const HeroRibbon: React.FC = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-      {/* 1. Deep Atmospheric Gradient Nebulas */}
-      <div className="absolute -top-32 right-0 w-[700px] h-[700px] bg-gradient-to-br from-purple-600/20 via-violet-900/15 to-transparent rounded-full blur-[130px]" />
-      <div className="absolute top-1/3 -right-20 w-[550px] h-[550px] bg-gradient-to-bl from-purple-700/25 via-fuchsia-900/10 to-transparent rounded-full blur-[120px]" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[400px] bg-gradient-to-tr from-cyan-600/15 via-teal-900/10 to-transparent rounded-full blur-[110px]" />
-      <div className="absolute top-1/2 left-0 w-[400px] h-[400px] bg-gradient-to-br from-emerald-600/10 via-teal-950/5 to-transparent rounded-full blur-[100px]" />
+      {/* 1. Deep Atmospheric Subtle Ambient Lighting */}
+      <div className="absolute -top-32 right-0 w-[700px] h-[700px] bg-gradient-to-br from-white/[0.03] to-transparent rounded-full blur-[140px]" />
+      <div className="absolute top-1/3 -right-20 w-[550px] h-[550px] bg-gradient-to-bl from-neutral-800/20 to-transparent rounded-full blur-[130px]" />
+      <div className="absolute bottom-10 right-1/4 w-[500px] h-[400px] bg-gradient-to-tr from-white/[0.02] to-transparent rounded-full blur-[120px]" />
 
       {/* 2. Abstract 3D Luminous Ribbon Wave (SVG Vector with metallic gradient highlights) */}
       <svg
@@ -17,31 +16,31 @@ export const HeroRibbon: React.FC = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          {/* Main tube body gradient (Deep metallic violet to midnight cyan) */}
+          {/* Main tube body gradient (Refined deep obsidian to chrome) */}
           <linearGradient id="tubeBody" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="#1a0b2e" stopOpacity="0.4" />
-            <stop offset="25%" stopColor="#3b156b" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#7928ca" stopOpacity="0.9" />
-            <stop offset="75%" stopColor="#2a104e" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#0a2a30" stopOpacity="0.6" />
+            <stop offset="0%" stopColor="#171717" stopOpacity="0.4" />
+            <stop offset="25%" stopColor="#262626" stopOpacity="0.8" />
+            <stop offset="50%" stopColor="#404040" stopOpacity="0.9" />
+            <stop offset="75%" stopColor="#262626" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#171717" stopOpacity="0.6" />
           </linearGradient>
 
           {/* Top specular ridge light (Glossy glass reflection) */}
           <linearGradient id="ridgeLight" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="20%" stopColor="#e9d5ff" stopOpacity="0.6" />
+            <stop offset="20%" stopColor="#e5e5e5" stopOpacity="0.6" />
             <stop offset="45%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="70%" stopColor="#c084fc" stopOpacity="0.7" />
-            <stop offset="90%" stopColor="#67e8f9" stopOpacity="0.8" />
+            <stop offset="70%" stopColor="#d4d4d4" stopOpacity="0.7" />
+            <stop offset="90%" stopColor="#a3a3a3" stopOpacity="0.8" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
 
-          {/* Bottom neon reflection line */}
+          {/* Bottom subtle reflection line */}
           <linearGradient id="underGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#9945FF" stopOpacity="0.2" />
-            <stop offset="50%" stopColor="#c084fc" stopOpacity="0.5" />
-            <stop offset="85%" stopColor="#14F195" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.3" />
+            <stop offset="85%" stopColor="#a3a3a3" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#525252" stopOpacity="0.2" />
           </linearGradient>
 
           <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">

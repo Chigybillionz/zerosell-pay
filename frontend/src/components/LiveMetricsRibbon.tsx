@@ -2,7 +2,7 @@ import React from "react";
 
 export const LiveMetricsRibbon: React.FC = () => {
   return (
-    <div className="w-full border-y border-white/[0.08] bg-[#07050d]/80 backdrop-blur-xl">
+    <div className="w-full border-y border-white/[0.08] bg-black/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-white/[0.08]">
         <div className="p-6 sm:p-8 text-center hover:bg-white/[0.02] transition-colors">
           <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight font-mono">

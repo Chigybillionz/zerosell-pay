@@ -76,20 +76,16 @@ export const Navbar: React.FC = () => {
         {/* Brand Logo */}
         <Link to="/checkout" className="flex items-center space-x-3 group">
           <div className="relative">
-            <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-400 opacity-40 blur-sm group-hover:opacity-80 transition-opacity" />
             <img
               src="/zerosell-logo.jpg"
-              alt="ZeroSell Pay Emblem"
-              className="relative w-9 h-9 rounded-xl object-cover object-top border border-white/10 shadow-lg group-hover:scale-105 transition-transform"
+              alt="Zero Sell"
+              className="w-9 h-9 rounded-xl object-contain bg-white p-0.5 border border-white/20 shadow-md group-hover:scale-105 transition-transform"
             />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center space-x-1.5 leading-none">
-              <span className="text-base font-extrabold tracking-tight text-white font-mono uppercase">
-                ZeroSell
-              </span>
-              <span className="text-base font-extrabold tracking-tight text-[#14F195] font-mono uppercase">
-                Pay
+              <span className="text-base font-extrabold tracking-tight text-white font-sans">
+                Zero <span className="text-neutral-300">Sell</span>
               </span>
             </div>
             <span className="text-[8.5px] uppercase tracking-widest font-semibold text-neutral-400 mt-0.5 hidden sm:block">
@@ -110,8 +106,8 @@ export const Navbar: React.FC = () => {
                 to={link.path}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-white/[0.1] text-white font-semibold"
-                    : "text-gray-400 hover:text-white hover:bg-white/[0.05]"
+                    ? "bg-white/[0.12] text-white font-semibold"
+                    : "text-neutral-400 hover:text-white hover:bg-white/[0.05]"
                 }`}
               >
                 <span>{link.name}</span>
@@ -122,34 +118,34 @@ export const Navbar: React.FC = () => {
             href="https://github.com/Chigybillionz/zerosell-pay"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 rounded-full text-xs font-medium text-gray-400 hover:text-white hover:bg-white/[0.05] flex items-center space-x-1 transition-colors"
+            className="px-3.5 py-1.5 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.05] flex items-center space-x-1 transition-colors"
           >
             <span>Docs</span>
-            <ExternalLink className="w-2.5 h-2.5 text-gray-500" />
+            <ExternalLink className="w-2.5 h-2.5 text-neutral-500" />
           </a>
         </nav>
 
         {/* Right Action Cluster */}
         <div className="flex items-center space-x-2.5">
           {/* Live Pyth Oracle Ticker & Network Status */}
-          <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-[#110d1c] border border-[#2b1747] text-xs">
+          <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-xs">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/60 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
             </span>
-            <span className="text-gray-400 text-[11px]">SOL:</span>
+            <span className="text-neutral-400 text-[11px]">SOL:</span>
             <span className="font-mono font-bold text-white text-xs">
               ${solPrice.toFixed(2)}
             </span>
-            <span className="text-gray-600">•</span>
-            <span className="text-purple-300 text-[11px]">Devnet</span>
+            <span className="text-neutral-600">•</span>
+            <span className="text-neutral-300 text-[11px]">Devnet</span>
           </div>
 
           {/* Connected Wallet Devnet Balance */}
           {connected && balance !== null && (
-            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-[#110d1c] border border-[#2b1747] text-xs font-mono">
-              <span className="text-gray-400">Bal:</span>
-              <span className={balance > 0 ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
+            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-xs font-mono">
+              <span className="text-neutral-400">Bal:</span>
+              <span className="text-white font-bold">
                 {balance.toFixed(2)} SOL
               </span>
             </div>
@@ -160,16 +156,16 @@ export const Navbar: React.FC = () => {
             onClick={handleFaucet}
             disabled={airdropping}
             title="Copy wallet address & open official Solana Devnet Faucet"
-            className="flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium bg-[#1a1228] hover:bg-[#25193b] text-gray-300 border border-[#3b235d] transition-all hover:text-white cursor-pointer"
+            className="flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-700 transition-all hover:text-white cursor-pointer"
           >
             {airdropSuccess ? (
               <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-300">Copied!</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                <span className="text-white">Copied!</span>
               </>
             ) : (
               <>
-                <Droplets className="w-3.5 h-3.5 text-cyan-400" />
+                <Droplets className="w-3.5 h-3.5 text-neutral-400" />
                 <span className="hidden sm:inline">Free SOL</span>
               </>
             )}

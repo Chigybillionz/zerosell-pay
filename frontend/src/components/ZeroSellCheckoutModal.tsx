@@ -202,7 +202,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-400">Pyth SOL/USD Oracle:</span>
-                    <span className="font-mono text-emerald-400 font-semibold">
+                    <span className="font-mono text-white font-semibold">
                       ${solPrice.toFixed(2)} USD
                     </span>
                   </div>
@@ -216,14 +216,14 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-gray-400">Gas & Network Fee:</span>
-                    <span className="font-mono font-bold text-emerald-400 flex items-center space-x-1">
+                    <span className="font-mono font-bold text-white flex items-center space-x-1">
                       <span>$0.00 (Sponsored by Relayer)</span>
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-[#1e2522] flex justify-between items-center text-xs">
+                  <div className="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
                     <span className="text-gray-300 font-medium">Merchant Receives:</span>
-                    <span className="font-mono font-bold text-emerald-300 text-sm">
+                    <span className="font-mono font-bold text-white text-sm">
                       ${invoice.usdcAmount.toFixed(2)} USDC Instantly
                     </span>
                   </div>
@@ -231,19 +231,19 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 {/* Progress / Step status indicator if loading */}
                 {stepStatus && (
-                  <div className="mb-4 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center text-xs text-emerald-400 font-mono animate-pulse">
+                  <div className="mb-4 p-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-center text-xs text-white font-mono">
                     {stepStatus}
                   </div>
                 )}
 
                 {/* Error Banner with 1-click Recovery */}
                 {errorMsg && (
-                  <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-2">
+                  <div className="mb-4 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 text-xs text-neutral-300 space-y-2">
                     <div className="flex items-start space-x-2">
                       <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                       <div className="flex-1">
-                        <p className="font-semibold text-amber-200">Devnet Account Notice</p>
-                        <p className="text-[11px] text-amber-300/80 mt-0.5 leading-relaxed">
+                        <p className="font-semibold text-white">Devnet Account Notice</p>
+                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-relaxed">
                           {errorMsg.includes("debit") || errorMsg.includes("credit") || errorMsg.includes("simulation")
                             ? "Your Devnet wallet has 0 SOL to simulate transaction fees. You can claim free test SOL or continue instantly in Demo Mode."
                             : errorMsg}
@@ -255,14 +255,14 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                       <button
                         type="button"
                         onClick={() => window.open("https://faucet.solana.com", "_blank")}
-                        className="flex-1 py-1.5 px-3 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-[11px] font-semibold border border-amber-500/40 text-center transition-all cursor-pointer"
+                        className="flex-1 py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold border border-white/20 text-center transition-all cursor-pointer"
                       >
                         Claim Free Devnet SOL ↗
                       </button>
                       <button
                         type="button"
                         onClick={handleDemoConfirm}
-                        className="flex-1 py-1.5 px-3 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold border border-emerald-500/40 text-center transition-all cursor-pointer"
+                        className="flex-1 py-1.5 px-3 rounded-full bg-white hover:bg-neutral-200 text-black text-[11px] font-semibold text-center transition-all cursor-pointer"
                       >
                         Instant Demo Confirm ⚡
                       </button>
@@ -274,7 +274,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full flex items-center justify-center space-x-2 py-4 px-6 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-black text-xs uppercase tracking-wider shadow-lg transition-all disabled:opacity-50 cursor-pointer active:scale-95"
+                  className="w-full flex items-center justify-center space-x-2 py-4 px-6 rounded-full bg-white hover:bg-neutral-200 text-black font-semibold text-sm tracking-wide shadow-lg transition-all disabled:opacity-50 cursor-pointer active:scale-95"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
@@ -296,7 +296,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 <p className="text-xs text-gray-400 mt-4 text-center max-w-xs">
                   Scan with any Solana Pay compatible mobile wallet (Phantom, Solflare, Dialect) to pay via ZeroSell.
                 </p>
-                <div className="mt-3 text-[11px] text-emerald-400 font-mono">
+                <div className="mt-3 text-[11px] text-neutral-400 font-mono">
                   Standard URI: solana:{invoice.merchantPubkey.slice(0, 8)}...
                 </div>
               </div>
@@ -305,27 +305,27 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         ) : (
           /* Payment Success View */
           <div className="text-center py-4 space-y-5 animate-fade-in">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center mx-auto shadow-glow">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/40 flex items-center justify-center mx-auto shadow-lg">
+              <CheckCircle2 className="w-8 h-8 text-white" />
             </div>
 
             <div>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+              <h3 className="text-2xl font-bold text-white tracking-tight">
                 Payment Settled!
               </h3>
-              <p className="text-xs text-gray-400 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-neutral-400 mt-1 max-w-sm mx-auto">
                 Merchant received ${invoice.usdcAmount.toFixed(2)} USDC directly from the ZeroSell liquidity pool. Your {calc.formattedUnits} SOL is safely locked in your non-custodial Anchor Vault PDA.
               </p>
             </div>
 
-            <div className="bg-[#090c0a] p-4 rounded-2xl border border-[#1e2522] text-left space-y-2 text-xs">
+            <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-800 text-left space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-gray-400">Invoice:</span>
                 <span className="font-mono text-gray-200">#{invoice.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Locked Collateral:</span>
-                <span className="font-mono text-emerald-400 font-bold">
+                <span className="font-mono text-white font-bold">
                   {calc.formattedUnits} SOL
                 </span>
               </div>

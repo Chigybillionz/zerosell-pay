@@ -12,7 +12,7 @@ export const App: React.FC = () => {
   return (
     <WalletContextProvider>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen bg-black text-gray-100 selection:bg-purple-500/30 selection:text-purple-200">
+        <div className="flex flex-col min-h-screen bg-black text-gray-100 selection:bg-white/20 selection:text-white">
           <Navbar />
 
           <main className="flex-1">

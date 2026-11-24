@@ -2,7 +2,7 @@
   <img src="assets/zerosell-logo.jpg" alt="ZeroSell Pay - Spend Without Selling" width="680" />
 </p>
 
-# ⚡ ZeroSell Pay
+# ⚡ Zero Sell
 
 > **Spend Without Selling — The Liquidity Layer for Every Asset on Earth.**  
 > *Target Track: Dev3pack "Best App Overall on Solana" ($10,000 Prize)*

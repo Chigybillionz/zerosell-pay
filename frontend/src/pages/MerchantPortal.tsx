@@ -127,10 +127,10 @@ export const MerchantPortal: React.FC = () => {
       {/* Top Header */}
       <div className="space-y-3">
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-neutral-300">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
           <span>Merchant &amp; POS Engine</span>
           <span className="text-neutral-600">•</span>
-          <span className="text-violet-400">Instant USDC Settlement</span>
+          <span className="text-neutral-300">Instant USDC Settlement</span>
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
           Merchant Invoicing &amp; Streams
@@ -145,7 +145,7 @@ export const MerchantPortal: React.FC = () => {
         <div className="lg:col-span-6 bg-white/[0.02] border border-white/[0.08] rounded-3xl p-6 sm:p-8 backdrop-blur-xl hover:border-white/[0.14] transition-all shadow-2xl">
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-6">
             <h3 className="text-lg font-bold text-white flex items-center space-x-2.5">
-              <Share2 className="w-5 h-5 text-violet-400" />
+              <Share2 className="w-5 h-5 text-neutral-300" />
               <span>Create Invoice &amp; Solana Blink</span>
             </h3>
             <span className="text-[11px] font-mono text-neutral-300 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.08]">
@@ -240,12 +240,12 @@ export const MerchantPortal: React.FC = () => {
               {/* Solana Blink Link */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs text-neutral-400">
-                  <span className="font-semibold text-violet-400 flex items-center space-x-1">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <span className="font-semibold text-white flex items-center space-x-1">
+                    <Sparkles className="w-3.5 h-3.5 text-neutral-300" />
                     <span>Solana Blink (Share on X / Discord / Dialect)</span>
                   </span>
                   {copiedLink === "blink" ? (
-                    <span className="text-cyan-400 flex items-center space-x-1 font-mono">
+                    <span className="text-white flex items-center space-x-1 font-mono">
                       <Check className="w-3 h-3" />
                       <span>Copied!</span>
                     </span>
@@ -274,7 +274,7 @@ export const MerchantPortal: React.FC = () => {
                 </div>
                 <div>
                   <span className="text-xs font-bold text-white flex items-center space-x-1">
-                    <QrCode className="w-3.5 h-3.5 text-cyan-400" />
+                    <QrCode className="w-3.5 h-3.5 text-neutral-300" />
                     <span>Solana Pay QR Code</span>
                   </span>
                   <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
@@ -290,11 +290,11 @@ export const MerchantPortal: React.FC = () => {
         <div className="lg:col-span-6 bg-white/[0.02] border border-white/[0.08] rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl hover:border-white/[0.14] transition-all">
           <div className="flex items-center justify-between mb-4 border-b border-white/[0.08] pb-4">
             <h3 className="text-lg font-bold text-white flex items-center space-x-2.5">
-              <Radio className="w-5 h-5 text-cyan-400 animate-pulse" />
+              <Radio className="w-5 h-5 text-neutral-300 animate-pulse" />
               <span>Live USDC Settlement Stream</span>
             </h3>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 flex items-center space-x-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/[0.04] text-neutral-300 border border-white/[0.1] flex items-center space-x-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
               <span>Helius SSE: Active</span>
             </span>
           </div>
