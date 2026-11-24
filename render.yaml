@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: zerosell-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: SOLANA_RPC_URL
+        value: https://api.devnet.solana.com
+      - key: PROGRAM_ID
+        value: 3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv
+      - key: USDC_MINT
+        value: 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU
+      - key: WSOL_MINT
+        value: So11111111111111111111111111111111111111112
+      - key: PYTH_HERMES_URL
+        value: https://hermes.pyth.network
+      - key: FRONTEND_URL
+        sync: false
+      - key: RELAYER_KEYPAIR
+        sync: false
