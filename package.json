@@ -26,5 +26,8 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.66.0"
+  },
+  "overrides": {
+    "uuid": "^9.0.1"
   }
 }
