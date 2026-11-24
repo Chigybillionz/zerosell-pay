@@ -9,7 +9,7 @@ import {
   getLiquidityVaultPda,
   getUserLoanPositionPda,
   getCollateralVaultPda,
-} from "@zerosell/shared";
+} from "../shared/zerosell.js";
 
 export const PROGRAM_ID = ZEROSELL_PROGRAM_ID;
 export const BACKEND_URL = (import.meta as any).env?.VITE_BACKEND_URL || "http://localhost:4000";
