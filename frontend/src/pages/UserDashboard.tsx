@@ -91,20 +91,20 @@ export const UserDashboard: React.FC = () => {
     totalCollateralVal > 0 ? (totalDebtUsdc / totalCollateralVal) * 100 : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 bg-[#F8FAF9] text-[#0A0A0A]">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b-2 border-[#0A0A0A]">
         <div className="space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-neutral-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-xs font-mono font-black uppercase text-[#0A0A0A]">
+            <span className="w-2 h-2 bg-[#14F195] border border-[#0A0A0A]" />
             <span>Vault Dashboard</span>
-            <span className="text-neutral-600">•</span>
-            <span className="text-neutral-300">Non-Custodial Solana PDA</span>
+            <span className="text-[#0A0A0A]">•</span>
+            <span>Non-Custodial Solana PDA</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase text-[#0A0A0A] tracking-tight">
             Borrower Credit &amp; Vaults
           </h1>
-          <p className="text-sm sm:text-base text-neutral-400 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-neutral-600 font-medium max-w-2xl leading-relaxed">
             Monitor locked collateral, track unrealized SOL market gains, and repay loans to unlock collateral instantly.
           </p>
         </div>
@@ -112,77 +112,77 @@ export const UserDashboard: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => refreshPrices()}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.12] text-xs font-semibold text-neutral-200 hover:text-white transition-all cursor-pointer backdrop-blur-md active:scale-95"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-xs font-black uppercase tracking-wider text-[#0A0A0A] transition-all cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5 text-neutral-400" />
+            <RefreshCw className="w-3.5 h-3.5 text-[#0A0A0A] stroke-[2.5]" />
             <span>Sync Pyth Oracles</span>
           </button>
         </div>
       </div>
 
-      {/* Metrics Row: 4 key high-impact financial cards with Solana hairline dividers */}
-      <div className="bg-white/[0.02] border border-white/[0.08] rounded-2xl overflow-hidden backdrop-blur-xl shadow-2xl">
-        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-white/[0.08] text-center">
+      {/* Metrics Row: 4 key high-impact financial cards with 2px solid dividers */}
+      <div className="bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] overflow-hidden">
+        <div className="grid grid-cols-2 lg:grid-cols-4 divide-y-2 lg:divide-y-0 lg:divide-x-2 divide-[#0A0A0A] text-left">
           {/* Metric 1 */}
-          <div className="p-6 hover:bg-white/[0.02] transition-colors text-left">
-            <div className="flex items-center justify-between text-neutral-400 mb-2">
-              <span className="text-xs uppercase font-medium tracking-wider">
+          <div className="p-6 hover:bg-[#F8FAF9] transition-colors">
+            <div className="flex items-center justify-between text-neutral-600 mb-2">
+              <span className="text-xs uppercase font-black tracking-wider">
                 Locked Collateral
               </span>
-              <Lock className="w-4 h-4 text-neutral-300" />
+              <Lock className="w-4 h-4 text-[#0A0A0A] stroke-[2.5]" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-black text-[#0A0A0A] font-mono tabular-nums">
               ${totalCollateralVal.toFixed(2)}
             </div>
-            <span className="text-xs text-neutral-500 mt-1 block">
+            <span className="text-xs font-semibold text-neutral-600 mt-1 block">
               {activePositions.reduce((a, b) => a + b.collateralAmount, 0).toFixed(3)} SOL in vaults
             </span>
           </div>
 
           {/* Metric 2 */}
-          <div className="p-6 hover:bg-white/[0.02] transition-colors text-left">
-            <div className="flex items-center justify-between text-neutral-400 mb-2">
-              <span className="text-xs uppercase font-medium tracking-wider">
+          <div className="p-6 hover:bg-[#F8FAF9] transition-colors">
+            <div className="flex items-center justify-between text-neutral-600 mb-2">
+              <span className="text-xs uppercase font-black tracking-wider">
                 Active Debt
               </span>
-              <Coins className="w-4 h-4 text-neutral-300" />
+              <Coins className="w-4 h-4 text-[#0A0A0A] stroke-[2.5]" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-black text-[#0A0A0A] font-mono tabular-nums">
               ${totalDebtUsdc.toFixed(2)}
             </div>
-            <span className="text-xs text-neutral-400 mt-1 block">
+            <span className="text-xs font-semibold text-neutral-600 mt-1 block">
               USDC owed to Protocol
             </span>
           </div>
 
           {/* Metric 3 */}
-          <div className="p-6 hover:bg-white/[0.02] transition-colors text-left">
-            <div className="flex items-center justify-between text-neutral-400 mb-2">
-              <span className="text-xs uppercase font-medium tracking-wider">
+          <div className="p-6 hover:bg-[#F8FAF9] transition-colors">
+            <div className="flex items-center justify-between text-neutral-600 mb-2">
+              <span className="text-xs uppercase font-black tracking-wider">
                 Upside Preserved
               </span>
-              <TrendingUp className="w-4 h-4 text-neutral-300" />
+              <TrendingUp className="w-4 h-4 text-[#14F195] bg-[#0A0A0A] p-0.5 stroke-[2.5]" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-black text-[#0A0A0A] font-mono tabular-nums">
               +${totalGainsSaved.toFixed(2)}
             </div>
-            <span className="text-xs text-neutral-400 mt-1 block">
+            <span className="text-xs font-semibold text-neutral-600 mt-1 block">
               Saved by holding SOL
             </span>
           </div>
 
           {/* Metric 4 */}
-          <div className="p-6 hover:bg-white/[0.02] transition-colors text-left">
-            <div className="flex items-center justify-between text-neutral-400 mb-2">
-              <span className="text-xs uppercase font-medium tracking-wider">
+          <div className="p-6 hover:bg-[#F8FAF9] transition-colors">
+            <div className="flex items-center justify-between text-neutral-600 mb-2">
+              <span className="text-xs uppercase font-black tracking-wider">
                 Portfolio LTV
               </span>
-              <ShieldCheck className="w-4 h-4 text-neutral-400" />
+              <ShieldCheck className="w-4 h-4 text-[#0A0A0A] stroke-[2.5]" />
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+            <div className="text-2xl sm:text-3xl font-black text-[#0A0A0A] font-mono tabular-nums">
               {averageLtv > 0 ? `${averageLtv.toFixed(1)}%` : "N/A"}
             </div>
-            <span className="text-xs text-neutral-500 mt-1 block">
+            <span className="text-xs font-semibold text-neutral-600 mt-1 block">
               Liquidation threshold 75%
             </span>
           </div>
@@ -198,13 +198,13 @@ export const UserDashboard: React.FC = () => {
       </div>
 
       {/* Tabs: Active Locks vs Repaid History */}
-      <div className="flex items-center space-x-2 border-b border-white/[0.08] pb-4">
+      <div className="flex items-center space-x-3 pb-2">
         <button
           onClick={() => setActiveTab("active")}
-          className={`px-5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`px-5 py-2.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
             activeTab === "active"
-              ? "bg-white text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-              : "text-neutral-400 hover:text-white bg-white/[0.03] border border-white/[0.08]"
+              ? "bg-[#0A0A0A] text-white border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A]"
+              : "bg-white text-[#0A0A0A] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9]"
           }`}
         >
           Active Vault Locks ({activePositions.length})
@@ -212,10 +212,10 @@ export const UserDashboard: React.FC = () => {
 
         <button
           onClick={() => setActiveTab("history")}
-          className={`px-5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+          className={`px-5 py-2.5 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
             activeTab === "history"
-              ? "bg-white text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-              : "text-neutral-400 hover:text-white bg-white/[0.03] border border-white/[0.08]"
+              ? "bg-[#0A0A0A] text-white border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A]"
+              : "bg-white text-[#0A0A0A] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9]"
           }`}
         >
           Repaid History ({repaidPositions.length})
@@ -237,10 +237,10 @@ export const UserDashboard: React.FC = () => {
 
       {/* Empty State */}
       {(activeTab === "active" ? activePositions : repaidPositions).length === 0 && (
-        <div className="text-center py-16 bg-white/[0.02] rounded-3xl border border-dashed border-white/[0.08]">
-          <Coins className="w-10 h-10 text-neutral-600 mx-auto mb-3" />
-          <h4 className="text-base font-bold text-neutral-300">No positions found</h4>
-          <p className="text-xs text-neutral-500 mt-1">
+        <div className="text-center py-16 bg-white border-2 border-dashed border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A]">
+          <Coins className="w-10 h-10 text-neutral-400 mx-auto mb-3" />
+          <h4 className="text-base font-black uppercase text-[#0A0A0A]">No positions found</h4>
+          <p className="text-xs text-neutral-600 font-medium mt-1">
             Head to the Demo Storefront to test paying an invoice with ZeroSell.
           </p>
         </div>

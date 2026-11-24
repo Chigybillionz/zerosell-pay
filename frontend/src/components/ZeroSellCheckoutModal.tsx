@@ -70,7 +70,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ["#14F195", "#9945FF", "#00F0FF"],
+        colors: ["#14F195", "#9945FF", "#0A0A0A"],
       });
 
       const demoResult = {
@@ -118,7 +118,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ["#14F195", "#9945FF", "#00F0FF"],
+        colors: ["#14F195", "#9945FF", "#0A0A0A"],
       });
 
       setSuccessResult({
@@ -137,40 +137,40 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg bg-[#111413] border border-[#1E2522] rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+      <div className="relative w-full max-w-lg bg-white border-3 border-[#0A0A0A] p-6 sm:p-8 shadow-[8px_8px_0px_#0A0A0A] overflow-hidden text-[#0A0A0A]">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1a201c] transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 bg-white border-2 border-[#0A0A0A] text-[#0A0A0A] hover:bg-[#F8FAF9] shadow-[2px_2px_0px_#0A0A0A] transition-all cursor-pointer"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5 stroke-[2.5]" />
         </button>
 
         {!successResult ? (
           <>
             {/* Modal Header */}
             <div className="text-center mb-6">
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#181E1B] border border-[#27322B] text-[11px] font-mono font-bold text-gray-300 mb-3">
-                <ShieldCheck className="w-3.5 h-3.5 text-gray-300" />
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 bg-[#14F195] border-2 border-[#0A0A0A] text-[11px] font-mono font-black uppercase text-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] mb-3">
+                <ShieldCheck className="w-3.5 h-3.5 stroke-[2.5]" />
                 <span>ZeroSell Non-Custodial Protocol</span>
               </div>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+              <h3 className="text-2xl font-black text-[#0A0A0A] uppercase tracking-tight">
                 Pay Without Selling
               </h3>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-neutral-600 font-medium mt-1">
                 Keep 100% of your SOL upside. Settle ${invoice.usdcAmount.toFixed(2)} USDC immediately.
               </p>
             </div>
 
             {/* Mode Switch Tabs */}
-            <div className="flex bg-[#090c0a] p-1 rounded-xl border border-[#1e2522] mb-6">
+            <div className="flex bg-[#F8FAF9] p-1 border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] mb-6 gap-1">
               <button
                 onClick={() => setActiveTab("wallet")}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center space-x-2 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "wallet"
-                    ? "bg-[#181D1A] text-white border border-[#27322B]"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-[#0A0A0A] text-white border-2 border-[#0A0A0A]"
+                    : "bg-white text-[#0A0A0A] hover:bg-neutral-100 border border-transparent"
                 }`}
               >
                 <Wallet className="w-3.5 h-3.5" />
@@ -178,10 +178,10 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               </button>
               <button
                 onClick={() => setActiveTab("qr")}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`flex-1 flex items-center justify-center space-x-2 py-2 text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === "qr"
-                    ? "bg-[#181D1A] text-white border border-[#27322B]"
-                    : "text-gray-400 hover:text-white"
+                    ? "bg-[#0A0A0A] text-white border-2 border-[#0A0A0A]"
+                    : "bg-white text-[#0A0A0A] hover:bg-neutral-100 border border-transparent"
                 }`}
               >
                 <QrCode className="w-3.5 h-3.5" />
@@ -192,38 +192,38 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
             {activeTab === "wallet" ? (
               <div>
                 {/* Financial Math Breakdown Card */}
-                <div className="bg-[#090c0a] rounded-2xl p-4 border border-[#1e2522] mb-6 space-y-3">
+                <div className="bg-[#F8FAF9] p-4 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] mb-6 space-y-3 font-medium">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-400">Invoice Amount:</span>
-                    <span className="font-mono font-bold text-gray-200">
+                    <span className="text-neutral-600 uppercase font-bold">Invoice Amount:</span>
+                    <span className="font-mono font-black text-[#0A0A0A]">
                       ${invoice.usdcAmount.toFixed(2)} USDC
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-400">Pyth SOL/USD Oracle:</span>
-                    <span className="font-mono text-white font-semibold">
+                    <span className="text-neutral-600 uppercase font-bold">Pyth SOL/USD Oracle:</span>
+                    <span className="font-mono text-[#0A0A0A] font-bold">
                       ${solPrice.toFixed(2)} USD
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-400">Collateral Required (50% LTV):</span>
-                    <span className="font-mono font-bold text-gray-100">
+                    <span className="text-neutral-600 uppercase font-bold">Collateral Required (50% LTV):</span>
+                    <span className="font-mono font-black text-[#0A0A0A]">
                       {calc.formattedUnits} SOL (${calc.collateralValueUsd.toFixed(2)})
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-gray-400">Gas & Network Fee:</span>
-                    <span className="font-mono font-bold text-white flex items-center space-x-1">
+                    <span className="text-neutral-600 uppercase font-bold">Gas &amp; Network Fee:</span>
+                    <span className="font-mono font-black text-[#0A0A0A] flex items-center space-x-1">
                       <span>$0.00 (Sponsored by Relayer)</span>
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-neutral-800 flex justify-between items-center text-xs">
-                    <span className="text-gray-300 font-medium">Merchant Receives:</span>
-                    <span className="font-mono font-bold text-white text-sm">
+                  <div className="pt-2 border-t-2 border-[#0A0A0A] flex justify-between items-center text-xs">
+                    <span className="text-[#0A0A0A] font-black uppercase">Merchant Receives:</span>
+                    <span className="font-mono font-black text-[#0A0A0A] text-sm">
                       ${invoice.usdcAmount.toFixed(2)} USDC Instantly
                     </span>
                   </div>
@@ -231,19 +231,19 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 {/* Progress / Step status indicator if loading */}
                 {stepStatus && (
-                  <div className="mb-4 p-2.5 rounded-xl bg-white/[0.05] border border-white/10 text-center text-xs text-white font-mono">
+                  <div className="mb-4 p-2.5 bg-[#9945FF] text-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-center text-xs font-mono font-black uppercase">
                     {stepStatus}
                   </div>
                 )}
 
                 {/* Error Banner with 1-click Recovery */}
                 {errorMsg && (
-                  <div className="mb-4 p-3.5 rounded-2xl bg-white/[0.04] border border-white/10 text-xs text-neutral-300 space-y-2">
+                  <div className="mb-4 p-3.5 bg-red-50 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] text-xs text-[#0A0A0A] space-y-2">
                     <div className="flex items-start space-x-2">
-                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5 stroke-[2.5]" />
                       <div className="flex-1">
-                        <p className="font-semibold text-white">Devnet Account Notice</p>
-                        <p className="text-[11px] text-neutral-400 mt-0.5 leading-relaxed">
+                        <p className="font-black uppercase text-red-700">Devnet Account Notice</p>
+                        <p className="text-[11px] text-neutral-700 mt-0.5 leading-relaxed font-medium">
                           {errorMsg.includes("debit") || errorMsg.includes("credit") || errorMsg.includes("simulation")
                             ? "Your Devnet wallet has 0 SOL to simulate transaction fees. You can claim free test SOL or continue instantly in Demo Mode."
                             : errorMsg}
@@ -255,14 +255,14 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                       <button
                         type="button"
                         onClick={() => window.open("https://faucet.solana.com", "_blank")}
-                        className="flex-1 py-1.5 px-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold border border-white/20 text-center transition-all cursor-pointer"
+                        className="flex-1 py-2 px-3 bg-white hover:bg-neutral-100 text-[#0A0A0A] text-[11px] font-black uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-center transition-all cursor-pointer"
                       >
                         Claim Free Devnet SOL ↗
                       </button>
                       <button
                         type="button"
                         onClick={handleDemoConfirm}
-                        className="flex-1 py-1.5 px-3 rounded-full bg-white hover:bg-neutral-200 text-black text-[11px] font-semibold text-center transition-all cursor-pointer"
+                        className="flex-1 py-2 px-3 bg-[#14F195] hover:bg-[#0fe088] text-[#0A0A0A] text-[11px] font-black uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-center transition-all cursor-pointer"
                       >
                         Instant Demo Confirm ⚡
                       </button>
@@ -274,13 +274,13 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full flex items-center justify-center space-x-2 py-4 px-6 rounded-full bg-white hover:bg-neutral-200 text-black font-semibold text-sm tracking-wide shadow-lg transition-all disabled:opacity-50 cursor-pointer active:scale-95"
+                  className="w-full flex items-center justify-center space-x-2 py-4 px-6 bg-[#9945FF] hover:bg-[#8935ef] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-white font-black text-sm uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A] transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? (
-                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-3 border-white border-t-transparent animate-spin" />
                   ) : (
                     <>
-                      <Zap className="w-4 h-4 fill-black" />
+                      <Zap className="w-4 h-4 fill-white" />
                       <span>
                         Lock {calc.formattedUnits} SOL &amp; Pay ${invoice.usdcAmount} USDC
                       </span>
@@ -290,13 +290,13 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-4">
-                <div className="p-4 bg-white rounded-2xl shadow-lg border border-gray-700">
+                <div className="p-4 bg-white border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A]">
                   <QRCodeSVG value={solanaPayUrl} size={180} level="M" />
                 </div>
-                <p className="text-xs text-gray-400 mt-4 text-center max-w-xs">
+                <p className="text-xs text-neutral-600 font-medium mt-4 text-center max-w-xs">
                   Scan with any Solana Pay compatible mobile wallet (Phantom, Solflare, Dialect) to pay via ZeroSell.
                 </p>
-                <div className="mt-3 text-[11px] text-neutral-400 font-mono">
+                <div className="mt-3 text-[11px] text-[#0A0A0A] font-mono font-bold bg-[#F8FAF9] px-3 py-1 border border-[#0A0A0A]">
                   Standard URI: solana:{invoice.merchantPubkey.slice(0, 8)}...
                 </div>
               </div>
@@ -305,52 +305,52 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         ) : (
           /* Payment Success View */
           <div className="text-center py-4 space-y-5 animate-fade-in">
-            <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/40 flex items-center justify-center mx-auto shadow-lg">
-              <CheckCircle2 className="w-8 h-8 text-white" />
+            <div className="w-16 h-16 bg-[#14F195] border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A] flex items-center justify-center mx-auto text-[#0A0A0A]">
+              <CheckCircle2 className="w-8 h-8 stroke-[2.5]" />
             </div>
 
             <div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">
+              <h3 className="text-2xl font-black text-[#0A0A0A] uppercase tracking-tight">
                 Payment Settled!
               </h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-sm mx-auto">
+              <p className="text-xs text-neutral-600 font-medium mt-1 max-w-sm mx-auto">
                 Merchant received ${invoice.usdcAmount.toFixed(2)} USDC directly from the ZeroSell liquidity pool. Your {calc.formattedUnits} SOL is safely locked in your non-custodial Anchor Vault PDA.
               </p>
             </div>
 
-            <div className="bg-neutral-900/50 p-4 rounded-2xl border border-neutral-800 text-left space-y-2 text-xs">
+            <div className="bg-[#F8FAF9] p-4 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] text-left space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-gray-400">Invoice:</span>
-                <span className="font-mono text-gray-200">#{invoice.id}</span>
+                <span className="text-neutral-600 uppercase font-bold">Invoice:</span>
+                <span className="font-mono text-[#0A0A0A] font-bold">#{invoice.id}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Locked Collateral:</span>
-                <span className="font-mono text-white font-bold">
+                <span className="text-neutral-600 uppercase font-bold">Locked Collateral:</span>
+                <span className="font-mono text-[#0A0A0A] font-black">
                   {calc.formattedUnits} SOL
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Total Debt:</span>
-                <span className="font-mono text-gray-200">
+                <span className="text-neutral-600 uppercase font-bold">Total Debt:</span>
+                <span className="font-mono text-[#0A0A0A] font-bold">
                   ${(invoice.usdcAmount * 1.005).toFixed(2)} USDC (0.5% fee)
                 </span>
               </div>
             </div>
 
-            <div className="space-y-2 pt-2">
+            <div className="space-y-3 pt-2">
               <a
                 href={successResult.solscanUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-full bg-[#18201b] hover:bg-[#202b24] text-gray-200 text-xs font-semibold transition-colors border border-[#26352c]"
+                className="w-full flex items-center justify-center space-x-2 py-3.5 bg-white hover:bg-neutral-100 text-[#0A0A0A] text-xs font-black uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] transition-all"
               >
                 <span>View on Solscan Devnet</span>
-                <ExternalLink className="w-3.5 h-3.5 text-gray-300" />
+                <ExternalLink className="w-3.5 h-3.5 stroke-[2.5]" />
               </a>
 
               <button
                 onClick={onClose}
-                className="w-full py-3.5 rounded-full bg-white hover:bg-gray-100 text-black font-extrabold text-xs uppercase tracking-wider shadow-sm transition-colors cursor-pointer"
+                className="w-full py-3.5 bg-[#9945FF] hover:bg-[#8935ef] text-white font-black text-xs uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] transition-all cursor-pointer"
               >
                 Close &amp; View Vault Dashboard
               </button>
@@ -361,4 +361,3 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
     </div>
   );
 };
-

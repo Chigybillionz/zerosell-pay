@@ -40,30 +40,30 @@ export const FloatingAssistant: React.FC = () => {
       <div className="fixed bottom-6 right-6 z-40">
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center space-x-2.5 px-4 py-2.5 rounded-full bg-neutral-900/90 hover:bg-neutral-800 border border-neutral-700 text-white text-xs font-semibold shadow-2xl backdrop-blur-xl transition-all hover:scale-105 active:scale-95 group cursor-pointer"
+          className="flex items-center space-x-2.5 px-4 py-2.5 bg-white hover:bg-[#F8FAF9] border-2 border-[#0A0A0A] text-[#0A0A0A] text-xs font-black uppercase shadow-[4px_4px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#0A0A0A] transition-all group cursor-pointer"
         >
-          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center">
-            <Sparkles className="w-2.5 h-2.5 text-white" />
+          <div className="w-5 h-5 bg-[#9945FF] flex items-center justify-center border border-[#0A0A0A]">
+            <Sparkles className="w-3 h-3 text-white" />
           </div>
-          <span className="tracking-wide">Zero Sell Guide</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="tracking-wider">Zero Sell Guide</span>
+          <span className="w-2 h-2 bg-[#14F195] border border-[#0A0A0A]" />
         </button>
       </div>
 
       {/* 2. Interactive Assistant Slide-over Drawer */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md h-full bg-neutral-950 border-l border-neutral-800 p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+          <div className="w-full max-w-md h-full bg-white border-l-3 border-[#0A0A0A] p-6 flex flex-col justify-between shadow-[-8px_0px_0px_#0A0A0A] overflow-y-auto text-[#0A0A0A]">
             {/* Header */}
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-neutral-800">
+              <div className="flex items-center justify-between pb-4 border-b-2 border-[#0A0A0A]">
                 <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center">
+                  <div className="w-8 h-8 bg-[#9945FF] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-white">Zero Sell Protocol Guide</h3>
-                    <p className="text-[11px] text-neutral-400">Instant answers on loans, collateral &amp; oracles</p>
+                    <h3 className="text-sm font-black uppercase tracking-tight text-[#0A0A0A]">Zero Sell Protocol Guide</h3>
+                    <p className="text-[11px] font-medium text-neutral-600">Instant answers on loans, collateral &amp; oracles</p>
                   </div>
                 </div>
 
@@ -72,9 +72,9 @@ export const FloatingAssistant: React.FC = () => {
                     setIsOpen(false);
                     setSelectedFaq(null);
                   }}
-                  className="p-1.5 rounded-full text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors cursor-pointer"
+                  className="p-1.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-[#0A0A0A] hover:bg-[#F8FAF9] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 stroke-[2.5]" />
                 </button>
               </div>
 
@@ -84,19 +84,19 @@ export const FloatingAssistant: React.FC = () => {
                   <div className="space-y-4 animate-fade-in">
                     <button
                       onClick={() => setSelectedFaq(null)}
-                      className="text-xs text-neutral-400 hover:text-white flex items-center space-x-1 font-medium cursor-pointer"
+                      className="text-xs font-black uppercase text-neutral-600 hover:text-black flex items-center space-x-1 cursor-pointer"
                     >
                       <span>← Back to questions</span>
                     </button>
 
-                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08] space-y-2">
-                      <h4 className="text-sm font-bold text-white">{selectedFaq.q}</h4>
-                      <p className="text-xs text-neutral-300 leading-relaxed">{selectedFaq.a}</p>
+                    <div className="p-4 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] space-y-2">
+                      <h4 className="text-sm font-black uppercase text-[#0A0A0A]">{selectedFaq.q}</h4>
+                      <p className="text-xs text-neutral-700 leading-relaxed font-medium">{selectedFaq.a}</p>
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
-                    <span className="text-[11px] uppercase font-bold tracking-wider text-neutral-400 block mb-1">
+                    <span className="text-[11px] uppercase font-black tracking-wider text-neutral-600 block mb-1">
                       Frequently Asked Questions
                     </span>
                     {FAQ_ITEMS.map((item, idx) => {
@@ -105,17 +105,17 @@ export const FloatingAssistant: React.FC = () => {
                         <button
                           key={idx}
                           onClick={() => setSelectedFaq(item)}
-                          className="w-full p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.08] hover:border-white/20 text-left transition-all flex items-center justify-between group cursor-pointer"
+                          className="w-full p-3.5 bg-[#F8FAF9] hover:bg-white border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[4px_4px_0px_#0A0A0A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[2px_2px_0px_#0A0A0A] text-left transition-all flex items-center justify-between group cursor-pointer"
                         >
                           <div className="flex items-center space-x-3">
-                            <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                              <Icon className="w-3.5 h-3.5 text-neutral-300" />
+                            <div className="w-7 h-7 bg-white border border-[#0A0A0A] flex items-center justify-center shrink-0">
+                              <Icon className="w-3.5 h-3.5 text-[#0A0A0A]" />
                             </div>
-                            <span className="text-xs font-medium text-neutral-200 group-hover:text-white">
+                            <span className="text-xs font-black uppercase text-[#0A0A0A]">
                               {item.q}
                             </span>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-neutral-500 group-hover:text-white transition-colors shrink-0 ml-2" />
+                          <ChevronRight className="w-4 h-4 text-[#0A0A0A] stroke-[2.5] shrink-0 ml-2" />
                         </button>
                       );
                     })}
@@ -125,8 +125,8 @@ export const FloatingAssistant: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="pt-4 border-t border-neutral-800 text-center">
-              <span className="text-[11px] text-neutral-500">
+            <div className="pt-4 border-t-2 border-[#0A0A0A] text-center">
+              <span className="text-[11px] font-mono font-bold uppercase text-neutral-600">
                 Zero Sell Protocol Smart Contracts on Solana Devnet
               </span>
             </div>

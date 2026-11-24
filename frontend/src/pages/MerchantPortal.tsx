@@ -123,39 +123,39 @@ export const MerchantPortal: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 bg-[#F8FAF9] text-[#0A0A0A]">
       {/* Top Header */}
-      <div className="space-y-3">
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-neutral-300">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+      <div className="space-y-3 pb-6 border-b-2 border-[#0A0A0A]">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-xs font-mono font-black uppercase text-[#0A0A0A]">
+          <span className="w-2 h-2 bg-[#14F195] border border-[#0A0A0A]" />
           <span>Merchant &amp; POS Engine</span>
-          <span className="text-neutral-600">•</span>
-          <span className="text-neutral-300">Instant USDC Settlement</span>
+          <span className="text-[#0A0A0A]">•</span>
+          <span>Instant USDC Settlement</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black uppercase text-[#0A0A0A] tracking-tight">
           Merchant Invoicing &amp; Streams
         </h1>
-        <p className="text-sm sm:text-base text-neutral-400 max-w-2xl leading-relaxed">
+        <p className="text-sm sm:text-base text-neutral-600 font-medium max-w-2xl leading-relaxed">
           Generate ZeroSell checkout invoices, shareable Solana Blinks for X (Twitter), and track live Helius SSE settlement streams.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Invoice & Blink Generator */}
-        <div className="lg:col-span-6 bg-white/[0.02] border border-white/[0.08] rounded-3xl p-6 sm:p-8 backdrop-blur-xl hover:border-white/[0.14] transition-all shadow-2xl">
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-6">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2.5">
-              <Share2 className="w-5 h-5 text-neutral-300" />
+        <div className="lg:col-span-6 bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] p-6 sm:p-8 space-y-6 text-[#0A0A0A]">
+          <div className="flex items-center justify-between border-b-2 border-[#0A0A0A] pb-4">
+            <h3 className="text-lg font-black uppercase text-[#0A0A0A] flex items-center space-x-2.5">
+              <Share2 className="w-5 h-5 text-[#9945FF] stroke-[2.5]" />
               <span>Create Invoice &amp; Solana Blink</span>
             </h3>
-            <span className="text-[11px] font-mono text-neutral-300 bg-white/[0.04] px-2.5 py-1 rounded-full border border-white/[0.08]">
+            <span className="text-[11px] font-mono font-black uppercase text-[#0A0A0A] bg-[#14F195] px-2.5 py-1 border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]">
               Devnet Ready
             </span>
           </div>
 
           <form onSubmit={handleCreateInvoice} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-black text-[#0A0A0A] uppercase tracking-wider mb-2">
                 Invoice Title
               </label>
               <input
@@ -163,13 +163,13 @@ export const MerchantPortal: React.FC = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                className="w-full bg-black/60 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
+                className="w-full bg-[#F8FAF9] border-2 border-[#0A0A0A] px-4 py-3 text-sm text-[#0A0A0A] font-medium placeholder-neutral-400 focus:outline-none focus:bg-white shadow-[2px_2px_0px_#0A0A0A] transition-all"
                 placeholder="e.g. Web Development Invoice"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-black text-[#0A0A0A] uppercase tracking-wider mb-2">
                 Description / Line Items
               </label>
               <input
@@ -177,18 +177,18 @@ export const MerchantPortal: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
-                className="w-full bg-black/60 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
+                className="w-full bg-[#F8FAF9] border-2 border-[#0A0A0A] px-4 py-3 text-sm text-[#0A0A0A] font-medium placeholder-neutral-400 focus:outline-none focus:bg-white shadow-[2px_2px_0px_#0A0A0A] transition-all"
                 placeholder="Brief summary for customer"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-black text-[#0A0A0A] uppercase tracking-wider mb-2">
                   USDC Amount
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-3 text-neutral-500 font-medium">$</span>
+                  <span className="absolute left-3.5 top-3.5 text-neutral-500 font-bold">$</span>
                   <input
                     type="number"
                     step="0.01"
@@ -196,13 +196,13 @@ export const MerchantPortal: React.FC = () => {
                     value={usdcAmount}
                     onChange={(e) => setUsdcAmount(parseFloat(e.target.value))}
                     required
-                    className="w-full bg-black/60 border border-white/[0.08] rounded-xl pl-8 pr-4 py-3 text-sm text-white font-mono placeholder-neutral-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
+                    className="w-full bg-[#F8FAF9] border-2 border-[#0A0A0A] pl-8 pr-4 py-3 text-sm text-[#0A0A0A] font-mono font-bold placeholder-neutral-400 focus:outline-none focus:bg-white shadow-[2px_2px_0px_#0A0A0A] transition-all"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-black text-[#0A0A0A] uppercase tracking-wider mb-2">
                   Merchant Address
                 </label>
                 <input
@@ -210,7 +210,7 @@ export const MerchantPortal: React.FC = () => {
                   value={merchantPubkey}
                   onChange={(e) => setMerchantPubkey(e.target.value)}
                   required
-                  className="w-full bg-black/60 border border-white/[0.08] rounded-xl px-4 py-3 text-xs text-white font-mono placeholder-neutral-500 focus:outline-none focus:border-white/30 focus:ring-1 focus:ring-white/20 transition-all"
+                  className="w-full bg-[#F8FAF9] border-2 border-[#0A0A0A] px-4 py-3 text-xs text-[#0A0A0A] font-mono font-bold placeholder-neutral-400 focus:outline-none focus:bg-white shadow-[2px_2px_0px_#0A0A0A] transition-all"
                   placeholder="Solana Wallet Address"
                 />
               </div>
@@ -218,35 +218,35 @@ export const MerchantPortal: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3.5 px-6 rounded-full bg-white hover:bg-neutral-200 text-black font-semibold text-sm transition-all flex items-center justify-center space-x-2 shadow-[0_0_24px_rgba(255,255,255,0.15)] active:scale-[0.98] cursor-pointer"
+              className="w-full py-4 px-6 bg-[#9945FF] hover:bg-[#8935ef] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-white font-black text-sm uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A] transition-all flex items-center justify-center space-x-2 cursor-pointer"
             >
-              <Zap className="w-4 h-4 fill-black" />
+              <Zap className="w-4 h-4 fill-white" />
               <span>Generate ZeroSell Invoice &amp; Blink</span>
             </button>
           </form>
 
           {/* Generated Shareable Links Box */}
           {createdInvoice && (
-            <div className="mt-6 pt-6 border-t border-white/[0.08] space-y-4">
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.08]">
-                <span className="text-xs font-bold text-white block mb-1">
+            <div className="mt-6 pt-6 border-t-2 border-[#0A0A0A] space-y-4">
+              <div className="p-4 bg-[#14F195]/20 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A]">
+                <span className="text-xs font-black uppercase text-[#0A0A0A] block mb-1">
                   🎉 Invoice #{createdInvoice.id} Generated!
                 </span>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-neutral-700 font-medium">
                   Customers can now pay this invoice using ZeroSell to keep their crypto upside while you receive guaranteed USDC immediately.
                 </p>
               </div>
 
               {/* Solana Blink Link */}
               <div className="space-y-1.5">
-                <div className="flex justify-between text-xs text-neutral-400">
-                  <span className="font-semibold text-white flex items-center space-x-1">
-                    <Sparkles className="w-3.5 h-3.5 text-neutral-300" />
+                <div className="flex justify-between text-xs text-[#0A0A0A]">
+                  <span className="font-black uppercase flex items-center space-x-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[#9945FF]" />
                     <span>Solana Blink (Share on X / Discord / Dialect)</span>
                   </span>
                   {copiedLink === "blink" ? (
-                    <span className="text-white flex items-center space-x-1 font-mono">
-                      <Check className="w-3 h-3" />
+                    <span className="text-[#0A0A0A] bg-[#14F195] px-2 py-0.5 border border-[#0A0A0A] flex items-center space-x-1 font-mono font-bold text-[11px]">
+                      <Check className="w-3 h-3 stroke-[3]" />
                       <span>Copied!</span>
                     </span>
                   ) : null}
@@ -256,28 +256,28 @@ export const MerchantPortal: React.FC = () => {
                     type="text"
                     readOnly
                     value={createdInvoice.blinkUrl}
-                    className="flex-1 bg-black/60 border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-neutral-300 focus:outline-none"
+                    className="flex-1 bg-[#F8FAF9] border-2 border-[#0A0A0A] px-3 py-2.5 text-xs font-mono font-medium text-[#0A0A0A] focus:outline-none"
                   />
                   <button
                     onClick={() => copyToClipboard(createdInvoice.blinkUrl, "blink")}
-                    className="p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-white transition-colors cursor-pointer"
+                    className="p-2.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#0A0A0A] transition-all cursor-pointer"
                   >
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-4 h-4 stroke-[2.5]" />
                   </button>
                 </div>
               </div>
 
               {/* Solana Pay QR Code */}
-              <div className="p-4 bg-white/[0.02] rounded-2xl border border-white/[0.08] flex items-center space-x-4">
-                <div className="p-2.5 bg-white rounded-xl shadow-lg">
+              <div className="p-4 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] flex items-center space-x-4">
+                <div className="p-2.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]">
                   <QRCodeSVG value={createdInvoice.solanaPayUri} size={90} />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-white flex items-center space-x-1">
-                    <QrCode className="w-3.5 h-3.5 text-neutral-300" />
+                  <span className="text-xs font-black uppercase text-[#0A0A0A] flex items-center space-x-1">
+                    <QrCode className="w-3.5 h-3.5 text-[#9945FF] stroke-[2.5]" />
                     <span>Solana Pay QR Code</span>
                   </span>
-                  <p className="text-xs text-neutral-400 mt-1 leading-relaxed">
+                  <p className="text-xs text-neutral-600 font-medium mt-1 leading-relaxed">
                     Display at your POS terminal or on desktop invoices for instant mobile checkout.
                   </p>
                 </div>
@@ -287,19 +287,19 @@ export const MerchantPortal: React.FC = () => {
         </div>
 
         {/* Right Column: Live Settlement Feed (SSE Webhook Stream) */}
-        <div className="lg:col-span-6 bg-white/[0.02] border border-white/[0.08] rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl hover:border-white/[0.14] transition-all">
-          <div className="flex items-center justify-between mb-4 border-b border-white/[0.08] pb-4">
-            <h3 className="text-lg font-bold text-white flex items-center space-x-2.5">
-              <Radio className="w-5 h-5 text-neutral-300 animate-pulse" />
+        <div className="lg:col-span-6 bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] p-6 sm:p-8 space-y-6 text-[#0A0A0A]">
+          <div className="flex items-center justify-between border-b-2 border-[#0A0A0A] pb-4">
+            <h3 className="text-lg font-black uppercase text-[#0A0A0A] flex items-center space-x-2.5">
+              <Radio className="w-5 h-5 text-[#9945FF] animate-pulse stroke-[2.5]" />
               <span>Live USDC Settlement Stream</span>
             </h3>
-            <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/[0.04] text-neutral-300 border border-white/[0.1] flex items-center space-x-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+            <span className="px-2.5 py-1 text-[11px] font-mono font-black uppercase bg-[#14F195] text-[#0A0A0A] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] flex items-center space-x-1.5">
+              <span className="w-2 h-2 bg-[#0A0A0A] animate-ping" />
               <span>Helius SSE: Active</span>
             </span>
           </div>
 
-          <p className="text-xs text-neutral-400 mb-6">
+          <p className="text-xs text-neutral-600 font-medium">
             Real-time on-chain confirmation stream of USDC disbursements issued to merchant settlement accounts on Solana Devnet.
           </p>
 
@@ -307,18 +307,18 @@ export const MerchantPortal: React.FC = () => {
             {settlements.map((item, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.14] transition-all flex items-start justify-between group"
+                className="p-4 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[4px_4px_0px_#0A0A0A] transition-all flex items-start justify-between group"
               >
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-semibold text-cyan-400">
+                    <span className="text-xs font-black uppercase text-[#0A0A0A] bg-[#14F195] px-2 py-0.5 border border-[#0A0A0A]">
                       Settlement Confirmed
                     </span>
-                    <span className="text-[10px] text-neutral-500 font-mono">
+                    <span className="text-[10px] text-neutral-600 font-mono font-bold">
                       {new Date(item.timestamp).toLocaleTimeString()}
                     </span>
                   </div>
-                  <p className="text-xs font-medium text-neutral-200">
+                  <p className="text-xs font-black uppercase text-[#0A0A0A] pt-0.5">
                     {item.description}
                   </p>
                   <span className="text-[11px] font-mono text-neutral-500 block truncate max-w-xs">
@@ -330,9 +330,9 @@ export const MerchantPortal: React.FC = () => {
                   href={item.solscanUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-neutral-400 hover:text-white transition-colors"
+                  className="p-2 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9] text-[#0A0A0A] transition-all"
                 >
-                  <ExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-4 h-4 stroke-[2.5]" />
                 </a>
               </div>
             ))}

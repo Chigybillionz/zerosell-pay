@@ -71,31 +71,31 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-black/80 backdrop-blur-xl border-b border-white/[0.08]">
+    <header className="sticky top-0 z-50 w-full bg-white border-b-2 border-[#0A0A0A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/checkout" className="flex items-center space-x-3 group">
-          <div className="relative">
+          <div className="relative border-2 border-[#0A0A0A] bg-white p-0.5 shadow-[2px_2px_0px_#0A0A0A]">
             <img
               src="/zerosell-logo.jpg"
               alt="Zero Sell"
-              className="w-9 h-9 rounded-xl object-contain bg-white p-0.5 border border-white/20 shadow-md group-hover:scale-105 transition-transform"
+              className="w-8 h-8 object-contain"
             />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center space-x-1.5 leading-none">
-              <span className="text-base font-extrabold tracking-tight text-white font-sans">
-                Zero <span className="text-neutral-300">Sell</span>
+              <span className="text-base font-black tracking-tight text-[#0A0A0A] uppercase font-sans">
+                Zero <span className="text-[#9945FF]">Sell</span>
               </span>
             </div>
-            <span className="text-[8.5px] uppercase tracking-widest font-semibold text-neutral-400 mt-0.5 hidden sm:block">
+            <span className="text-[9px] uppercase tracking-widest font-black text-[#0A0A0A] mt-0.5 hidden sm:block">
               Spend Without Selling
             </span>
           </div>
         </Link>
 
-        {/* Navigation Tabs (Solana-style minimalist links) */}
-        <nav className="hidden md:flex items-center space-x-1">
+        {/* Navigation Tabs (Swiss / Neo-Brutalist minimalist links) */}
+        <nav className="hidden md:flex items-center space-x-2">
           {navLinks.map((link) => {
             const isActive =
               location.pathname === link.path ||
@@ -104,10 +104,10 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                className={`px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider transition-all duration-150 border-2 ${
                   isActive
-                    ? "bg-white/[0.12] text-white font-semibold"
-                    : "text-neutral-400 hover:text-white hover:bg-white/[0.05]"
+                    ? "bg-[#0A0A0A] text-white border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]"
+                    : "bg-white text-[#0A0A0A] border-transparent hover:border-[#0A0A0A] hover:bg-[#F8FAF9]"
                 }`}
               >
                 <span>{link.name}</span>
@@ -118,36 +118,33 @@ export const Navbar: React.FC = () => {
             href="https://github.com/Chigybillionz/zerosell-pay"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/[0.05] flex items-center space-x-1 transition-colors"
+            className="px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0A0A0A] border-2 border-transparent hover:border-[#0A0A0A] hover:bg-[#F8FAF9] flex items-center space-x-1 transition-all"
           >
             <span>Docs</span>
-            <ExternalLink className="w-2.5 h-2.5 text-neutral-500" />
+            <ExternalLink className="w-3 h-3 text-[#0A0A0A]" />
           </a>
         </nav>
 
         {/* Right Action Cluster */}
         <div className="flex items-center space-x-2.5">
           {/* Live Pyth Oracle Ticker & Network Status */}
-          <div className="hidden lg:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/60 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-            </span>
-            <span className="text-neutral-400 text-[11px]">SOL:</span>
-            <span className="font-mono font-bold text-white text-xs">
+          <div className="hidden lg:flex items-center space-x-2 px-3 py-1 bg-white border-2 border-[#0A0A0A] text-xs shadow-[2px_2px_0px_#0A0A0A]">
+            <span className="w-2 h-2 bg-[#14F195] border border-[#0A0A0A] shrink-0" />
+            <span className="text-[#0A0A0A] text-[11px] font-bold uppercase">SOL:</span>
+            <span className="font-mono font-bold text-[#0A0A0A] text-xs tabular-nums">
               ${solPrice.toFixed(2)}
             </span>
-            <span className="text-neutral-600">•</span>
-            <span className="text-neutral-300 text-[11px]">Devnet</span>
+            <span className="text-[#0A0A0A]">•</span>
+            <span className="bg-[#9945FF] text-white text-[10px] font-bold uppercase px-1.5 py-0.2 border border-[#0A0A0A]">
+              Devnet
+            </span>
           </div>
 
           {/* Connected Wallet Devnet Balance */}
           {connected && balance !== null && (
-            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-neutral-900/80 border border-neutral-800 text-xs font-mono">
-              <span className="text-neutral-400">Bal:</span>
-              <span className="text-white font-bold">
-                {balance.toFixed(2)} SOL
-              </span>
+            <div className="hidden md:flex items-center space-x-1.5 px-3 py-1 bg-[#14F195] border-2 border-[#0A0A0A] text-xs font-mono font-bold text-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] tabular-nums">
+              <span className="text-[#0A0A0A] uppercase font-sans">Bal:</span>
+              <span>{balance.toFixed(2)} SOL</span>
             </div>
           )}
 
@@ -156,16 +153,16 @@ export const Navbar: React.FC = () => {
             onClick={handleFaucet}
             disabled={airdropping}
             title="Copy wallet address & open official Solana Devnet Faucet"
-            className="flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-700 transition-all hover:text-white cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold uppercase tracking-wider bg-white hover:bg-[#F8FAF9] text-[#0A0A0A] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
           >
             {airdropSuccess ? (
               <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                <span className="text-white">Copied!</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#0A0A0A]" />
+                <span className="text-[#0A0A0A]">Copied!</span>
               </>
             ) : (
               <>
-                <Droplets className="w-3.5 h-3.5 text-neutral-400" />
+                <Droplets className="w-3.5 h-3.5 text-[#0A0A0A]" />
                 <span className="hidden sm:inline">Free SOL</span>
               </>
             )}

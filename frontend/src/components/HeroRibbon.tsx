@@ -3,95 +3,42 @@ import React from "react";
 export const HeroRibbon: React.FC = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-      {/* 1. Deep Atmospheric Subtle Ambient Lighting */}
-      <div className="absolute -top-32 right-0 w-[700px] h-[700px] bg-gradient-to-br from-white/[0.03] to-transparent rounded-full blur-[140px]" />
-      <div className="absolute top-1/3 -right-20 w-[550px] h-[550px] bg-gradient-to-bl from-neutral-800/20 to-transparent rounded-full blur-[130px]" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[400px] bg-gradient-to-tr from-white/[0.02] to-transparent rounded-full blur-[120px]" />
+      {/* 1. Swiss / Neo-Brutalist Technical Grid Matrix */}
+      <div 
+        className="absolute inset-0 opacity-[0.25]" 
+        style={{
+          backgroundImage: "linear-gradient(to right, #0A0A0A 1px, transparent 1px), linear-gradient(to bottom, #0A0A0A 1px, transparent 1px)",
+          backgroundSize: "60px 60px"
+        }}
+      />
 
-      {/* 2. Abstract 3D Luminous Ribbon Wave (SVG Vector with metallic gradient highlights) */}
+      {/* 2. Architectural Accent Vectors */}
       <svg
-        className="absolute right-0 top-1/2 -translate-y-[45%] w-[1000px] h-[600px] max-w-none opacity-85 mix-blend-screen"
-        viewBox="0 0 1000 600"
+        className="absolute right-0 top-1/2 -translate-y-[45%] w-[900px] h-[550px] max-w-none opacity-90"
+        viewBox="0 0 900 550"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <defs>
-          {/* Main tube body gradient (Refined deep obsidian to chrome) */}
-          <linearGradient id="tubeBody" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stopColor="#171717" stopOpacity="0.4" />
-            <stop offset="25%" stopColor="#262626" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#404040" stopOpacity="0.9" />
-            <stop offset="75%" stopColor="#262626" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#171717" stopOpacity="0.6" />
-          </linearGradient>
-
-          {/* Top specular ridge light (Glossy glass reflection) */}
-          <linearGradient id="ridgeLight" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="20%" stopColor="#e5e5e5" stopOpacity="0.6" />
-            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.95" />
-            <stop offset="70%" stopColor="#d4d4d4" stopOpacity="0.7" />
-            <stop offset="90%" stopColor="#a3a3a3" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-          </linearGradient>
-
-          {/* Bottom subtle reflection line */}
-          <linearGradient id="underGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.1" />
-            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.3" />
-            <stop offset="85%" stopColor="#a3a3a3" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#525252" stopOpacity="0.2" />
-          </linearGradient>
-
-          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="14" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-
-        {/* Outer ambient glow path */}
+        {/* Hard drop shadow line */}
         <path
-          d="M 50,480 C 180,480 220,120 400,240 C 580,360 620,100 800,220 C 890,280 940,160 1020,130"
-          stroke="url(#underGlow)"
-          strokeWidth="38"
-          strokeLinecap="round"
-          filter="url(#softGlow)"
-          opacity="0.45"
-        />
-
-        {/* Main 3D Tube Body */}
-        <path
-          d="M 50,480 C 180,480 220,120 400,240 C 580,360 620,100 800,220 C 890,280 940,160 1020,130"
-          stroke="url(#tubeBody)"
-          strokeWidth="20"
-          strokeLinecap="round"
-          className="transition-all duration-700"
-        />
-
-        {/* Secondary inner contour reflection */}
-        <path
-          d="M 50,480 C 180,480 220,120 400,240 C 580,360 620,100 800,220 C 890,280 940,160 1020,130"
-          stroke="url(#underGlow)"
+          d="M 50,450 C 180,450 220,130 400,250 C 580,370 620,110 800,230 L 860,170"
+          stroke="#0A0A0A"
           strokeWidth="10"
-          strokeLinecap="round"
-          opacity="0.75"
+          strokeLinecap="square"
         />
-
-        {/* Sharp Specular Ridge Highlight (The signature glossy glass edge) */}
+        {/* Solana Vivid Violet Core Line */}
         <path
-          d="M 50,480 C 180,480 220,120 400,240 C 580,360 620,100 800,220 C 890,280 940,160 1020,130"
-          stroke="url(#ridgeLight)"
-          strokeWidth="3.5"
-          strokeLinecap="round"
+          d="M 44,444 C 174,444 214,124 394,244 C 574,364 614,104 794,224 L 854,164"
+          stroke="#9945FF"
+          strokeWidth="8"
+          strokeLinecap="square"
         />
-
-        {/* Additional intersecting orbital curve for depth */}
+        {/* Solana Mint Signal Accent */}
         <path
-          d="M 200,560 C 350,560 420,380 620,440 C 820,500 880,320 1020,310"
-          stroke="url(#underGlow)"
-          strokeWidth="5"
-          strokeDasharray="8 12"
-          opacity="0.35"
+          d="M 38,438 C 168,438 208,118 388,238 C 568,358 608,98 788,218 L 848,158"
+          stroke="#14F195"
+          strokeWidth="3"
+          strokeLinecap="square"
         />
       </svg>
     </div>
