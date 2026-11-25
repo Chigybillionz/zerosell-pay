@@ -86,9 +86,9 @@ flowchart TD
 
 ## 🔑 On-Chain Addresses (Devnet)
 
-- **zerosell_vault Program ID**: `3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv`
-- **ProtocolConfig PDA**: `[b"protocol_config"]`
-- **USDC Liquidity Vault PDA**: `[b"liquidity_vault"]`
+- **zerosell_vault Program ID**: `FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs`
+- **ProtocolConfig PDA**: `4dDHE2Vco8AtNbvW2q9mUnH4b4QnWyQRNrJkifJbkGeT`
+- **USDC Liquidity Vault PDA**: `FsRUbgmFkYTxfr5nBRfFoid6VUgJzMm4tCite1izSVuS`
 - **UserLoanPosition PDA**: `[b"user_position", borrower, invoice_id]`
 - **CollateralVault PDA**: `[b"collateral_vault", borrower, invoice_id]`
 - **Devnet USDC Mint**: `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU`
