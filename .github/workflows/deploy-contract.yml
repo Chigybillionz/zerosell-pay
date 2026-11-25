@@ -28,12 +28,27 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Set up Anchor, Solana CLI, and Node.js
-        uses: metadaoproject/setup-anchor@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          anchor-version: '0.30.1'
-          solana-cli-version: '1.18.26'
-          node-version: '20'
+          node-version: 20
+
+      - name: Cache Solana CLI
+        uses: actions/cache@v4
+        id: cache-solana
+        with:
+          path: ~/.local/share/solana/
+          key: ${{ runner.os }}-solana-v1.18.26
+
+      - name: Install Solana CLI (Anza v1.18.26)
+        if: steps.cache-solana.outputs.cache-hit != 'true'
+        run: sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.26/install)"
+
+      - name: Add Solana to PATH
+        run: echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+
+      - name: Install Anchor CLI (Pre-built v0.30.1)
+        run: npm install -g @coral-xyz/anchor-cli@0.30.1
 
       - name: Verify Solana, Anchor & Node Versions
         run: |
