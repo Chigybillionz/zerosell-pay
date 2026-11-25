@@ -86,6 +86,7 @@ async function main() {
     process.exit(1);
   }
   const idl = JSON.parse(fs.readFileSync(idlPath, "utf-8"));
+  idl.address = PROGRAM_ID.toBase58();
 
   const provider = new AnchorProvider(connection, new Wallet(deployer), {
     commitment: "confirmed",

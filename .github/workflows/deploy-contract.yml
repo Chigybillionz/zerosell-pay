@@ -11,10 +11,14 @@ on:
         options:
           - devnet
           - testnet
+      rpc_url:
+        description: "Custom RPC URL (optional, defaults to public cluster RPC)"
+        required: false
+        default: ""
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -24,41 +28,20 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Cache Solana & Anchor binaries
-        uses: actions/cache@v4
-        id: cache-solana-anchor
+      - name: Set up Anchor, Solana CLI, and Node.js
+        uses: metadaoproject/setup-anchor@v3
         with:
-          path: |
-            ~/.local/share/solana
-            ~/.cargo/bin/anchor
-            ~/.cargo/bin/avm
-          key: ${{ runner.os }}-solana-1.18.26-anchor-0.30.1
+          anchor-version: '0.30.1'
+          solana-cli-version: '1.18.26'
+          node-version: '20'
 
-      - name: Install Solana CLI
-        if: steps.cache-solana-anchor.outputs.cache-hit != 'true'
+      - name: Verify Solana, Anchor & Node Versions
         run: |
-          sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.26/install)"
-          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+          solana --version
+          anchor --version
+          node --version
 
-      - name: Add Solana to PATH
-        run: echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
-
-      - name: Verify Solana Version
-        run: solana --version
-
-      - name: Install Anchor CLI (v0.30.1)
-        if: steps.cache-solana-anchor.outputs.cache-hit != 'true'
-        run: |
-          cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli --locked --force
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Add Cargo to PATH
-        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-
-      - name: Verify Anchor Version
-        run: anchor --version
-
-      - name: Setup Deployer Keypair
+      - name: Setup Deployer Keypair & RPC
         run: |
           mkdir -p ~/.config/solana
           if [ -n "${{ secrets.DEPLOYER_KEYPAIR }}" ]; then
@@ -68,45 +51,66 @@ jobs:
             solana-keygen new --no-bip39-passphrase -o ~/.config/solana/id.json --force
             echo "⚠️ Generated fresh deployer keypair."
           fi
-          solana config set --url https://api.${{ inputs.cluster }}.solana.com
+          
+          RPC_ENDPOINT="${{ inputs.rpc_url }}"
+          if [ -z "$RPC_ENDPOINT" ]; then
+            RPC_ENDPOINT="https://api.${{ inputs.cluster }}.solana.com"
+          fi
+          echo "RPC_URL=$RPC_ENDPOINT" >> $GITHUB_ENV
+          
+          solana config set --url "$RPC_ENDPOINT"
           solana config set --keypair ~/.config/solana/id.json
           echo "Deployer Address: $(solana address)"
 
       - name: Fund Deployer Wallet via Devnet Faucet
         run: |
           DEPLOYER=$(solana address)
-          echo "Funding $DEPLOYER..."
-          solana airdrop 2 $DEPLOYER || true
+          echo "Deployer: $DEPLOYER"
+          echo "Requesting devnet SOL airdrop..."
+          solana airdrop 2 $DEPLOYER || solana airdrop 1 $DEPLOYER || true
           sleep 5
-          solana airdrop 2 $DEPLOYER || true
+          solana airdrop 2 $DEPLOYER || solana airdrop 1 $DEPLOYER || true
           sleep 5
-          solana airdrop 2 $DEPLOYER || true
           solana balance
+
+      - name: Prepare Program Keypair & Sync Keys
+        run: |
+          mkdir -p target/deploy
+          PROGRAM_KEYPAIR="target/deploy/zerosell_vault-keypair.json"
+          if [ -n "${{ secrets.PROGRAM_KEYPAIR }}" ]; then
+            echo "${{ secrets.PROGRAM_KEYPAIR }}" > "$PROGRAM_KEYPAIR"
+            echo "✅ Loaded program keypair from GitHub Secrets."
+          elif [ ! -f "$PROGRAM_KEYPAIR" ]; then
+            solana-keygen new --no-bip39-passphrase -o "$PROGRAM_KEYPAIR" --force
+            echo "⚠️ Generated fresh program keypair."
+          fi
+          PROGRAM_ID=$(solana address -k "$PROGRAM_KEYPAIR")
+          echo "Target Program ID: $PROGRAM_ID"
+          echo "PROGRAM_ID=$PROGRAM_ID" >> $GITHUB_ENV
+          
+          # Sync program ID in lib.rs and Anchor.toml
+          anchor keys sync
 
       - name: Build Anchor Smart Contract
         run: |
           anchor build
           ls -la target/deploy/
 
+      - name: Sync Generated IDL
+        run: |
+          if [ -f "target/idl/zerosell_vault.json" ]; then
+            cp target/idl/zerosell_vault.json backend/src/idl/zerosell_vault.json
+            cp target/idl/zerosell_vault.json frontend/src/idl/zerosell_vault.json
+            echo "✅ Synchronized target/idl/zerosell_vault.json to backend & frontend"
+          fi
+
       - name: Deploy zerosell_vault Program
         id: deploy
         run: |
           PROGRAM_KEYPAIR="target/deploy/zerosell_vault-keypair.json"
-          if [ ! -f "$PROGRAM_KEYPAIR" ]; then
-            solana-keygen new --no-bip39-passphrase -o "$PROGRAM_KEYPAIR" --force
-          fi
-          PROGRAM_ID=$(solana address -k "$PROGRAM_KEYPAIR")
-          echo "Target Program ID: $PROGRAM_ID"
-          echo "PROGRAM_ID=$PROGRAM_ID" >> $GITHUB_ENV
-          
           solana program deploy \
             --program-id "$PROGRAM_KEYPAIR" \
             target/deploy/zerosell_vault.so
-
-      - name: Setup Node.js Environment
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
 
       - name: Install Node Dependencies
         run: npm install
@@ -114,12 +118,13 @@ jobs:
       - name: Initialize Protocol On-Chain (ProtocolConfig & LiquidityVault)
         env:
           PROGRAM_ID: ${{ env.PROGRAM_ID }}
-          SOLANA_RPC_URL: "https://api.${{ inputs.cluster }}.solana.com"
+          SOLANA_RPC_URL: ${{ env.RPC_URL }}
           ANCHOR_WALLET: "/home/runner/.config/solana/id.json"
         run: |
-          node backend/node_modules/tsx/dist/cli.mjs scripts/init_protocol.ts
+          npm run init:protocol || npx tsx scripts/init_protocol.ts
 
       - name: Deployment Summary
+        if: always()
         run: |
           echo "### 🚀 ZeroSell Smart Contract Deployed to Solana ${{ inputs.cluster }}!" >> $GITHUB_STEP_SUMMARY
           echo "- **Program ID:** \`${{ env.PROGRAM_ID }}\`" >> $GITHUB_STEP_SUMMARY
