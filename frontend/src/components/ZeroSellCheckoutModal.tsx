@@ -48,6 +48,8 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   const { executeGaslessCheckout, loading } = useZeroSellProgram();
 
   const [activeTab, setActiveTab] = useState<"wallet" | "qr">("wallet");
+  const [editableAmount, setEditableAmount] = useState<number>(invoice.usdcAmount);
+  const [isEditingAmount, setIsEditingAmount] = useState<boolean>(false);
   const [successResult, setSuccessResult] = useState<{
     signature: string;
     solscanUrl: string;
@@ -56,13 +58,21 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   const [stepStatus, setStepStatus] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Sync internal editable amount when incoming invoice changes
+  React.useEffect(() => {
+    setEditableAmount(invoice.usdcAmount);
+    setIsEditingAmount(false);
+  }, [invoice.usdcAmount, invoice.id]);
+
   if (!isOpen) return null;
 
+  const currentUsdcAmount = editableAmount > 0 ? editableAmount : invoice.usdcAmount;
+
   // Real-time calculation based on Pyth price and 50% LTV
-  const calc = calculateCollateralNeeded(invoice.usdcAmount, "SOL", 50.0);
+  const calc = calculateCollateralNeeded(currentUsdcAmount, "SOL", 50.0);
 
   // Solana Pay URL (spec compliant)
-  const solanaPayUrl = `solana:${invoice.merchantPubkey}?amount=${invoice.usdcAmount}&spl-token=4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU&reference=${invoice.id}&label=ZeroSell+Pay&message=${encodeURIComponent(
+  const solanaPayUrl = `solana:${invoice.merchantPubkey}?amount=${currentUsdcAmount}&spl-token=4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU&reference=${invoice.id}&label=ZeroSell+Pay&message=${encodeURIComponent(
     invoice.title
   )}`;
 
@@ -113,7 +123,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
       setStepStatus("2/3 Sponsoring Gas with Relayer...");
       const result = await executeGaslessCheckout({
         merchantPubkey: invoice.merchantPubkey,
-        usdcAmount: invoice.usdcAmount,
+        usdcAmount: currentUsdcAmount,
         invoiceId: invoice.id,
       });
 
@@ -141,7 +151,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         collateralMint: "So11111111111111111111111111111111111111112",
         collateralAmount: collateralAmt,
         collateralAmountRaw: Math.floor(collateralAmt * 1e9).toString(),
-        debtUsdcAmount: invoice.usdcAmount,
+        debtUsdcAmount: currentUsdcAmount,
         entryPriceUsd: solPrice,
         currentCollateralValueUsd: collateralAmt * solPrice,
         currentLtvPercent: 50.0,
@@ -161,7 +171,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         signature: result.signature,
         invoiceId: invoice.id,
         title: invoice.title,
-        usdcAmount: invoice.usdcAmount,
+        usdcAmount: currentUsdcAmount,
         collateralAmount: collateralAmt,
         collateralMint: "SOL",
         borrower: borrowerKey,
@@ -213,7 +223,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 Pay Without Selling
               </h3>
               <p className="text-xs text-neutral-600 font-medium mt-1">
-                Keep 100% of your SOL upside. Settle ${invoice.usdcAmount.toFixed(2)} USDC immediately.
+                Keep 100% of your SOL upside. Settle ${currentUsdcAmount.toFixed(2)} USDC immediately.
               </p>
             </div>
 
@@ -249,9 +259,47 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="bg-[#F8FAF9] p-4 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] mb-6 space-y-3 font-medium">
                   <div className="flex justify-between items-center text-xs">
                     <span className="text-neutral-600 uppercase font-bold">Invoice Amount:</span>
-                    <span className="font-mono font-black text-[#0A0A0A]">
-                      ${invoice.usdcAmount.toFixed(2)} USDC
-                    </span>
+                    {isEditingAmount ? (
+                      <div className="flex items-center space-x-1.5">
+                        <div className="relative flex items-center">
+                          <span className="absolute left-2 text-xs font-mono font-black text-neutral-400">$</span>
+                          <input
+                            type="number"
+                            min="1"
+                            step="any"
+                            value={editableAmount || ""}
+                            onChange={(e) => {
+                              const v = parseFloat(e.target.value);
+                              setEditableAmount(isNaN(v) ? 0 : v);
+                            }}
+                            className="w-24 pl-5 pr-2 py-1 bg-white border-2 border-[#0A0A0A] font-mono font-black text-xs text-[#0A0A0A] shadow-[1px_1px_0px_#0A0A0A] focus:outline-none"
+                            autoFocus
+                          />
+                        </div>
+                        <span className="text-[10px] font-bold text-neutral-500 uppercase">USDC</span>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingAmount(false)}
+                          className="px-2 py-0.5 bg-[#14F195] text-[#0A0A0A] border-2 border-[#0A0A0A] font-mono font-bold text-[10px] uppercase shadow-[1px_1px_0px_#0A0A0A] cursor-pointer"
+                        >
+                          Set
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <span className="font-mono font-black text-[#0A0A0A]">
+                          ${currentUsdcAmount.toFixed(2)} USDC
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setIsEditingAmount(true)}
+                          className="text-[10px] uppercase font-mono font-black text-[#9945FF] hover:underline cursor-pointer bg-purple-50 px-1.5 py-0.5 border border-[#9945FF]/30"
+                          title="Click to edit amount"
+                        >
+                          Edit ✎
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-between items-center text-xs">
@@ -278,7 +326,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="pt-2 border-t-2 border-[#0A0A0A] flex justify-between items-center text-xs">
                     <span className="text-[#0A0A0A] font-black uppercase">Merchant Receives:</span>
                     <span className="font-mono font-black text-[#0A0A0A] text-sm">
-                      ${invoice.usdcAmount.toFixed(2)} USDC Instantly
+                      ${currentUsdcAmount.toFixed(2)} USDC Instantly
                     </span>
                   </div>
                 </div>
@@ -336,7 +384,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
                     <>
                       <Zap className="w-4 h-4 fill-white" />
                       <span>
-                        Lock {calc.formattedUnits} SOL &amp; Pay ${invoice.usdcAmount} USDC
+                        Lock {calc.formattedUnits} SOL &amp; Pay ${currentUsdcAmount.toFixed(2)} USDC
                       </span>
                     </>
                   )}

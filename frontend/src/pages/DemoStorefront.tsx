@@ -17,6 +17,8 @@ import {
   Info,
   Check,
   HelpCircle,
+  Edit3,
+  DollarSign,
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { ZeroSellCheckoutModal } from "../components/ZeroSellCheckoutModal.js";
@@ -84,6 +86,9 @@ export const DemoStorefront: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const [selectedInvoice, setSelectedInvoice] = useState(DEMO_INVOICES[0]);
+  const [isCustomMode, setIsCustomMode] = useState(false);
+  const [customUsdcAmount, setCustomUsdcAmount] = useState<number>(75.0);
+  const [customTitle, setCustomTitle] = useState<string>("Custom Merchant Invoice");
   const [modalOpen, setModalOpen] = useState(false);
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
 
@@ -106,26 +111,32 @@ export const DemoStorefront: React.FC = () => {
       if (invoiceId) {
         const found = DEMO_INVOICES.find((i) => i.id === invoiceId);
         if (found) {
+          setIsCustomMode(false);
           setSelectedInvoice(found);
           setModalOpen(true);
         }
       } else if (amount && merchant) {
-        setSelectedInvoice({
-          id: Math.floor(100000 + Math.random() * 900000),
-          title: title || "Custom Checkout Invoice",
-          category: "Direct Checkout",
-          description: "ZeroSell collateralized invoice",
-          usdcAmount: amount,
-          merchantPubkey: merchant,
-          vendorName: "Merchant POS",
-          dueDate: "Immediate",
-        });
+        setIsCustomMode(true);
+        setCustomUsdcAmount(amount);
+        if (title) setCustomTitle(title);
         setModalOpen(true);
       }
     }
   }, [searchParams]);
 
-  const calc = calculateCollateralNeeded(selectedInvoice.usdcAmount, "SOL", 50.0);
+  const customInvoice = {
+    id: 999123,
+    title: customTitle || "Custom Merchant Invoice",
+    category: "Custom POS",
+    description: "User-defined invoice for live Devnet collateral demonstration",
+    usdcAmount: customUsdcAmount > 0 ? customUsdcAmount : 1,
+    merchantPubkey: "MrcHnt1111111111111111111111111111111111111",
+    vendorName: "ZeroSell Custom POS",
+    dueDate: "Immediate",
+  };
+
+  const activeInvoice = isCustomMode ? customInvoice : selectedInvoice;
+  const calc = calculateCollateralNeeded(activeInvoice.usdcAmount, "SOL", 50.0);
 
   const scrollToCheckout = () => {
     const el = document.getElementById("checkout-experience");
@@ -165,36 +176,142 @@ export const DemoStorefront: React.FC = () => {
           <div className="bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] p-6 sm:p-8 space-y-6">
             {/* Invoice Selector Pills */}
             <div>
-              <label className="block text-xs font-black text-[#0A0A0A] uppercase tracking-wider mb-2.5">
-                Select Demo Invoice
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-center justify-between mb-2.5">
+                <label className="text-xs font-black text-[#0A0A0A] uppercase tracking-wider">
+                  Select Demo Invoice or Set Custom Amount
+                </label>
+                <span className="text-[11px] font-mono font-bold text-[#9945FF]">
+                  100% Non-Custodial
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {DEMO_INVOICES.map((inv) => {
-                  const isSelected = selectedInvoice.id === inv.id;
+                  const isSelected = !isCustomMode && selectedInvoice.id === inv.id;
                   return (
                     <button
                       key={inv.id}
-                      onClick={() => setSelectedInvoice(inv)}
-                      className={`p-4 border-2 border-[#0A0A0A] text-left transition-all cursor-pointer ${
+                      onClick={() => {
+                        setIsCustomMode(false);
+                        setSelectedInvoice(inv);
+                      }}
+                      className={`p-3.5 border-2 border-[#0A0A0A] text-left transition-all cursor-pointer ${
                         isSelected
                           ? "bg-[#9945FF] text-white shadow-[3px_3px_0px_#0A0A0A] translate-x-[-1px] translate-y-[-1px]"
                           : "bg-white text-[#0A0A0A] hover:bg-[#F8FAF9] shadow-[2px_2px_0px_#0A0A0A]"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className={`text-xs font-black uppercase truncate max-w-[120px] ${isSelected ? "text-white" : "text-[#0A0A0A]"}`}>
+                        <span className={`text-xs font-black uppercase truncate max-w-[90px] ${isSelected ? "text-white" : "text-[#0A0A0A]"}`}>
                           {inv.title}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-white shrink-0 stroke-[3]" />}
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white shrink-0 stroke-[3]" />}
                       </div>
                       <div className={`text-sm font-mono font-black ${isSelected ? "text-white" : "text-[#0A0A0A]"}`}>
                         ${inv.usdcAmount.toFixed(2)}{" "}
-                        <span className={`text-[10px] font-sans uppercase font-bold ${isSelected ? "text-white/80" : "text-neutral-500"}`}>USDC</span>
+                        <span className={`text-[9px] font-sans uppercase font-bold ${isSelected ? "text-white/80" : "text-neutral-500"}`}>USDC</span>
                       </div>
                     </button>
                   );
                 })}
+
+                {/* 4th Card: Custom Amount */}
+                <button
+                  onClick={() => setIsCustomMode(true)}
+                  className={`p-3.5 border-2 border-[#0A0A0A] text-left transition-all cursor-pointer ${
+                    isCustomMode
+                      ? "bg-[#14F195] text-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] translate-x-[-1px] translate-y-[-1px]"
+                      : "bg-white text-[#0A0A0A] hover:bg-[#F8FAF9] shadow-[2px_2px_0px_#0A0A0A]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-black uppercase truncate max-w-[90px] text-[#0A0A0A]">
+                      Custom Amount
+                    </span>
+                    {isCustomMode ? (
+                      <Check className="w-3.5 h-3.5 text-[#0A0A0A] shrink-0 stroke-[3]" />
+                    ) : (
+                      <Edit3 className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+                    )}
+                  </div>
+                  <div className="text-sm font-mono font-black text-[#0A0A0A]">
+                    ${customUsdcAmount.toFixed(2)}{" "}
+                    <span className="text-[9px] font-sans uppercase font-bold text-neutral-600">USDC</span>
+                  </div>
+                </button>
               </div>
+
+              {/* Interactive Custom Invoice Box */}
+              {isCustomMode && (
+                <div className="mt-3.5 p-4 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] space-y-3 animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-black uppercase text-[#0A0A0A] flex items-center space-x-1.5">
+                      <Edit3 className="w-3.5 h-3.5 text-[#9945FF]" />
+                      <span>Enter Any USDC Amount</span>
+                    </label>
+                    <span className="text-[10px] font-bold text-neutral-500 uppercase">
+                      Instant Pyth Oracle Math
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                    <div className="relative flex-1">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-mono font-black text-neutral-400">
+                        $
+                      </span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="100000"
+                        step="any"
+                        value={customUsdcAmount || ""}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          setCustomUsdcAmount(isNaN(val) ? 0 : Math.max(0, val));
+                        }}
+                        placeholder="e.g. 75.00"
+                        className="w-full pl-8 pr-16 py-2.5 bg-white border-2 border-[#0A0A0A] font-mono font-black text-base text-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#9945FF]"
+                      />
+                      <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-black uppercase text-neutral-500">
+                        USDC
+                      </span>
+                    </div>
+
+                    {/* Quick Preset Buttons */}
+                    <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 sm:pb-0">
+                      {[10, 25, 75, 150, 500, 1000].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setCustomUsdcAmount(preset)}
+                          className={`px-2.5 py-2 text-xs font-mono font-black border-2 border-[#0A0A0A] shadow-[1px_1px_0px_#0A0A0A] transition-all cursor-pointer ${
+                            customUsdcAmount === preset
+                              ? "bg-[#0A0A0A] text-white"
+                              : "bg-white text-[#0A0A0A] hover:bg-neutral-100"
+                          }`}
+                        >
+                          ${preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Optional Custom Item Title */}
+                  <div className="pt-2 border-t border-dashed border-neutral-300 flex items-center space-x-2">
+                    <span className="text-[10px] font-black uppercase text-neutral-500 whitespace-nowrap">
+                      Invoice Title:
+                    </span>
+                    <input
+                      type="text"
+                      value={customTitle}
+                      onChange={(e) => setCustomTitle(e.target.value)}
+                      placeholder="e.g. Freelance Web3 Invoice"
+                      maxLength={50}
+                      className="flex-1 px-2.5 py-1 text-xs font-semibold bg-white border border-[#0A0A0A] text-[#0A0A0A] focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Summary Card */}
@@ -202,12 +319,12 @@ export const DemoStorefront: React.FC = () => {
               <div className="flex items-center justify-between pb-3 border-b-2 border-[#0A0A0A]">
                 <div>
                   <span className="text-[11px] text-neutral-500 uppercase tracking-wider block font-bold">Billed By</span>
-                  <span className="text-sm font-black text-[#0A0A0A] uppercase">{selectedInvoice.vendorName}</span>
+                  <span className="text-sm font-black text-[#0A0A0A] uppercase">{activeInvoice.vendorName}</span>
                 </div>
                 <div className="text-right">
                   <span className="text-[11px] text-neutral-500 uppercase tracking-wider block font-bold">Merchant Gets</span>
                   <span className="text-lg font-black text-[#0A0A0A] font-mono">
-                    ${selectedInvoice.usdcAmount.toFixed(2)}{" "}
+                    ${activeInvoice.usdcAmount.toFixed(2)}{" "}
                     <span className="text-xs text-neutral-600 font-sans font-bold">USDC</span>
                   </span>
                 </div>
@@ -240,7 +357,7 @@ export const DemoStorefront: React.FC = () => {
                 className="w-full py-4 px-6 bg-[#9945FF] hover:bg-[#8935ef] text-white border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_#0A0A0A] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none font-black text-sm uppercase tracking-wider flex items-center justify-center space-x-2 transition-all cursor-pointer"
               >
                 <Zap className="w-4 h-4 fill-white" />
-                <span>Pay ${selectedInvoice.usdcAmount.toFixed(2)} USDC (Keep SOL)</span>
+                <span>Pay ${activeInvoice.usdcAmount.toFixed(2)} USDC (Keep SOL)</span>
                 <ArrowRight className="w-4 h-4 ml-1 stroke-[3]" />
               </button>
 
@@ -423,7 +540,7 @@ export const DemoStorefront: React.FC = () => {
       <ZeroSellCheckoutModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        invoice={selectedInvoice}
+        invoice={activeInvoice}
         onSuccess={(res) => {
           console.log("Payment successful:", res);
         }}
@@ -440,7 +557,7 @@ export const DemoStorefront: React.FC = () => {
               Are you sure you want to sell your SOL?
             </h3>
             <p className="text-xs text-neutral-700 leading-relaxed font-medium">
-              Selling {calc.formattedUnits} SOL locks in a taxable event and permanently gives away future bull run upside. ZeroSell Pay lets you pay the exact same ${selectedInvoice.usdcAmount} USDC while keeping your SOL!
+              Selling {calc.formattedUnits} SOL locks in a taxable event and permanently gives away future bull run upside. ZeroSell Pay lets you pay the exact same ${activeInvoice.usdcAmount.toFixed(2)} USDC while keeping your SOL!
             </p>
             <div className="flex space-x-3 pt-2">
               <button
