@@ -85,13 +85,36 @@ jobs:
       - name: Fund Deployer Wallet via Devnet Faucet
         run: |
           DEPLOYER=$(solana address)
-          echo "Deployer: $DEPLOYER"
-          echo "Requesting devnet SOL airdrop..."
-          solana airdrop 2 $DEPLOYER || solana airdrop 1 $DEPLOYER || true
-          sleep 5
-          solana airdrop 2 $DEPLOYER || solana airdrop 1 $DEPLOYER || true
-          sleep 5
-          solana balance
+          echo "Deployer Address: $DEPLOYER"
+          
+          # Check current balance
+          BAL=$(solana balance | awk '{print $1}')
+          echo "Current balance: $BAL SOL"
+          
+          # Attempt airdrops if balance is below 2.2 SOL
+          for i in 1 2 3 4 5; do
+            CURRENT=$(solana balance | awk '{print $1}')
+            HAS_ENOUGH=$(awk -v b="$CURRENT" 'BEGIN {print (b >= 2.2) ? 1 : 0}')
+            if [ "$HAS_ENOUGH" -eq 1 ]; then
+              echo "✅ Sufficient balance: $CURRENT SOL"
+              break
+            fi
+            echo "Attempt $i: Requesting devnet SOL airdrop for $DEPLOYER..."
+            solana airdrop 2 $DEPLOYER --url https://api.devnet.solana.com || \
+            solana airdrop 1 $DEPLOYER --url https://api.devnet.solana.com || \
+            solana airdrop 2 $DEPLOYER || true
+            sleep 6
+          done
+          
+          FINAL_BAL=$(solana balance | awk '{print $1}')
+          echo "Final Deployer Balance: $FINAL_BAL SOL"
+          
+          HAS_ENOUGH=$(awk -v b="$FINAL_BAL" 'BEGIN {print (b >= 2.0) ? 1 : 0}')
+          if [ "$HAS_ENOUGH" -eq 0 ]; then
+            echo "::error::Deployer $DEPLOYER has only $FINAL_BAL SOL. Deployment requires ~2.0 SOL for account rent."
+            echo "👉 Recommended Solution: Add GitHub Secret 'DEPLOYER_KEYPAIR' with a pre-funded devnet wallet, or request devnet SOL at https://faucet.solana.com/?address=$DEPLOYER"
+            exit 1
+          fi
 
       - name: Prepare Program Keypair & Sync Keys
         run: |

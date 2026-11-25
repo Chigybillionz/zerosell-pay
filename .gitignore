@@ -19,6 +19,7 @@ out/
 .env.test.local
 .env.production.local
 *.keypair.json
+deployer-keypair.json
 id.json
 
 # Logs
