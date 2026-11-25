@@ -23,7 +23,7 @@ pub struct LiquidateOrSettle<'info> {
         seeds = [PROTOCOL_CONFIG_SEED],
         bump = protocol_config.bump
     )]
-    pub protocol_config: Account<'info, ProtocolConfig>,
+    pub protocol_config: Box<Account<'info, ProtocolConfig>>,
 
     #[account(
         mut,
@@ -35,29 +35,29 @@ pub struct LiquidateOrSettle<'info> {
         bump = user_loan_position.bump,
         has_one = borrower @ ZeroSellError::Unauthorized
     )]
-    pub user_loan_position: Account<'info, UserLoanPosition>,
+    pub user_loan_position: Box<Account<'info, UserLoanPosition>>,
 
-    pub collateral_mint: Account<'info, Mint>,
+    pub collateral_mint: Box<Account<'info, Mint>>,
 
     #[account(
         mut,
         constraint = liquidator_usdc_ata.mint == protocol_config.usdc_mint @ ZeroSellError::InvalidCollateralAccount,
         constraint = liquidator_usdc_ata.owner == liquidator.key() @ ZeroSellError::Unauthorized
     )]
-    pub liquidator_usdc_ata: Account<'info, TokenAccount>,
+    pub liquidator_usdc_ata: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         address = protocol_config.liquidity_vault @ ZeroSellError::InvalidCollateralAccount
     )]
-    pub liquidity_vault: Account<'info, TokenAccount>,
+    pub liquidity_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         constraint = liquidator_collateral_ata.mint == user_loan_position.collateral_mint @ ZeroSellError::CollateralMintMismatch,
         constraint = liquidator_collateral_ata.owner == liquidator.key() @ ZeroSellError::Unauthorized
     )]
-    pub liquidator_collateral_ata: Account<'info, TokenAccount>,
+    pub liquidator_collateral_ata: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
@@ -68,7 +68,7 @@ pub struct LiquidateOrSettle<'info> {
         ],
         bump
     )]
-    pub collateral_vault: Account<'info, TokenAccount>,
+    pub collateral_vault: Box<Account<'info, TokenAccount>>,
 
     pub token_program: Program<'info, Token>,
 }

@@ -30,7 +30,7 @@ pub struct LockCollateralAndPay<'info> {
         seeds = [PROTOCOL_CONFIG_SEED],
         bump = protocol_config.bump
     )]
-    pub protocol_config: Account<'info, ProtocolConfig>,
+    pub protocol_config: Box<Account<'info, ProtocolConfig>>,
 
     #[account(
         init,
@@ -43,16 +43,16 @@ pub struct LockCollateralAndPay<'info> {
         ],
         bump
     )]
-    pub user_loan_position: Account<'info, UserLoanPosition>,
+    pub user_loan_position: Box<Account<'info, UserLoanPosition>>,
 
-    pub collateral_mint: Account<'info, Mint>,
+    pub collateral_mint: Box<Account<'info, Mint>>,
 
     #[account(
         mut,
         constraint = borrower_collateral_ata.mint == collateral_mint.key() @ ZeroSellError::InvalidCollateralAccount,
         constraint = borrower_collateral_ata.owner == borrower.key() @ ZeroSellError::Unauthorized
     )]
-    pub borrower_collateral_ata: Account<'info, TokenAccount>,
+    pub borrower_collateral_ata: Box<Account<'info, TokenAccount>>,
 
     #[account(
         init,
@@ -66,27 +66,27 @@ pub struct LockCollateralAndPay<'info> {
         ],
         bump
     )]
-    pub collateral_vault: Account<'info, TokenAccount>,
+    pub collateral_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         address = protocol_config.liquidity_vault @ ZeroSellError::InvalidCollateralAccount
     )]
-    pub liquidity_vault: Account<'info, TokenAccount>,
+    pub liquidity_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         constraint = merchant_usdc_ata.mint == protocol_config.usdc_mint @ ZeroSellError::InvalidCollateralAccount,
         constraint = merchant_usdc_ata.owner == merchant.key() @ ZeroSellError::Unauthorized
     )]
-    pub merchant_usdc_ata: Account<'info, TokenAccount>,
+    pub merchant_usdc_ata: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         constraint = treasury_usdc_ata.mint == protocol_config.usdc_mint @ ZeroSellError::InvalidCollateralAccount,
         constraint = treasury_usdc_ata.owner == treasury.key() @ ZeroSellError::InvalidTreasury
     )]
-    pub treasury_usdc_ata: Account<'info, TokenAccount>,
+    pub treasury_usdc_ata: Box<Account<'info, TokenAccount>>,
 
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
