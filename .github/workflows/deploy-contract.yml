@@ -1,0 +1,127 @@
+name: Deploy ZeroSell Contract to Devnet
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster:
+        description: "Solana Cluster"
+        required: true
+        default: "devnet"
+        type: choice
+        options:
+          - devnet
+          - testnet
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Cache Solana & Anchor binaries
+        uses: actions/cache@v4
+        id: cache-solana-anchor
+        with:
+          path: |
+            ~/.local/share/solana
+            ~/.cargo/bin/anchor
+            ~/.cargo/bin/avm
+          key: ${{ runner.os }}-solana-1.18.26-anchor-0.30.1
+
+      - name: Install Solana CLI
+        if: steps.cache-solana-anchor.outputs.cache-hit != 'true'
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/v1.18.26/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+
+      - name: Add Solana to PATH
+        run: echo "$HOME/.local/share/solana/install/active_release/bin" >> $GITHUB_PATH
+
+      - name: Verify Solana Version
+        run: solana --version
+
+      - name: Install Anchor CLI (v0.30.1)
+        if: steps.cache-solana-anchor.outputs.cache-hit != 'true'
+        run: |
+          cargo install --git https://github.com/coral-xyz/anchor --tag v0.30.1 anchor-cli --locked --force
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Add Cargo to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Verify Anchor Version
+        run: anchor --version
+
+      - name: Setup Deployer Keypair
+        run: |
+          mkdir -p ~/.config/solana
+          if [ -n "${{ secrets.DEPLOYER_KEYPAIR }}" ]; then
+            echo "${{ secrets.DEPLOYER_KEYPAIR }}" > ~/.config/solana/id.json
+            echo "✅ Loaded deployer keypair from GitHub Secrets."
+          else
+            solana-keygen new --no-bip39-passphrase -o ~/.config/solana/id.json --force
+            echo "⚠️ Generated fresh deployer keypair."
+          fi
+          solana config set --url https://api.${{ inputs.cluster }}.solana.com
+          solana config set --keypair ~/.config/solana/id.json
+          echo "Deployer Address: $(solana address)"
+
+      - name: Fund Deployer Wallet via Devnet Faucet
+        run: |
+          DEPLOYER=$(solana address)
+          echo "Funding $DEPLOYER..."
+          solana airdrop 2 $DEPLOYER || true
+          sleep 5
+          solana airdrop 2 $DEPLOYER || true
+          sleep 5
+          solana airdrop 2 $DEPLOYER || true
+          solana balance
+
+      - name: Build Anchor Smart Contract
+        run: |
+          anchor build
+          ls -la target/deploy/
+
+      - name: Deploy zerosell_vault Program
+        id: deploy
+        run: |
+          PROGRAM_KEYPAIR="target/deploy/zerosell_vault-keypair.json"
+          if [ ! -f "$PROGRAM_KEYPAIR" ]; then
+            solana-keygen new --no-bip39-passphrase -o "$PROGRAM_KEYPAIR" --force
+          fi
+          PROGRAM_ID=$(solana address -k "$PROGRAM_KEYPAIR")
+          echo "Target Program ID: $PROGRAM_ID"
+          echo "PROGRAM_ID=$PROGRAM_ID" >> $GITHUB_ENV
+          
+          solana program deploy \
+            --program-id "$PROGRAM_KEYPAIR" \
+            target/deploy/zerosell_vault.so
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Node Dependencies
+        run: npm install
+
+      - name: Initialize Protocol On-Chain (ProtocolConfig & LiquidityVault)
+        env:
+          PROGRAM_ID: ${{ env.PROGRAM_ID }}
+          SOLANA_RPC_URL: "https://api.${{ inputs.cluster }}.solana.com"
+          ANCHOR_WALLET: "/home/runner/.config/solana/id.json"
+        run: |
+          node backend/node_modules/tsx/dist/cli.mjs scripts/init_protocol.ts
+
+      - name: Deployment Summary
+        run: |
+          echo "### 🚀 ZeroSell Smart Contract Deployed to Solana ${{ inputs.cluster }}!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Program ID:** \`${{ env.PROGRAM_ID }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployer Wallet:** \`$(solana address)\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Explorer Link:** [View on Solscan](https://solscan.io/account/${{ env.PROGRAM_ID }}?cluster=${{ inputs.cluster }})" >> $GITHUB_STEP_SUMMARY

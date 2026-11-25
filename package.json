@@ -17,7 +17,8 @@
     "test": "node backend/node_modules/tsx/dist/cli.mjs --test tests/zerosell_protocol.test.ts tests/backend_api.test.ts",
     "test:unit": "node backend/node_modules/tsx/dist/cli.mjs --test tests/zerosell_protocol.test.ts",
     "test:e2e": "node backend/node_modules/tsx/dist/cli.mjs --test tests/backend_api.test.ts",
-    "test:contract": "node backend/node_modules/tsx/dist/cli.mjs tests/zerosell_vault.ts"
+    "test:contract": "node backend/node_modules/tsx/dist/cli.mjs tests/zerosell_vault.ts",
+    "init:protocol": "node backend/node_modules/tsx/dist/cli.mjs scripts/init_protocol.ts"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
