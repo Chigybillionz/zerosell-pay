@@ -5,10 +5,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-zerosell_vault = "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv"
+zerosell_vault = "FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs"
 
 [programs.localnet]
-zerosell_vault = "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv"
+zerosell_vault = "FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs"
 
 [registry]
 url = "https://api.apr.dev"

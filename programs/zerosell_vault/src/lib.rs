@@ -8,7 +8,7 @@ pub mod utils;
 
 use instructions::*;
 
-declare_id!("3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv");
+declare_id!("FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs");
 
 #[macro_export]
 macro_rules! assert_not_paused {

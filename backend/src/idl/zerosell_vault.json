@@ -1,5 +1,5 @@
 {
-  "address": "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv",
+  "address": "FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs",
   "metadata": {
     "name": "zerosell_vault",
     "version": "0.1.0",
@@ -9,7 +9,7 @@
   "instructions": [
     {
       "name": "initialize_protocol",
-      "discriminator": [95, 180, 10, 172, 84, 173, 99, 244],
+      "discriminator": [188, 233, 252, 106, 134, 146, 202, 91],
       "accounts": [
         { "name": "admin", "writable": true, "signer": true },
         { "name": "treasury", "writable": false, "signer": false },
@@ -28,7 +28,7 @@
     },
     {
       "name": "fund_liquidity",
-      "discriminator": [35, 14, 187, 85, 252, 91, 111, 237],
+      "discriminator": [92, 113, 223, 209, 191, 118, 31, 8],
       "accounts": [
         { "name": "funder", "writable": true, "signer": true },
         { "name": "protocol_config", "writable": false, "signer": false },
@@ -42,7 +42,7 @@
     },
     {
       "name": "lock_collateral_and_pay",
-      "discriminator": [121, 62, 161, 74, 98, 203, 14, 219],
+      "discriminator": [138, 251, 183, 124, 166, 45, 99, 63],
       "accounts": [
         { "name": "borrower", "writable": true, "signer": true },
         { "name": "merchant", "writable": false, "signer": false },
@@ -70,7 +70,7 @@
     },
     {
       "name": "repay_and_unlock",
-      "discriminator": [211, 18, 117, 197, 246, 172, 89, 73],
+      "discriminator": [72, 172, 136, 49, 85, 245, 115, 28],
       "accounts": [
         { "name": "borrower", "writable": true, "signer": true },
         { "name": "protocol_config", "writable": true, "signer": false },
@@ -88,7 +88,7 @@
     },
     {
       "name": "liquidate_or_settle",
-      "discriminator": [116, 219, 119, 172, 191, 101, 151, 115],
+      "discriminator": [39, 117, 139, 179, 78, 141, 64, 170],
       "accounts": [
         { "name": "liquidator", "writable": true, "signer": true },
         { "name": "borrower", "writable": false, "signer": false },
@@ -112,11 +112,11 @@
   "accounts": [
     {
       "name": "ProtocolConfig",
-      "discriminator": [128, 155, 76, 211, 233, 18, 142, 60]
+      "discriminator": [207, 91, 250, 28, 152, 179, 215, 209]
     },
     {
       "name": "UserLoanPosition",
-      "discriminator": [201, 161, 91, 153, 137, 189, 75, 109]
+      "discriminator": [51, 173, 253, 209, 33, 102, 162, 97]
     }
   ],
   "types": [

@@ -7,7 +7,7 @@ import * as os from "os";
 
 // 1. Program ID & Tokens
 const PROGRAM_ID = new PublicKey(
-  process.env.PROGRAM_ID || "3TKiwrS9LNA3H2gnpfTVDyujP48PbCBo93w18q4ddZDv"
+  process.env.PROGRAM_ID || "FrjqMc7Cmz79KiZ4BXDqMVwRvutAM1jfc9PL3MTaAUCs"
 );
 const DEVNET_USDC_MINT = new PublicKey(
   process.env.USDC_MINT || "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"

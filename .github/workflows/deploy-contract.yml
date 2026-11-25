@@ -165,8 +165,7 @@ jobs:
           PROGRAM_ID: ${{ env.PROGRAM_ID }}
           SOLANA_RPC_URL: ${{ env.RPC_URL }}
           ANCHOR_WALLET: "/home/runner/.config/solana/id.json"
-        run: |
-          npm run init:protocol || npx tsx scripts/init_protocol.ts
+        run: npm run init:protocol
 
       - name: Deployment Summary
         if: always()
