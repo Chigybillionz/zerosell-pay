@@ -17,6 +17,12 @@ import {
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { useZeroSellProgram } from "../hooks/useZeroSellProgram.js";
+import {
+  saveUserPosition,
+  logUserTransaction,
+  getDeviceId,
+  StoredPosition,
+} from "../utils/storage.js";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -37,7 +43,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   invoice,
   onSuccess,
 }) => {
-  const { connected } = useWallet();
+  const { connected, publicKey } = useWallet();
   const { solPrice, calculateCollateralNeeded } = usePythPrices();
   const { executeGaslessCheckout, loading } = useZeroSellProgram();
 
@@ -121,10 +127,58 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         colors: ["#14F195", "#9945FF", "#0A0A0A"],
       });
 
+      const collateralAmt = result.requiredCollateral || calc.collateralUnits;
+      const borrowerKey = publicKey?.toBase58() || "DUaNPqVtrf8rS3ZUH3FVVAbhVmVyJknFfM5zP2Jm79wZ";
+      const devId = getDeviceId();
+
+      // Persist the active position to storage so it appears on Dashboard
+      const newPos: StoredPosition = {
+        publicKey: result.signature,
+        invoiceId: invoice.id,
+        title: invoice.title,
+        borrower: borrowerKey,
+        merchant: invoice.merchantPubkey,
+        collateralMint: "So11111111111111111111111111111111111111112",
+        collateralAmount: collateralAmt,
+        collateralAmountRaw: Math.floor(collateralAmt * 1e9).toString(),
+        debtUsdcAmount: invoice.usdcAmount,
+        entryPriceUsd: solPrice,
+        currentCollateralValueUsd: collateralAmt * solPrice,
+        currentLtvPercent: 50.0,
+        createdAt: Date.now(),
+        status: "Active",
+        statusRaw: 0,
+        unrealizedGainUsd: 0,
+        signature: result.signature,
+        solscanUrl: result.solscanUrl,
+        deviceId: devId,
+      };
+
+      saveUserPosition(newPos);
+
+      // Log transaction to persistent history
+      logUserTransaction({
+        signature: result.signature,
+        invoiceId: invoice.id,
+        title: invoice.title,
+        usdcAmount: invoice.usdcAmount,
+        collateralAmount: collateralAmt,
+        collateralMint: "SOL",
+        borrower: borrowerKey,
+        timestamp: Date.now(),
+        type: "LOCK_AND_PAY",
+        solscanUrl: result.solscanUrl,
+      });
+
+      // Notify other views (like UserDashboard) of the update
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("zerosell_storage_updated"));
+      }
+
       setSuccessResult({
         signature: result.signature,
         solscanUrl: result.solscanUrl,
-        collateralUnits: result.requiredCollateral,
+        collateralUnits: collateralAmt,
       });
 
       onSuccess(result);
