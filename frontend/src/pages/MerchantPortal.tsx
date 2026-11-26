@@ -36,6 +36,13 @@ export const MerchantPortal: React.FC = () => {
     publicKey?.toBase58() || "MrcHnt1111111111111111111111111111111111111"
   );
 
+  // Sync merchantPubkey whenever user connects or changes their Solana wallet
+  useEffect(() => {
+    if (publicKey) {
+      setMerchantPubkey(publicKey.toBase58());
+    }
+  }, [publicKey]);
+
   const [createdInvoice, setCreatedInvoice] = useState<{
     id: number;
     checkoutUrl: string;
