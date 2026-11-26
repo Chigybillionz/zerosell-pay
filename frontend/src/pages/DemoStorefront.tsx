@@ -89,6 +89,7 @@ export const DemoStorefront: React.FC = () => {
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [customUsdcAmount, setCustomUsdcAmount] = useState<number>(75.0);
   const [customTitle, setCustomTitle] = useState<string>("Custom Merchant Invoice");
+  const [customMerchantPubkey, setCustomMerchantPubkey] = useState<string>("");
   const [modalOpen, setModalOpen] = useState(false);
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
 
@@ -118,6 +119,7 @@ export const DemoStorefront: React.FC = () => {
       } else if (amount && merchant) {
         setIsCustomMode(true);
         setCustomUsdcAmount(amount);
+        setCustomMerchantPubkey(merchant);
         if (title) setCustomTitle(title);
         setModalOpen(true);
       }
@@ -130,8 +132,10 @@ export const DemoStorefront: React.FC = () => {
     category: "Custom POS",
     description: "User-defined invoice for live Devnet collateral demonstration",
     usdcAmount: customUsdcAmount > 0 ? customUsdcAmount : 1,
-    merchantPubkey: "MrcHnt1111111111111111111111111111111111111",
-    vendorName: "ZeroSell Custom POS",
+    merchantPubkey: customMerchantPubkey.trim() || "MrcHnt1111111111111111111111111111111111111",
+    vendorName: customMerchantPubkey.trim()
+      ? `${customMerchantPubkey.trim().slice(0, 6)}...${customMerchantPubkey.trim().slice(-4)}`
+      : "ZeroSell Custom POS",
     dueDate: "Immediate",
   };
 
@@ -308,6 +312,20 @@ export const DemoStorefront: React.FC = () => {
                       placeholder="e.g. Freelance Web3 Invoice"
                       maxLength={50}
                       className="flex-1 px-2.5 py-1 text-xs font-semibold bg-white border border-[#0A0A0A] text-[#0A0A0A] focus:outline-none"
+                    />
+                  </div>
+
+                  {/* Optional Seller / Merchant Solana Address */}
+                  <div className="pt-2 border-t border-dashed border-neutral-300 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+                    <span className="text-[10px] font-black uppercase text-neutral-500 whitespace-nowrap">
+                      Seller Address (Optional):
+                    </span>
+                    <input
+                      type="text"
+                      value={customMerchantPubkey}
+                      onChange={(e) => setCustomMerchantPubkey(e.target.value)}
+                      placeholder="e.g. Paste any Solana wallet (default: Demo POS MrcHnt...)"
+                      className="flex-1 px-2.5 py-1 text-xs font-mono font-semibold bg-white border border-[#0A0A0A] text-[#0A0A0A] focus:outline-none placeholder:font-sans placeholder:text-neutral-400"
                     />
                   </div>
                 </div>
