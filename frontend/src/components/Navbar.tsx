@@ -14,6 +14,8 @@ import {
   Store,
   LayoutDashboard,
   Coins,
+  Menu,
+  X,
 } from "lucide-react";
 
 export const Navbar: React.FC = () => {
@@ -25,6 +27,11 @@ export const Navbar: React.FC = () => {
   const [airdropping, setAirdropping] = useState(false);
   const [airdropSuccess, setAirdropSuccess] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!publicKey) {
@@ -170,8 +177,67 @@ export const Navbar: React.FC = () => {
 
           {/* Solana Wallet Adapter Button */}
           <WalletMultiButton className="wallet-adapter-button" />
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] text-[#0A0A0A] hover:bg-neutral-100 transition-all cursor-pointer"
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-4 h-4 stroke-[2.5]" />
+            ) : (
+              <Menu className="w-4 h-4 stroke-[2.5]" />
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t-2 border-[#0A0A0A] bg-white px-4 py-4 space-y-2.5 animate-fade-in shadow-[0px_6px_0px_#0A0A0A]">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const isActive =
+              location.pathname === link.path ||
+              (link.path === "/checkout" && location.pathname === "/");
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-xs font-black uppercase tracking-wider border-2 border-[#0A0A0A] transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-[#0A0A0A] text-white shadow-[3px_3px_0px_#0A0A0A]"
+                    : "bg-[#F8FAF9] text-[#0A0A0A] hover:bg-neutral-100 shadow-[2px_2px_0px_#0A0A0A]"
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{link.name}</span>
+              </Link>
+            );
+          })}
+
+          <a
+            href="https://github.com/Chigybillionz/zerosell-pay"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center justify-between px-4 py-3 text-xs font-black uppercase tracking-wider bg-white border-2 border-[#0A0A0A] text-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]"
+          >
+            <span>Documentation (GitHub)</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+
+          {/* Pyth price ribbon for mobile */}
+          <div className="pt-2 border-t border-dashed border-neutral-300 flex items-center justify-between text-xs font-mono font-bold text-neutral-600">
+            <span>Pyth SOL: ${solPrice.toFixed(2)}</span>
+            <span className="bg-[#9945FF] text-white text-[10px] font-mono uppercase px-2 py-0.5 border border-[#0A0A0A]">
+              Devnet
+            </span>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

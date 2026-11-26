@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { QRCodeSVG } from "qrcode.react";
 import confetti from "canvas-confetti";
@@ -44,6 +45,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
   onSuccess,
 }) => {
   const { connected, publicKey } = useWallet();
+  const navigate = useNavigate();
   const { solPrice, calculateCollateralNeeded } = usePythPrices();
   const { executeGaslessCheckout, loading } = useZeroSellProgram();
 
@@ -434,7 +436,7 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="flex justify-between">
                 <span className="text-neutral-600 uppercase font-bold">Total Debt:</span>
                 <span className="font-mono text-[#0A0A0A] font-bold">
-                  ${(invoice.usdcAmount * 1.005).toFixed(2)} USDC (0.5% fee)
+                  ${(currentUsdcAmount * 1.005).toFixed(2)} USDC (0.5% fee)
                 </span>
               </div>
             </div>
@@ -451,10 +453,15 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
               </a>
 
               <button
-                onClick={onClose}
-                className="w-full py-3.5 bg-[#9945FF] hover:bg-[#8935ef] text-white font-black text-xs uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] transition-all cursor-pointer"
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate("/dashboard");
+                }}
+                className="w-full py-3.5 bg-[#9945FF] hover:bg-[#8935ef] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-white font-black text-xs uppercase tracking-wider border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] transition-all cursor-pointer flex items-center justify-center space-x-2"
               >
-                Close &amp; View Vault Dashboard
+                <span>View on Vault Dashboard</span>
+                <ArrowRight className="w-4 h-4 ml-1 stroke-[3]" />
               </button>
             </div>
           </div>
