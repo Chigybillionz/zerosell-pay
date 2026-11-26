@@ -99,7 +99,9 @@ export const MerchantPortal: React.FC = () => {
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     const id = Math.floor(100000 + Math.random() * 900000);
-    const checkoutUrl = `${window.location.origin}/checkout`;
+    const checkoutUrl = `${window.location.origin}/checkout?amount=${usdcAmount}&merchant=${merchantPubkey}&title=${encodeURIComponent(
+      title
+    )}&invoiceId=${id}`;
     const blinkActionUrl = `${BACKEND_URL}/api/actions/pay/${id}`;
     const dialectBlinkUrl = `https://dial.to/?action=solana-action:${encodeURIComponent(
       blinkActionUrl
@@ -227,7 +229,7 @@ export const MerchantPortal: React.FC = () => {
 
           {/* Generated Shareable Links Box */}
           {createdInvoice && (
-            <div className="mt-6 pt-6 border-t-2 border-[#0A0A0A] space-y-4">
+            <div className="mt-6 pt-6 border-t-2 border-[#0A0A0A] space-y-5">
               <div className="p-4 bg-[#14F195]/20 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A]">
                 <span className="text-xs font-black uppercase text-[#0A0A0A] block mb-1">
                   🎉 Invoice #{createdInvoice.id} Generated!
@@ -237,8 +239,50 @@ export const MerchantPortal: React.FC = () => {
                 </p>
               </div>
 
-              {/* Solana Blink Link */}
-              <div className="space-y-1.5">
+              {/* 1. Direct Web Checkout Link (Send to Buyer) */}
+              <div className="space-y-1.5 p-3.5 bg-white border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A]">
+                <div className="flex justify-between items-center text-xs text-[#0A0A0A]">
+                  <span className="font-black uppercase flex items-center space-x-1.5 text-[#9945FF]">
+                    <LinkIcon className="w-3.5 h-3.5" />
+                    <span>Customer Web Checkout Link (Send to Buyer)</span>
+                  </span>
+                  {copiedLink === "checkout" ? (
+                    <span className="text-[#0A0A0A] bg-[#14F195] px-2 py-0.5 border border-[#0A0A0A] flex items-center space-x-1 font-mono font-bold text-[11px]">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      <span>Copied!</span>
+                    </span>
+                  ) : null}
+                </div>
+                <p className="text-[11px] text-neutral-600 font-medium leading-relaxed">
+                  Send this link to the customer. When opened, it automatically loads your invoice on the storefront and launches the ZeroSell checkout modal!
+                </p>
+                <div className="flex items-center space-x-2 pt-1">
+                  <input
+                    type="text"
+                    readOnly
+                    value={createdInvoice.checkoutUrl}
+                    className="flex-1 bg-[#F8FAF9] border-2 border-[#0A0A0A] px-3 py-2.5 text-xs font-mono font-medium text-[#0A0A0A] focus:outline-none select-all"
+                  />
+                  <button
+                    onClick={() => copyToClipboard(createdInvoice.checkoutUrl, "checkout")}
+                    className="px-3.5 py-2.5 bg-[#9945FF] hover:bg-[#8935ef] active:translate-x-[1px] active:translate-y-[1px] text-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] transition-all cursor-pointer font-black text-xs uppercase"
+                  >
+                    Copy Link
+                  </button>
+                  <a
+                    href={createdInvoice.checkoutUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9] active:translate-x-[1px] active:translate-y-[1px] text-[#0A0A0A] transition-all"
+                    title="Open checkout in new tab"
+                  >
+                    <ExternalLink className="w-4 h-4 stroke-[2.5]" />
+                  </a>
+                </div>
+              </div>
+
+              {/* 2. Solana Blink Link */}
+              <div className="space-y-1.5 p-3.5 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]">
                 <div className="flex justify-between text-xs text-[#0A0A0A]">
                   <span className="font-black uppercase flex items-center space-x-1">
                     <Sparkles className="w-3.5 h-3.5 text-[#9945FF]" />
@@ -251,23 +295,23 @@ export const MerchantPortal: React.FC = () => {
                     </span>
                   ) : null}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 pt-1">
                   <input
                     type="text"
                     readOnly
                     value={createdInvoice.blinkUrl}
-                    className="flex-1 bg-[#F8FAF9] border-2 border-[#0A0A0A] px-3 py-2.5 text-xs font-mono font-medium text-[#0A0A0A] focus:outline-none"
+                    className="flex-1 bg-white border-2 border-[#0A0A0A] px-3 py-2 text-xs font-mono font-medium text-[#0A0A0A] focus:outline-none"
                   />
                   <button
                     onClick={() => copyToClipboard(createdInvoice.blinkUrl, "blink")}
-                    className="p-2.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#0A0A0A] transition-all cursor-pointer"
+                    className="p-2 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] hover:bg-[#F8FAF9] active:translate-x-[1px] active:translate-y-[1px] text-[#0A0A0A] transition-all cursor-pointer font-bold text-xs uppercase px-3"
                   >
-                    <Copy className="w-4 h-4 stroke-[2.5]" />
+                    Copy
                   </button>
                 </div>
               </div>
 
-              {/* Solana Pay QR Code */}
+              {/* 3. Solana Pay QR Code */}
               <div className="p-4 bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] flex items-center space-x-4">
                 <div className="p-2.5 bg-white border-2 border-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A]">
                   <QRCodeSVG value={createdInvoice.solanaPayUri} size={90} />

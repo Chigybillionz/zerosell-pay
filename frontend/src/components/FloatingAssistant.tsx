@@ -37,7 +37,7 @@ export const FloatingAssistant: React.FC = () => {
   return (
     <>
       {/* 1. Sleek Floating Pill Button (Bottom Right) */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-16 right-4 md:bottom-6 md:right-6 z-30">
         <button
           onClick={() => setIsOpen(true)}
           className="flex items-center space-x-2.5 px-4 py-2.5 bg-white hover:bg-[#F8FAF9] border-2 border-[#0A0A0A] text-[#0A0A0A] text-xs font-black uppercase shadow-[4px_4px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#0A0A0A] transition-all group cursor-pointer"

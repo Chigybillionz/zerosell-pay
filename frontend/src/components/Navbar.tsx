@@ -72,13 +72,14 @@ export const Navbar: React.FC = () => {
   };
 
   const navLinks = [
-    { name: "Demo Store", path: "/checkout", icon: Store },
-    { name: "Vault Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { name: "Merchant Portal", path: "/merchant", icon: Coins },
+    { name: "Demo Store", shortName: "Store", path: "/checkout", icon: Store },
+    { name: "Vault Dashboard", shortName: "Vaults", path: "/dashboard", icon: LayoutDashboard },
+    { name: "Merchant Portal", shortName: "Merchant", path: "/merchant", icon: Coins },
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b-2 border-[#0A0A0A]">
+    <>
+      <header className="sticky top-0 z-50 w-full bg-white border-b-2 border-[#0A0A0A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/checkout" className="flex items-center space-x-3 group">
@@ -239,6 +240,35 @@ export const Navbar: React.FC = () => {
         </div>
       )}
     </header>
+
+    {/* Mobile Fixed Bottom Navigation Bar (Always visible on mobile) */}
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t-2 border-[#0A0A0A] shadow-[0px_-3px_0px_#0A0A0A]">
+      <div className="grid grid-cols-3 divide-x-2 divide-[#0A0A0A]">
+        {navLinks.map((link) => {
+          const Icon = link.icon;
+          const isActive =
+            location.pathname === link.path ||
+            (link.path === "/checkout" && (location.pathname === "/" || location.pathname === "/checkout"));
+          return (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`flex flex-col items-center justify-center py-2.5 px-1 transition-all cursor-pointer ${
+                isActive
+                  ? "bg-[#0A0A0A] text-white"
+                  : "bg-white text-[#0A0A0A] hover:bg-[#F8FAF9]"
+              }`}
+            >
+              <Icon className={`w-4 h-4 mb-1 ${isActive ? "text-[#14F195]" : "text-[#0A0A0A]"}`} />
+              <span className={`text-[10px] font-black uppercase tracking-wider ${isActive ? "text-white" : "text-[#0A0A0A]"}`}>
+                {link.shortName}
+              </span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  </>
   );
 };
 

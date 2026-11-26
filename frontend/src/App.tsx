@@ -15,7 +15,7 @@ export const App: React.FC = () => {
         <div className="flex flex-col min-h-screen bg-[#F8FAF9] text-[#0A0A0A] selection:bg-[#9945FF] selection:text-white">
           <Navbar />
 
-          <main className="flex-1">
+          <main className="flex-1 pb-16 md:pb-0">
             <Routes>
               <Route path="/" element={<DemoStorefront />} />
               <Route path="/checkout" element={<DemoStorefront />} />
