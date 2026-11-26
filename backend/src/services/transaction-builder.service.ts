@@ -259,7 +259,21 @@ export class TransactionBuilderService {
       );
       transaction.add(lockIx);
     } else {
-      // Demo / Showcase Mode: Valid on-chain transaction with Solana Memo Program
+      // Demo / Showcase Mode: Valid on-chain transaction with explicit Collateral Vault Lock
+      // Derive borrower collateral vault PDA so Phantom explicitly shows the balance change
+      const [collateralVaultPda] = getCollateralVaultPda(borrower, invoiceId);
+      const lamportsToLock = Number(collateralAtomicUnits);
+
+      if (lamportsToLock > 0) {
+        transaction.add(
+          SystemProgram.transfer({
+            fromPubkey: borrower,
+            toPubkey: collateralVaultPda,
+            lamports: lamportsToLock,
+          })
+        );
+      }
+
       const memoPayload = JSON.stringify({
         protocol: "ZeroSell Pay",
         action: "LOCK_COLLATERAL_AND_PAY",
