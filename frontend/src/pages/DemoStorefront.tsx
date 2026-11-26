@@ -26,6 +26,8 @@ import { HeroSection } from "../components/HeroSection.js";
 import { LiveMetricsRibbon } from "../components/LiveMetricsRibbon.js";
 import { ProtocolFeaturesSection } from "../components/ProtocolFeaturesSection.js";
 import { UpsideSimulator } from "../components/UpsideSimulator.js";
+import { BusinessModelSection } from "../components/BusinessModelSection.js";
+import { BusinessModelModal } from "../components/BusinessModelModal.js";
 import { CinematicFooter } from "../components/CinematicFooter.js";
 import { FloatingAssistant } from "../components/FloatingAssistant.js";
 
@@ -176,6 +178,7 @@ export const DemoStorefront: React.FC = () => {
     initialData ? initialData.shouldOpenModal : false
   );
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
+  const [businessModelOpen, setBusinessModelOpen] = useState(false);
 
   // Progressive Disclosure Toggles
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -641,6 +644,15 @@ export const DemoStorefront: React.FC = () => {
 
       {/* 5. INTERACTIVE UPSIDE SIMULATOR */}
       <UpsideSimulator currentSolPrice={solPrice} />
+
+      {/* 6. PROTOCOL ECONOMICS & BUSINESS MODEL SECTION */}
+      <BusinessModelSection onOpenModal={() => setBusinessModelOpen(true)} />
+
+      {/* Business Model Interactive Modal */}
+      <BusinessModelModal
+        isOpen={businessModelOpen}
+        onClose={() => setBusinessModelOpen(false)}
+      />
 
       {/* ZeroSell Checkout Modal */}
       <ZeroSellCheckoutModal

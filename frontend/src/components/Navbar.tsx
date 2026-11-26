@@ -16,7 +16,9 @@ import {
   Coins,
   Menu,
   X,
+  Briefcase,
 } from "lucide-react";
+import { BusinessModelModal } from "./BusinessModelModal.js";
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -28,6 +30,7 @@ export const Navbar: React.FC = () => {
   const [airdropSuccess, setAirdropSuccess] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [businessModelOpen, setBusinessModelOpen] = useState(false);
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -122,6 +125,14 @@ export const Navbar: React.FC = () => {
               </Link>
             );
           })}
+          <button
+            type="button"
+            onClick={() => setBusinessModelOpen(true)}
+            className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0A0A0A] border-2 border-transparent hover:border-[#0A0A0A] hover:bg-[#F8FAF9] flex items-center space-x-1.5 transition-all cursor-pointer"
+          >
+            <Briefcase className="w-3.5 h-3.5 text-[#9945FF]" />
+            <span>Business Model</span>
+          </button>
           <a
             href="https://github.com/Chigybillionz/zerosell-pay"
             target="_blank"
@@ -219,6 +230,18 @@ export const Navbar: React.FC = () => {
             );
           })}
 
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setBusinessModelOpen(true);
+            }}
+            className="flex items-center space-x-3 px-4 py-3 text-xs font-black uppercase tracking-wider bg-white border-2 border-[#0A0A0A] text-[#0A0A0A] shadow-[2px_2px_0px_#0A0A0A] cursor-pointer text-left"
+          >
+            <Briefcase className="w-4 h-4 text-[#9945FF]" />
+            <span>Business Model &amp; Economics</span>
+          </button>
+
           <a
             href="https://github.com/Chigybillionz/zerosell-pay"
             target="_blank"
@@ -240,6 +263,12 @@ export const Navbar: React.FC = () => {
         </div>
       )}
     </header>
+
+    {/* Business Model & Unit Economics Modal */}
+    <BusinessModelModal
+      isOpen={businessModelOpen}
+      onClose={() => setBusinessModelOpen(false)}
+    />
 
     {/* Mobile Fixed Bottom Navigation Bar (Always visible on mobile) */}
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t-2 border-[#0A0A0A] shadow-[0px_-3px_0px_#0A0A0A]">
