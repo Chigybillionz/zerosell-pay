@@ -97,6 +97,54 @@ export const ZeroSellCheckoutModal: React.FC<CheckoutModalProps> = ({
         requiredCollateral: calc.collateralUnits,
       };
 
+      const collateralAmt = calc.collateralUnits;
+      const borrowerKey = publicKey?.toBase58() || "DUaNPqVtrf8rS3ZUH3FVVAbhVmVyJknFfM5zP2Jm79wZ";
+      const devId = getDeviceId();
+
+      // Persist the active position to storage so it immediately appears on Vault Dashboard
+      const newPos: StoredPosition = {
+        publicKey: demoSig,
+        invoiceId: invoice.id,
+        title: invoice.title,
+        borrower: borrowerKey,
+        merchant: invoice.merchantPubkey,
+        collateralMint: "So11111111111111111111111111111111111111112",
+        collateralAmount: collateralAmt,
+        collateralAmountRaw: Math.floor(collateralAmt * 1e9).toString(),
+        debtUsdcAmount: currentUsdcAmount,
+        entryPriceUsd: solPrice,
+        currentCollateralValueUsd: collateralAmt * solPrice,
+        currentLtvPercent: 50.0,
+        createdAt: Date.now(),
+        status: "Active",
+        statusRaw: 0,
+        unrealizedGainUsd: 0,
+        signature: demoSig,
+        solscanUrl: demoResult.solscanUrl,
+        deviceId: devId,
+      };
+
+      saveUserPosition(newPos);
+
+      // Log transaction to persistent audit history
+      logUserTransaction({
+        signature: demoSig,
+        invoiceId: invoice.id,
+        title: invoice.title,
+        usdcAmount: currentUsdcAmount,
+        collateralAmount: collateralAmt,
+        collateralMint: "SOL",
+        borrower: borrowerKey,
+        timestamp: Date.now(),
+        type: "LOCK_AND_PAY",
+        solscanUrl: demoResult.solscanUrl,
+      });
+
+      // Notify dashboard and storage listeners
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("zerosell_storage_updated"));
+      }
+
       setSuccessResult({
         signature: demoSig,
         solscanUrl: demoResult.solscanUrl,

@@ -40,14 +40,9 @@ export function getDeviceId(): string {
 }
 
 /**
- * Legacy dummy demo invoice IDs that should be purged from stored user data
- */
-const LEGACY_DUMMY_INVOICE_IDS = [984321, 876543, 765432];
-
-/**
  * Loads all stored user positions from localStorage.
  * Only returns transactions that the user/device has actually created.
- * Automatically purges any legacy dummy records from earlier demo sessions.
+ * Automatically purges any unsigned mock seed entries from earlier builds.
  */
 export function getUserPositions(walletAddress?: string): StoredPosition[] {
   if (typeof window === "undefined") return [];
@@ -58,8 +53,13 @@ export function getUserPositions(walletAddress?: string): StoredPosition[] {
 
   try {
     const list: StoredPosition[] = JSON.parse(raw);
-    // Purge legacy mock invoice IDs so user dashboard starts with clean real records only
-    const cleanList = list.filter((p) => !LEGACY_DUMMY_INVOICE_IDS.includes(p.invoiceId));
+    // Purge only unsigned legacy mock positions from the old build
+    const cleanList = list.filter(
+      (p) =>
+        Boolean(p.signature) &&
+        p.publicKey !== "4dDHE2Vco8AtNbvW2q9mUnH4b4QnWyQRNrJkifJbkGeT" &&
+        p.publicKey !== "FsRUbgmFkYTxfr5nBRfFoid6VUgJzMm4tCite1izSVuS"
+    );
     if (cleanList.length !== list.length) {
       localStorage.setItem(STORAGE_KEY_POSITIONS, JSON.stringify(cleanList));
     }
@@ -73,7 +73,8 @@ export function getUserPositions(walletAddress?: string): StoredPosition[] {
         p.deviceId === currentDeviceId
     );
 
-    return userList;
+    // If wallet or device matches, return filtered list; otherwise keep all local positions visible
+    return userList.length > 0 ? userList : cleanList;
   } catch (e) {
     console.error("Failed to parse stored positions:", e);
     return [];
@@ -86,9 +87,12 @@ export function getUserPositions(walletAddress?: string): StoredPosition[] {
 export function saveUserPosition(position: StoredPosition): void {
   if (typeof window === "undefined") return;
   try {
-    const currentList = getUserPositions();
-    // Prepend new position or update existing by invoiceId
-    const existingIndex = currentList.findIndex((p) => p.invoiceId === position.invoiceId);
+    const raw = localStorage.getItem(STORAGE_KEY_POSITIONS);
+    const currentList: StoredPosition[] = raw ? JSON.parse(raw) : [];
+    // Prepend new position or update existing by invoiceId or signature
+    const existingIndex = currentList.findIndex(
+      (p) => p.invoiceId === position.invoiceId || (position.signature && p.signature === position.signature)
+    );
     let updated: StoredPosition[];
     if (existingIndex >= 0) {
       updated = [...currentList];
@@ -150,16 +154,17 @@ export function getUserTransactionHistory(walletAddress?: string): TransactionRe
     const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
     if (!raw) return [];
     const history: TransactionRecord[] = JSON.parse(raw);
-    const cleanHistory = history.filter((h) => !LEGACY_DUMMY_INVOICE_IDS.includes(h.invoiceId));
+    const cleanHistory = history.filter((h) => Boolean(h.signature));
     if (cleanHistory.length !== history.length) {
       localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(cleanHistory));
     }
 
     if (!walletAddress) return cleanHistory;
     const currentDeviceId = getDeviceId();
-    return cleanHistory.filter(
+    const userHistory = cleanHistory.filter(
       (h) => h.borrower === walletAddress || h.deviceId === currentDeviceId
     );
+    return userHistory.length > 0 ? userHistory : cleanHistory;
   } catch (e) {
     console.error("Failed to parse history:", e);
     return [];

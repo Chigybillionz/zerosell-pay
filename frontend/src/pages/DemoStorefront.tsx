@@ -90,6 +90,7 @@ export const DemoStorefront: React.FC = () => {
   const [customUsdcAmount, setCustomUsdcAmount] = useState<number>(75.0);
   const [customTitle, setCustomTitle] = useState<string>("Custom Merchant Invoice");
   const [customMerchantPubkey, setCustomMerchantPubkey] = useState<string>("");
+  const [customInvoiceId, setCustomInvoiceId] = useState<number>(() => Math.floor(100000 + Math.random() * 900000));
   const [modalOpen, setModalOpen] = useState(false);
   const [showTraditionalModal, setShowTraditionalModal] = useState(false);
 
@@ -115,19 +116,27 @@ export const DemoStorefront: React.FC = () => {
           setIsCustomMode(false);
           setSelectedInvoice(found);
           setModalOpen(true);
+        } else {
+          setIsCustomMode(true);
+          setCustomInvoiceId(invoiceId);
+          if (amount) setCustomUsdcAmount(amount);
+          if (merchant) setCustomMerchantPubkey(merchant);
+          if (title) setCustomTitle(title);
+          setModalOpen(true);
         }
       } else if (amount && merchant) {
         setIsCustomMode(true);
         setCustomUsdcAmount(amount);
         setCustomMerchantPubkey(merchant);
         if (title) setCustomTitle(title);
+        setCustomInvoiceId(Math.floor(100000 + Math.random() * 900000));
         setModalOpen(true);
       }
     }
   }, [searchParams]);
 
   const customInvoice = {
-    id: 999123,
+    id: customInvoiceId,
     title: customTitle || "Custom Merchant Invoice",
     category: "Custom POS",
     description: "User-defined invoice for live Devnet collateral demonstration",
