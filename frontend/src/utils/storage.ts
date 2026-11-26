@@ -40,77 +40,43 @@ export function getDeviceId(): string {
 }
 
 /**
- * Default initial demo positions shown if no custom transactions have been made yet
+ * Legacy dummy demo invoice IDs that should be purged from stored user data
  */
-const DEFAULT_POSITIONS: StoredPosition[] = [
-  {
-    publicKey: "4dDHE2Vco8AtNbvW2q9mUnH4b4QnWyQRNrJkifJbkGeT",
-    invoiceId: 984321,
-    title: "Cloud GPU Render Credits",
-    borrower: "DUaNPqVtrf8rS3ZUH3FVVAbhVmVyJknFfM5zP2Jm79wZ",
-    merchant: "MrcHnt1111111111111111111111111111111111111",
-    collateralMint: "So11111111111111111111111111111111111111112",
-    collateralAmount: 0.539,
-    collateralAmountRaw: "539000000",
-    debtUsdcAmount: 50.25,
-    entryPriceUsd: 185.0,
-    currentCollateralValueUsd: 99.715,
-    currentLtvPercent: 50.39,
-    createdAt: Date.now() - 86400000 * 2,
-    status: "Active",
-    statusRaw: 0,
-    unrealizedGainUsd: 12.5,
-  },
-  {
-    publicKey: "FsRUbgmFkYTxfr5nBRfFoid6VUgJzMm4tCite1izSVuS",
-    invoiceId: 876543,
-    title: "Figma Pro Enterprise Annual",
-    borrower: "DUaNPqVtrf8rS3ZUH3FVVAbhVmVyJknFfM5zP2Jm79wZ",
-    merchant: "MrcHnt1111111111111111111111111111111111111",
-    collateralMint: "So11111111111111111111111111111111111111112",
-    collateralAmount: 1.294,
-    collateralAmountRaw: "1294000000",
-    debtUsdcAmount: 120.6,
-    entryPriceUsd: 180.0,
-    currentCollateralValueUsd: 239.39,
-    currentLtvPercent: 50.38,
-    createdAt: Date.now() - 86400000 * 5,
-    status: "Active",
-    statusRaw: 0,
-    unrealizedGainUsd: 24.8,
-  },
-];
+const LEGACY_DUMMY_INVOICE_IDS = [984321, 876543, 765432];
 
 /**
  * Loads all stored user positions from localStorage.
- * If user has a connected wallet, filters/merges by wallet address or device ID.
+ * Only returns transactions that the user/device has actually created.
+ * Automatically purges any legacy dummy records from earlier demo sessions.
  */
 export function getUserPositions(walletAddress?: string): StoredPosition[] {
-  if (typeof window === "undefined") return DEFAULT_POSITIONS;
+  if (typeof window === "undefined") return [];
   const raw = localStorage.getItem(STORAGE_KEY_POSITIONS);
   if (!raw) {
-    // Seed with defaults
-    localStorage.setItem(STORAGE_KEY_POSITIONS, JSON.stringify(DEFAULT_POSITIONS));
-    return DEFAULT_POSITIONS;
+    return [];
   }
 
   try {
     const list: StoredPosition[] = JSON.parse(raw);
-    if (!walletAddress) return list;
+    // Purge legacy mock invoice IDs so user dashboard starts with clean real records only
+    const cleanList = list.filter((p) => !LEGACY_DUMMY_INVOICE_IDS.includes(p.invoiceId));
+    if (cleanList.length !== list.length) {
+      localStorage.setItem(STORAGE_KEY_POSITIONS, JSON.stringify(cleanList));
+    }
 
-    // Filter by matching wallet or device id, but ensure at least demo positions show if empty
+    if (!walletAddress) return cleanList;
+
     const currentDeviceId = getDeviceId();
-    const userList = list.filter(
+    const userList = cleanList.filter(
       (p) =>
         p.borrower === walletAddress ||
-        p.deviceId === currentDeviceId ||
-        p.borrower.startsWith("DUaNPq") // default deployer address
+        p.deviceId === currentDeviceId
     );
 
-    return userList.length > 0 ? userList : list;
+    return userList;
   } catch (e) {
     console.error("Failed to parse stored positions:", e);
-    return DEFAULT_POSITIONS;
+    return [];
   }
 }
 
@@ -184,13 +150,28 @@ export function getUserTransactionHistory(walletAddress?: string): TransactionRe
     const raw = localStorage.getItem(STORAGE_KEY_HISTORY);
     if (!raw) return [];
     const history: TransactionRecord[] = JSON.parse(raw);
-    if (!walletAddress) return history;
+    const cleanHistory = history.filter((h) => !LEGACY_DUMMY_INVOICE_IDS.includes(h.invoiceId));
+    if (cleanHistory.length !== history.length) {
+      localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(cleanHistory));
+    }
+
+    if (!walletAddress) return cleanHistory;
     const currentDeviceId = getDeviceId();
-    return history.filter(
+    return cleanHistory.filter(
       (h) => h.borrower === walletAddress || h.deviceId === currentDeviceId
     );
   } catch (e) {
     console.error("Failed to parse history:", e);
     return [];
   }
+}
+
+/**
+ * Completely clears all local vault data and transaction history, resetting the dashboard to 0
+ */
+export function clearUserVaultData(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STORAGE_KEY_POSITIONS);
+  localStorage.removeItem(STORAGE_KEY_HISTORY);
+  window.dispatchEvent(new CustomEvent("zerosell_storage_updated"));
 }

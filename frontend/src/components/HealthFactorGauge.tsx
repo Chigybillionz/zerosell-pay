@@ -11,15 +11,18 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
   liquidationThreshold = 75.0,
 }) => {
   // Determine health category
-  const isHealthy = ltvPercent < 55.0;
-  const isWarning = ltvPercent >= 55.0 && ltvPercent < liquidationThreshold;
-  const isCritical = ltvPercent >= liquidationThreshold;
+  const isZeroDebt = ltvPercent <= 0;
+  const isHealthy = !isZeroDebt && ltvPercent < 55.0;
+  const isWarning = !isZeroDebt && ltvPercent >= 55.0 && ltvPercent < liquidationThreshold;
+  const isCritical = !isZeroDebt && ltvPercent >= liquidationThreshold;
 
   // Status color schemes
   const color = isCritical
     ? "text-red-600"
     : isWarning
     ? "text-amber-600"
+    : isZeroDebt
+    ? "text-emerald-700"
     : "text-[#0A0A0A]";
 
   const barColor = isCritical
@@ -32,10 +35,12 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
     ? "Liquidation Risk"
     : isWarning
     ? "Caution (Monitor)"
+    : isZeroDebt
+    ? "Safe (No Active Debt)"
     : "Optimal / Safe";
 
-  // Clamp bar width percentage
-  const clampedWidth = Math.min(Math.max((ltvPercent / 100) * 100, 5), 100);
+  // Clamp bar width percentage (0% if zero debt)
+  const clampedWidth = isZeroDebt ? 0 : Math.min(Math.max((ltvPercent / 100) * 100, 5), 100);
 
   return (
     <div className="bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] p-6 text-[#0A0A0A]">
@@ -46,7 +51,7 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
           ) : isWarning ? (
             <AlertTriangle className="w-5 h-5 text-amber-500 stroke-[2.5]" />
           ) : (
-            <ShieldCheck className="w-5 h-5 text-[#0A0A0A] stroke-[2.5]" />
+            <ShieldCheck className={`w-5 h-5 stroke-[2.5] ${isZeroDebt ? "text-emerald-600" : "text-[#0A0A0A]"}`} />
           )}
           <span className="text-sm font-black uppercase text-[#0A0A0A] tracking-tight">
             Vault Health &amp; LTV Buffer
@@ -86,7 +91,9 @@ export const HealthFactorGauge: React.FC<HealthFactorGaugeProps> = ({
       <div className="mt-4 pt-4 border-t-2 border-[#0A0A0A] flex items-center justify-between text-xs font-bold uppercase text-neutral-600">
         <span>Collateral buffer:</span>
         <span className="text-[#0A0A0A] font-black font-mono">
-          {Math.max(0, liquidationThreshold - ltvPercent).toFixed(1)}% buffer before liquidation
+          {isZeroDebt
+            ? "100.0% buffer (No debt)"
+            : `${Math.max(0, liquidationThreshold - ltvPercent).toFixed(1)}% buffer before liquidation`}
         </span>
       </div>
     </div>

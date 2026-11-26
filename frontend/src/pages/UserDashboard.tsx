@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   Coins,
@@ -14,6 +15,7 @@ import {
   History,
   CheckCircle2,
   Calendar,
+  RotateCcw,
 } from "lucide-react";
 import { usePythPrices } from "../hooks/usePythPrices.js";
 import { useZeroSellProgram } from "../hooks/useZeroSellProgram.js";
@@ -24,12 +26,14 @@ import {
   updatePositionStatus,
   getUserTransactionHistory,
   logUserTransaction,
+  clearUserVaultData,
   StoredPosition,
   TransactionRecord,
   getDeviceId,
 } from "../utils/storage.js";
 
 export const UserDashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { connected, publicKey } = useWallet();
   const { solPrice, refreshPrices } = usePythPrices();
   const { repayPosition } = useZeroSellProgram();
@@ -56,6 +60,13 @@ export const UserDashboard: React.FC = () => {
     setPositions(updated);
     setHistory(getUserTransactionHistory(userWallet));
   }, [publicKey, solPrice]);
+
+  const handleClearData = () => {
+    if (window.confirm("Are you sure you want to reset your dashboard to a clean zero state?")) {
+      clearUserVaultData();
+      loadStoredData();
+    }
+  };
 
   useEffect(() => {
     loadStoredData();
@@ -144,6 +155,15 @@ export const UserDashboard: React.FC = () => {
 
         <div className="flex items-center space-x-3">
           <button
+            onClick={handleClearData}
+            title="Reset dashboard to clean 0 state"
+            className="flex items-center space-x-2 px-3.5 py-2.5 bg-white hover:bg-neutral-100 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-xs font-black uppercase tracking-wider text-neutral-700 transition-all cursor-pointer"
+          >
+            <RotateCcw className="w-3.5 h-3.5 text-[#0A0A0A] stroke-[2.5]" />
+            <span>Reset Demo State</span>
+          </button>
+
+          <button
             onClick={() => refreshPrices()}
             className="flex items-center space-x-2 px-4 py-2.5 bg-white hover:bg-[#F8FAF9] border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_#0A0A0A] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none text-xs font-black uppercase tracking-wider text-[#0A0A0A] transition-all cursor-pointer"
           >
@@ -213,10 +233,10 @@ export const UserDashboard: React.FC = () => {
               <ShieldCheck className="w-4 h-4 text-[#0A0A0A] stroke-[2.5]" />
             </div>
             <div className="text-2xl sm:text-3xl font-black text-[#0A0A0A] font-mono tabular-nums">
-              {averageLtv > 0 ? `${averageLtv.toFixed(1)}%` : "N/A"}
+              {activePositions.length > 0 ? `${averageLtv.toFixed(1)}%` : "0.0%"}
             </div>
             <span className="text-xs font-semibold text-neutral-600 mt-1 block">
-              Liquidation threshold 75%
+              {activePositions.length > 0 ? "Liquidation threshold 75%" : "No Active Debt"}
             </span>
           </div>
         </div>
@@ -225,7 +245,7 @@ export const UserDashboard: React.FC = () => {
       {/* Global Health Factor Bar Gauge Component */}
       <div>
         <HealthFactorGauge
-          ltvPercent={averageLtv || 50.0}
+          ltvPercent={activePositions.length > 0 ? averageLtv : 0}
           liquidationThreshold={75.0}
         />
       </div>
@@ -357,12 +377,24 @@ export const UserDashboard: React.FC = () => {
 
       {/* Empty State */}
       {(activeTab === "active" ? activePositions : [...repaidPositions, ...history]).length === 0 && (
-        <div className="text-center py-16 bg-white border-2 border-dashed border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A]">
-          <Coins className="w-10 h-10 text-neutral-400 mx-auto mb-3" />
-          <h4 className="text-base font-black uppercase text-[#0A0A0A]">No positions found</h4>
-          <p className="text-xs text-neutral-600 font-medium mt-1">
-            Head to the Demo Storefront to test paying an invoice with ZeroSell.
+        <div className="text-center py-16 px-6 bg-white border-2 border-[#0A0A0A] shadow-[6px_6px_0px_#0A0A0A] max-w-xl mx-auto space-y-4">
+          <div className="w-14 h-14 bg-[#14F195]/20 border-2 border-[#0A0A0A] shadow-[3px_3px_0px_#0A0A0A] flex items-center justify-center mx-auto text-[#0A0A0A]">
+            <Coins className="w-7 h-7 text-[#0A0A0A] stroke-[2.5]" />
+          </div>
+          <h4 className="text-lg font-black uppercase text-[#0A0A0A] tracking-tight">
+            Clean Vault Slate — No Active Debt
+          </h4>
+          <p className="text-xs text-neutral-600 font-medium max-w-md mx-auto leading-relaxed">
+            You currently have $0.00 locked collateral and $0.00 active debt. Only transactions you actually record will be shown here.
           </p>
+          <div className="pt-2">
+            <button
+              onClick={() => navigate("/store")}
+              className="inline-flex items-center space-x-2 py-3 px-6 bg-[#9945FF] hover:bg-[#8935ef] text-white border-2 border-[#0A0A0A] shadow-[4px_4px_0px_#0A0A0A] font-black text-xs uppercase tracking-wider transition-all cursor-pointer"
+            >
+              <span>Test First ZeroSell Payment ↗</span>
+            </button>
+          </div>
         </div>
       )}
     </div>
